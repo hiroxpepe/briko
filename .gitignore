@@ -1,0 +1,23 @@
+# Unity meta files for non-tracked folders
+*.meta.bak
+
+# Unity's auto-generated assembly artifacts
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.tmp
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vs/
+.vscode/
+.idea/
+
+# Logs
+*.log
