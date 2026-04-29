@@ -18,6 +18,9 @@ desktop.ini
 .vs/
 .vscode/
 .idea/
+bin/
+obj/
+vs.code-workspace
 
 # Logs
 *.log

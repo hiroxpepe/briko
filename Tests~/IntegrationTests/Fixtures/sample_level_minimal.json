@@ -1,0 +1,25 @@
+{
+  "layout_id": "test_minimal",
+  "grid_unit": 0.5,
+  "target_duration_sec": 180,
+  "bgm_track": "test.mp3",
+  "platforms": [
+    {
+      "floor": "1f",
+      "grounds": [
+        {
+          "prefab": "Ground_10.0x0.5x10.0_Green",
+          "variant": 1,
+          "position": [0.0, 0.0, 0.0]
+        }
+      ],
+      "blocks": [],
+      "zones": [
+        {
+          "zone_id": "vol_spawn",
+          "position": [0.0, 0.5, 0.0]
+        }
+      ]
+    }
+  ]
+}

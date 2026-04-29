@@ -1,7 +1,9 @@
 {
   "name": "Briko.Editor",
-  "rootNamespace": "MeowToon.Briko.Editor",
-  "references": [],
+  "rootNamespace": "Briko.Editor",
+  "references": [
+    "Newtonsoft.Json"
+  ],
   "includePlatforms": [
     "Editor"
   ],
