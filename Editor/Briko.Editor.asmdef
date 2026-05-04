@@ -1,9 +1,7 @@
 {
   "name": "Briko.Editor",
   "rootNamespace": "Briko.Editor",
-  "references": [
-    "Newtonsoft.Json"
-  ],
+  "references": [],
   "includePlatforms": [
     "Editor"
   ],

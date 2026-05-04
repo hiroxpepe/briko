@@ -1,0 +1,221 @@
+﻿{
+  "layout_id": "Level_1",
+  "grid_unit": 0.5,
+  "target_duration_sec": 180,
+  "bgm_track": "",
+  "platforms": [
+    {
+      "floor": "1f",
+      "grounds": [
+        {
+          "prefab": "Ground_10.0x0.5x10.0_Green",
+          "variant": 1,
+          "position": [
+            -0.5,
+            -0.5,
+            4.0
+          ]
+        },
+        {
+          "prefab": "Ground_10.0x0.5x10.0_Green",
+          "variant": 2,
+          "position": [
+            -0.5,
+            -0.5,
+            27.5
+          ]
+        },
+        {
+          "prefab": "Ground_5.0x0.5x5.0_Green",
+          "variant": 1,
+          "position": [
+            2.5,
+            -0.5,
+            16.5
+          ]
+        },
+        {
+          "prefab": "Ground_5.0x0.5x5.0_Green",
+          "variant": 2,
+          "position": [
+            -3.0,
+            -0.5,
+            16.5
+          ]
+        },
+        {
+          "prefab": "Ground_2.5x0.5x2.5_Green",
+          "variant": 1,
+          "position": [
+            3.5,
+            -0.5,
+            10.0
+          ]
+        },
+        {
+          "prefab": "Ground_2.5x0.5x2.5_Green",
+          "variant": 2,
+          "position": [
+            1.0,
+            -1.0,
+            12.5
+          ]
+        },
+        {
+          "prefab": "Ground_2.5x0.5x2.5_Green",
+          "variant": 3,
+          "position": [
+            -3.5,
+            -0.5,
+            20.0
+          ]
+        },
+        {
+          "prefab": "Ground_2.5x0.5x2.5_Green",
+          "variant": 4,
+          "position": [
+            -1.0,
+            -0.5,
+            21.5
+          ]
+        }
+      ],
+      "blocks": [
+        {
+          "prefab": "Block_1.0x1.0x1.0_Plain_Green",
+          "variant": 1,
+          "position": [
+            -1.0,
+            0.0,
+            2.5
+          ]
+        },
+        {
+          "prefab": "Block_1.0x1.0x1.0_Plain_Green",
+          "variant": 2,
+          "position": [
+            2.0,
+            1.0,
+            7.0
+          ]
+        },
+        {
+          "prefab": "Block_1.0x1.0x1.0_Plain_Green",
+          "variant": 3,
+          "position": [
+            2.0,
+            0.5,
+            16.0
+          ]
+        },
+        {
+          "prefab": "Block_1.0x1.0x1.0_Plain_Green",
+          "variant": 4,
+          "position": [
+            -1.5,
+            1.5,
+            20.0
+          ]
+        },
+        {
+          "prefab": "Block_1.0x1.0x1.0_Plain_Green",
+          "variant": 5,
+          "position": [
+            2.0,
+            1.0,
+            26.0
+          ]
+        },
+        {
+          "prefab": "Block_1.0x1.0x1.0_Plain_Green",
+          "variant": 6,
+          "position": [
+            -2.5,
+            1.5,
+            30.5
+          ]
+        },
+        {
+          "prefab": "Block_0.5x0.5x0.5_Green",
+          "variant": 1,
+          "position": [
+            3.0,
+            0.0,
+            3.5
+          ]
+        },
+        {
+          "prefab": "Block_1.0x1.0x1.0_Green",
+          "variant": 1,
+          "position": [
+            2.5,
+            0.0,
+            4.0
+          ]
+        },
+        {
+          "prefab": "Block_1.0x1.0x1.0_Green",
+          "variant": 2,
+          "position": [
+            -6.0,
+            1.5,
+            10.0
+          ]
+        },
+        {
+          "prefab": "Block_1.0x1.0x1.0_Green",
+          "variant": 3,
+          "position": [
+            -3.5,
+            0.0,
+            16.5
+          ]
+        },
+        {
+          "prefab": "Block_1.0x1.0x1.0_Green",
+          "variant": 4,
+          "position": [
+            -3.5,
+            0.0,
+            25.5
+          ]
+        },
+        {
+          "prefab": "Block_1.0x1.0x1.0_Green",
+          "variant": 5,
+          "position": [
+            2.0,
+            0.0,
+            31.0
+          ]
+        }
+      ],
+      "zones": []
+    },
+    {
+      "floor": "2f",
+      "grounds": [
+        {
+          "prefab": "Ground_5.0x0.5x5.0_Green",
+          "variant": 1,
+          "position": [
+            -5.0,
+            1.0,
+            7.5
+          ]
+        },
+        {
+          "prefab": "Ground_5.0x0.5x5.0_Green",
+          "variant": 2,
+          "position": [
+            -7.5,
+            1.0,
+            12.5
+          ]
+        }
+      ],
+      "blocks": [],
+      "zones": []
+    }
+  ]
+}
