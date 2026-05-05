@@ -18,16 +18,6 @@ namespace Briko.Editor {
 #nullable enable
 
         ///////////////////////////////////////////////////////////////////////
-        // Private constants
-
-        private const float GRID_UNIT = 0.5f;
-        private const string LEVEL_ROOT_NAME = "Level";
-        private const string SYSTEM_NAME = "System";
-        private const string PLATFORM_NAME = "Platform";
-        private const string ENTITY_NAME = "Entity";
-        private const string BLOCKS_CONTAINER_NAME = "blocks_plain";
-
-        ///////////////////////////////////////////////////////////////////////
         // Public methods [verb, verb phrase]
 
         /// <summary>
@@ -36,34 +26,50 @@ namespace Briko.Editor {
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
         public static void ImportToNewScene(Root layout, string scene_path) {
-            var new_scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
+            BrikoLog.Write($"[Briko] ImportToNewScene start: layout_id={layout.layout_id} scene_path={scene_path}");
+            BrikoLog.Write($"[Briko] platforms count={layout.platforms.Count}");
 
-            GameObject level_root = new(LEVEL_ROOT_NAME);
-            GameObject system_go = new(SYSTEM_NAME);
-            GameObject platform_go = new(PLATFORM_NAME);
-            GameObject entity_go = new(ENTITY_NAME);
+            var new_scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene);
+            BrikoLog.Write($"[Briko] NewScene created.");
+
+            GameObject level_root = new("Level");
+            GameObject system_go = new("System");
+            GameObject platform_go = new("Platform");
+            GameObject entity_go = new("Entity");
 
             system_go.transform.SetParent(level_root.transform);
             platform_go.transform.SetParent(level_root.transform);
             entity_go.transform.SetParent(level_root.transform);
+            BrikoLog.Write($"[Briko] Hierarchy built: Level > System / Platform / Entity");
+
+            // Dump all prefab names once for diagnostics
+            string[] all_guids = AssetDatabase.FindAssets("t:Prefab");
+            BrikoLog.Write($"[Briko] Total prefabs in project: {all_guids.Length}");
+            foreach (string g in all_guids) {
+                BrikoLog.Write($"[Briko] available prefab: {Path.GetFileNameWithoutExtension(AssetDatabase.GUIDToAssetPath(g))}");
+            }
 
             foreach (Platform platform in layout.platforms) {
+                BrikoLog.Write($"[Briko] Processing platform: floor={platform.floor} grounds={platform.grounds.Count} blocks={platform.blocks.Count} zones={platform.zones.Count}");
+
                 string grounds_name = $"grounds_{platform.floor}";
                 GameObject grounds_go = GetOrCreateChild(
                     parent: platform_go.transform,
                     child_name: grounds_name);
+                BrikoLog.Write($"[Briko] Container created: {grounds_name}");
 
                 foreach (Item item in platform.grounds) {
-                    PlaceItem(item: item, parent: grounds_go.transform);
+                    PlaceItem(item: item, parent: grounds_go.transform, all_guids: all_guids);
                 }
 
                 if (platform.blocks.Count > 0) {
                     GameObject blocks_go = GetOrCreateChild(
                         parent: platform_go.transform,
-                        child_name: BLOCKS_CONTAINER_NAME);
+                        child_name: "blocks_plain");
+                    BrikoLog.Write($"[Briko] Container created: blocks_plain");
 
                     foreach (Item item in platform.blocks) {
-                        PlaceItem(item: item, parent: blocks_go.transform);
+                        PlaceItem(item: item, parent: blocks_go.transform, all_guids: all_guids);
                     }
                 }
 
@@ -75,62 +81,81 @@ namespace Briko.Editor {
             string dir = Path.GetDirectoryName(scene_path) ?? "";
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir)) {
                 Directory.CreateDirectory(dir);
+                BrikoLog.Write($"[Briko] Directory created: {dir}");
             }
             EditorSceneManager.SaveScene(new_scene, scene_path);
+            BrikoLog.Write($"[Briko] Scene saved: {scene_path}");
             AssetDatabase.Refresh();
+            BrikoLog.Write($"[Briko] ImportToNewScene complete.");
         }
 
         ///////////////////////////////////////////////////////////////////////
-        // Private methods [verb, verb phrase]
+        // Methods
 
         /// <summary>
         /// Instantiates a prefab for <paramref name="item"/> under <paramref name="parent"/>.
         /// Logs a warning and skips if the prefab is not found.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static void PlaceItem(Item item, Transform parent) {
-            string prefab_name = $"{item.prefab}_{item.variant}";
-            string[] guids = AssetDatabase.FindAssets($"t:Prefab {prefab_name}");
-            if (guids.Length == 0) {
-                Debug.LogWarning($"[Briko] Prefab not found: {prefab_name} (skipped)");
+        static void PlaceItem(Item item, Transform parent, string[] all_guids) {
+            string prefab_name = item.prefab;
+            BrikoLog.Write($"[Briko] PlaceItem: searching prefab_name={prefab_name}");
+
+            string? asset_path = null;
+            foreach (string guid in all_guids) {
+                string path = AssetDatabase.GUIDToAssetPath(guid);
+                string file_name = Path.GetFileNameWithoutExtension(path);
+                if (file_name == prefab_name) {
+                    asset_path = path;
+                    BrikoLog.Write($"[Briko] PlaceItem: found at path={asset_path}");
+                    break;
+                }
+            }
+
+            if (asset_path == null) {
+                BrikoLog.Write($"[Briko] PlaceItem: NOT FOUND prefab_name={prefab_name} (skipped)");
                 return;
             }
 
-            string asset_path = AssetDatabase.GUIDToAssetPath(guids[0]);
             GameObject? prefab = AssetDatabase.LoadAssetAtPath<GameObject>(asset_path);
             if (prefab == null) {
-                Debug.LogWarning($"[Briko] Failed to load prefab at: {asset_path} (skipped)");
+                BrikoLog.Write($"[Briko] PlaceItem: load failed asset_path={asset_path} (skipped)");
                 return;
             }
 
             GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-            float[] snapped = GridSnapper.Snap(raw: item.position, grid_unit: GRID_UNIT);
+            float[] snapped = GridSnapper.Snap(raw: item.position, grid_unit: 0.5f);
             instance.transform.position = new Vector3(snapped[0], snapped[1], snapped[2]);
             instance.transform.rotation = Quaternion.Euler(0f, item.rotation_y, 0f);
+            BrikoLog.Write($"[Briko] PlaceItem: placed {prefab_name} at ({snapped[0]}, {snapped[1]}, {snapped[2]}) rotation_y={item.rotation_y}");
         }
 
         /// <summary>
         /// Creates an empty zone GameObject under <paramref name="parent"/>.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static void PlaceZone(Zone zone, Transform parent) {
+        static void PlaceZone(Zone zone, Transform parent) {
+            BrikoLog.Write($"[Briko] PlaceZone: zone_id={zone.zone_id}");
             GameObject zone_go = new(zone.zone_id);
             zone_go.transform.SetParent(parent);
-            float[] snapped = GridSnapper.Snap(raw: zone.position, grid_unit: GRID_UNIT);
+            float[] snapped = GridSnapper.Snap(raw: zone.position, grid_unit: 0.5f);
             zone_go.transform.position = new Vector3(snapped[0], snapped[1], snapped[2]);
+            BrikoLog.Write($"[Briko] PlaceZone: placed {zone.zone_id} at ({snapped[0]}, {snapped[1]}, {snapped[2]})");
         }
 
         /// <summary>
         /// Gets or creates a child GameObject with the given name under <paramref name="parent"/>.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static GameObject GetOrCreateChild(Transform parent, string child_name) {
+        static GameObject GetOrCreateChild(Transform parent, string child_name) {
             Transform? existing = parent.Find(child_name);
             if (existing != null) {
+                BrikoLog.Write($"[Briko] GetOrCreateChild: reused existing {child_name}");
                 return existing.gameObject;
             }
             GameObject child = new(child_name);
             child.transform.SetParent(parent);
+            BrikoLog.Write($"[Briko] GetOrCreateChild: created {child_name}");
             return child;
         }
     }

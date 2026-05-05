@@ -46,5 +46,21 @@ namespace Briko.Tests.Internal {
             Assert.That(result!.Value.prefab, Is.EqualTo("Block_1.0x1.0x1.0_Plain_Green"));
             Assert.That(result.Value.variant, Is.EqualTo(15));
         }
+
+        [Test, Description("Parse handles arbitrary type prefix such as Enemy or Wall")]
+        public void Parse_ArbitraryType_ReturnsPrefabAndVariant() {
+            var result = PrefabNameParser.Parse(name: "Enemy_1.0x2.0x1.0_Red_2");
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result!.Value.prefab, Is.EqualTo("Enemy_1.0x2.0x1.0_Red"));
+            Assert.That(result.Value.variant, Is.EqualTo(2));
+        }
+
+        [Test, Description("Parse handles Bipyramid type with multi-word descriptor")]
+        public void Parse_BipyramidType_ReturnsPrefabAndVariant() {
+            var result = PrefabNameParser.Parse(name: "Bipyramid_0.5x1.0x0.5_Plain_Blue_1");
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result!.Value.prefab, Is.EqualTo("Bipyramid_0.5x1.0x0.5_Plain_Blue"));
+            Assert.That(result.Value.variant, Is.EqualTo(1));
+        }
     }
 }
