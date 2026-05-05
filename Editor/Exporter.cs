@@ -21,7 +21,7 @@ namespace Briko.Editor {
         ///////////////////////////////////////////////////////////////////////
         // Private constants
 
-        private const float GRID_UNIT = 0.5f;
+        private const float GRID_UNIT = 0.25f;
         private const float GRID_WARN_THRESHOLD = 0.01f;
         private const float ROTATION_WARN_THRESHOLD = 1.0f;
         private const float FLOOR_2F_Y_THRESHOLD = 3.0f;

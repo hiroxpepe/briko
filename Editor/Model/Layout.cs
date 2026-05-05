@@ -15,8 +15,8 @@ namespace Briko.Editor.Model {
         /// <summary>Level identifier, used as scene name on import.</summary>
         public string layout_id { get; set; } = "";
 
-        /// <summary>Grid quantization unit in meters. Fixed at 0.5 for v1.</summary>
-        public float grid_unit { get; set; } = 0.5f;
+        /// <summary>Grid quantization unit in meters. Fixed at 0.25 for v1.</summary>
+        public float grid_unit { get; set; } = 0.25f;
 
         /// <summary>Target play duration. Fixed at 180 (Beatles single rule) for v1.</summary>
         public int target_duration_sec { get; set; } = 180;
@@ -53,10 +53,10 @@ namespace Briko.Editor.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class Item {
 #nullable enable
-        /// <summary>Prefab name without trailing variant number (e.g. "Ground_10.0x0.5x10.0_Green").</summary>
+        /// <summary>Prefab asset name without trailing variant number (e.g. "Ground_10.0x0.5x10.0_Green").</summary>
         public string prefab { get; set; } = "";
 
-        /// <summary>Variant number (1-based). Combined with prefab on import: "{prefab}_{variant}".</summary>
+        /// <summary>Variant number (1-based). Used for scene object naming only; not appended to prefab asset name on import.</summary>
         public int variant { get; set; } = 1;
 
         /// <summary>World position in meters [x, y, z]. All values multiples of grid_unit.</summary>

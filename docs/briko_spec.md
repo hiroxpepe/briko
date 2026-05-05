@@ -6,8 +6,8 @@
 
 ---
 
-**Document Version**: 1.0
-**Last Updated**: 2026-04-29
+**Document Version**: 1.1
+**Last Updated**: 2026-05-05
 **Status**: Stable (v1 implementation complete)
 **Companion to**: [Germio Framework](https://github.com/hiroxpepe/germio)
 
@@ -209,7 +209,7 @@ graph LR
     end
 
     subgraph "Briko discretization"
-        D1["position - 0.5m integer multiples"]
+        D1["position - 0.25m integer multiples"]
         D2["rotation_y - {0, 90, 180, 270}"]
         D3[Scale - fixed, encoded in prefab name]
         D4[Prefab - finite catalog]
@@ -450,17 +450,17 @@ graph TB
     style B05 fill:#87ceeb
 ```
 
-**Grid base unit**: 0.5m. Sizes step in factors of 2 or 2.5.
+**Grid base unit: 0.25m. Sizes step in factors of 2 or 2.5.. Sizes step in factors of 2 or 2.5.
 
 ### 4.3 Discrete Constraints
 
 | Quantity | Constraint | Domain |
 |---|---|---|
-| `position[i]` | Integer multiple of `grid_unit` | `{ k × 0.5 \| k ∈ ℤ }` |
+| `position[i]` | Integer multiple of `grid_unit` | `{ k × 0.25 \| k ∈ ℤ }` |
 | `rotation_y` | Discrete cardinal | `{ 0, 90, 180, 270 }` |
 | `prefab` | Member of the prefab catalog | finite set, project-specific |
 | `variant` | Positive integer | `{ 1, 2, 3, ... }` |
-| `grid_unit` | Fixed value | `0.5` (v1) |
+| `grid_unit` | Fixed value | `0.25` (v1) |
 
 ### 4.4 Snap Algorithm
 
@@ -505,9 +505,9 @@ Prefab assets must follow this naming pattern:
 
 Where:
 
-- `Kind` ∈ `{ Ground, Block }` (extensible in future versions)
+- `Kind` is any arbitrary word (e.g., `Ground`, `Block`, `Enemy`, `Wall`, `Trap`). Open-ended and extensible.
 - `Width`, `Height`, `Depth` are decimal numbers in meters
-- `Descriptor` is a free-form identifier, may contain underscores
+- `Descriptor` is a free-form identifier, may contain underscores (e.g., `Green`, `Plain_Green`)
 - `Variant` is a positive integer
 
 ### 5.2 Examples
@@ -517,6 +517,8 @@ Where:
 | `Ground_10.0x0.5x10.0_Green_1` | Ground | 10×0.5×10 | Green | 1 |
 | `Block_1.0x1.0x1.0_Plain_Green_3` | Block | 1×1×1 | Plain_Green | 3 |
 | `Ground_2.5x0.5x2.5_Stone_2` | Ground | 2.5×0.5×2.5 | Stone | 2 |
+| `Enemy_1.0x2.0x1.0_Red_1` | Enemy | 1×2×1 | Red | 1 |
+| `Bipyramid_0.5x1.0x0.5_Plain_Blue_1` | Bipyramid | 0.5×1×0.5 | Plain_Blue | 1 |
 
 ### 5.3 Parser State Machine
 
@@ -524,19 +526,14 @@ Where:
 flowchart TB
     Input["GameObject name<br/>e.g., Ground_10.0x0.5x10.0_Green_1 (Clone)"]
     Input --> Strip["Strip ' (Clone)' suffix"]
-    Strip --> Regex{"Match against pattern:<br/>^(Ground|Block)_<br/>([\\d.]+x[\\d.]+x[\\d.]+)_<br/>(.+)_(\\d+)$"}
+    Strip --> Regex{"Match against pattern:<br/>^(.+_([\\d.]+x[\\d.]+x[\\d.]+)_.+)_(\\d+)$"}
 
     Regex -->|match| Extract[Extract groups]
-    Extract --> E1["Group 1: kind"]
-    Extract --> E2["Group 2: dimensions"]
-    Extract --> E3["Group 3: descriptor"]
-    Extract --> E4["Group 4: variant"]
+    Extract --> E1["Group 1: full prefab name<br/>(everything before last _variant)"]
+    Extract --> E2["Group 2: dimensions (captured inside group 1)"]
+    Extract --> E3["Group 3: variant number"]
 
-    E1 --> Combine[Reconstruct]
-    E2 --> Combine
-    E3 --> Combine
-
-    Combine --> Output["prefab = Ground_10.0x0.5x10.0_Green<br/>variant = 1"]
+    E1 --> Output["prefab = Ground_10.0x0.5x10.0_Green<br/>variant = 1"]
 
     Regex -->|no match| Null[Return null<br/>caller skips]
 
@@ -545,7 +542,7 @@ flowchart TB
     style Null fill:#ffcdd2
 ```
 
-The greedy quantifier on the descriptor group correctly handles multi-word descriptors like `Plain_Green` because the trailing `_(\d+)$` anchors to the end.
+The greedy quantifier on group 1 correctly handles multi-word descriptors like `Plain_Green` because the trailing `_(\d+)$` anchors to the end. `Kind` is unrestricted — any word is accepted as long as the `_NxNxN_` dimension segment is present.
 
 ### 5.4 The Catalog as LLM Vocabulary
 
@@ -560,7 +557,7 @@ graph LR
     Catalog["Prefab catalog<br/>= LLM vocabulary"]
 
     Catalog --> S1[Size dimension<br/>1m / 2.5m / 5m / 10m]
-    Catalog --> S2[Kind dimension<br/>Ground / Block]
+    Catalog --> S2[Kind dimension<br/>Ground / Block / Enemy / ...]
     Catalog --> S3[Descriptor dimension<br/>Green / Stone / etc.]
     Catalog --> S4[Variant dimension<br/>_1, _2, _3]
 
@@ -671,7 +668,7 @@ graph TB
 ```json
 {
   "layout_id": "stage_01",
-  "grid_unit": 0.5,
+  "grid_unit": 0.25,
   "target_duration_sec": 180,
   "bgm_track": "stage_01_theme.mp3",
   "platforms": [
@@ -718,7 +715,7 @@ graph TB
 | Field | Type | Required | Description |
 |---|---|---|---|
 | `layout_id` | string | yes | Unique identifier; used as default scene name on import |
-| `grid_unit` | float | yes | Grid quantization in meters (fixed at `0.5` in v1) |
+| `grid_unit` | float | yes | Grid quantization in meters (fixed at `0.25` in v1) |
 | `target_duration_sec` | int | yes | Intended play duration in seconds |
 | `bgm_track` | string | optional | BGM filename (relative to host project's StreamingAssets) |
 | `platforms` | array of Platform | yes | One or more floor layers |
@@ -736,8 +733,8 @@ graph TB
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `prefab` | string | yes | Prefab name **without** trailing variant number |
-| `variant` | int | yes | Variant number (1-based) |
+| `prefab` | string | yes | Prefab asset name **without** trailing variant number (e.g. `"Ground_10.0x0.5x10.0_Green"`) |
+| `variant` | int | yes | Variant number (1-based); used for scene object naming only, not appended to prefab asset name on import |
 | `position` | float[3] | yes | World coordinates `[x, y, z]` in meters |
 | `rotation_y` | int | optional | Y-axis rotation in degrees, default `0` |
 
@@ -866,8 +863,8 @@ flowchart TB
     Ground --> Loop2{For each Item in grounds}
     Block --> Loop3{For each Item in blocks}
 
-    Loop2 --> FindG["AssetDatabase.FindAssets<br/>by full prefab name"]
-    Loop3 --> FindB["AssetDatabase.FindAssets<br/>by full prefab name"]
+    Loop2 --> FindG["Search all prefabs by file name<br/>(item.prefab exact match)"]
+    Loop3 --> FindB["Search all prefabs by file name<br/>(item.prefab exact match)"]
 
     FindG --> InstG{Found?}
     FindB --> InstB{Found?}
@@ -997,6 +994,7 @@ briko/
 ├── README.md
 ├── Editor/
 │   ├── Briko.Editor.asmdef
+│   ├── BrikoLog.cs
 │   ├── Exporter.cs
 │   ├── ExportMenu.cs
 │   ├── Importer.cs
@@ -1038,6 +1036,7 @@ graph TB
         E2[Importer]
         E3[ExportMenu]
         E4[ImportMenu]
+        E5[BrikoLog]
     end
 
     subgraph "Briko.Editor.Internal"
@@ -1159,7 +1158,7 @@ All calls to project-defined methods (Briko or Germio) **must** use named argume
 
 ```csharp
 // Required
-GridSnapper.Snap(raw: position, grid_unit: 0.5f);
+GridSnapper.Snap(raw: position, grid_unit: 0.25f);
 Importer.ImportToNewScene(layout: root, scene_path: path);
 
 // Disallowed (positional)
@@ -1279,36 +1278,17 @@ graph TB
     style Spawn fill:#c8e6c9
     style Phase1 fill:#fff9c4
     style Phase2 fill:#ffccbc
-    style Final fill:#ff5252,color:#fff
+    style Final fill:#ffcdd2
 ```
 
-**Characteristics**: single enclosed space, minimal prefab density, multiple phase markers.
+**Characteristics**: compact, high block density, multi-phase zone progression.
 
-### 11.4 Tutorial
+### 11.4 Speedrun Stage
 
 ```mermaid
 graph LR
-    Spawn[vol_spawn] --> T1[mechanic 1<br/>vol_tutorial_jump]
-    T1 --> T2[mechanic 2<br/>vol_tutorial_dash]
-    T2 --> T3[mechanic 3<br/>vol_tutorial_combine]
-    T3 --> Goal[vol_exit]
-
-    style Spawn fill:#c8e6c9
-    style T1 fill:#bbdefb
-    style T2 fill:#bbdefb
-    style T3 fill:#bbdefb
-    style Goal fill:#ffd700
-```
-
-**Characteristics**: linear, low density, instruction zones for game state tracking.
-
-### 11.5 Time Attack
-
-```mermaid
-graph LR
-    Spawn[vol_spawn] --> Fast[high-speed traversal]
-    Fast --> Skill[skill checks]
-    Skill --> Goal[vol_exit]
+    Spawn[vol_spawn] --> Mid[mid-stage]
+    Mid --> Goal[vol_exit]
 
     Spawn -.timer start.-> T[vol_timer_start]
     Goal -.timer end.-> TE[vol_timer_end]
@@ -1438,7 +1418,7 @@ graph TB
     F1 --> S1[Absorbed by grid snap<br/>warning if drift > 0.01m]
     F2 --> S2[Regex match fails<br/>object skipped silently]
     F3 --> S3[Platform / Entity not found<br/>console warning]
-    F4 --> S4[AssetDatabase.FindAssets miss<br/>placement skipped]
+    F4 --> S4[File name search miss<br/>placement skipped]
     F5 --> S5[vol_* match fails<br/>excluded from zones list]
 
     style F1 fill:#ffcdd2
@@ -1517,6 +1497,7 @@ graph LR
 - ✅ Round-trip property guaranteed by discrete constraints
 - ✅ Test suite (NUnit, 18 tests, shared source compilation)
 - ✅ Stemic-aligned coding conventions
+- ✅ BrikoLog diagnostic logger
 
 ### 14.3 v2.0 — Planned
 
@@ -1582,7 +1563,7 @@ A Briko-conforming Unity Editor extension must:
 1. Read and write JSON matching the format specified in §7
 2. Apply discrete constraints from §4.3 on both directions of conversion
 3. Implement the snap algorithm from §4.4
-4. Parse prefab names per the regex in §5.3
+4. Parse prefab names per the regex `^(.+_([\d.]+x[\d.]+x[\d.]+)_.+)_(\d+)$` in §5.3
 5. Recognize the scene hierarchy from §6.1
 6. Match `zone_id` against `^vol_[a-z0-9_]+$`
 7. Preserve the round-trip property defined in §8.3

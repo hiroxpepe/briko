@@ -20,6 +20,9 @@ namespace Briko.Editor.Internal {
 
         const string PATTERN = @"^(.+_([\d.]+x[\d.]+x[\d.]+)_.+)_(\d+)$";
 
+        static readonly Regex KIND_PATTERN =
+            new(@"^([^_]+)_[\d.]+x[\d.]+x[\d.]+");
+
         ///////////////////////////////////////////////////////////////////////
         // Public methods [verb, verb phrase]
 
@@ -28,6 +31,18 @@ namespace Briko.Editor.Internal {
         /// does not match the Briko naming convention.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
+        /// <summary>
+        /// Extracts the Kind prefix from a prefab name — the first segment before the dimension part.
+        /// Returns null if the name does not contain a valid dimension segment.
+        /// Example: "Ground_10.0x0.5x10.0_Green_1" -> "Ground"
+        /// </summary>
+        /// <author>h.adachi (STUDIO MeowToon)</author>
+        public static string? ParseKind(string name) {
+            var match = KIND_PATTERN.Match(name);
+            if (!match.Success) { return null; }
+            return match.Groups[1].Value;
+        }
+
         public static (string prefab, int variant)? Parse(string name) {
             var match = Regex.Match(name, PATTERN);
             if (!match.Success) {

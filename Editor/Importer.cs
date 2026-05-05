@@ -124,7 +124,7 @@ namespace Briko.Editor {
             }
 
             GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab, parent);
-            float[] snapped = GridSnapper.Snap(raw: item.position, grid_unit: 0.5f);
+            float[] snapped = GridSnapper.Snap(raw: item.position, grid_unit: 0.25f);
             instance.transform.position = new Vector3(snapped[0], snapped[1], snapped[2]);
             instance.transform.rotation = Quaternion.Euler(0f, item.rotation_y, 0f);
             BrikoLog.Write($"[Briko] PlaceItem: placed {prefab_name} at ({snapped[0]}, {snapped[1]}, {snapped[2]}) rotation_y={item.rotation_y}");
@@ -138,7 +138,7 @@ namespace Briko.Editor {
             BrikoLog.Write($"[Briko] PlaceZone: zone_id={zone.zone_id}");
             GameObject zone_go = new(zone.zone_id);
             zone_go.transform.SetParent(parent);
-            float[] snapped = GridSnapper.Snap(raw: zone.position, grid_unit: 0.5f);
+            float[] snapped = GridSnapper.Snap(raw: zone.position, grid_unit: 0.25f);
             zone_go.transform.position = new Vector3(snapped[0], snapped[1], snapped[2]);
             BrikoLog.Write($"[Briko] PlaceZone: placed {zone.zone_id} at ({snapped[0]}, {snapped[1]}, {snapped[2]})");
         }

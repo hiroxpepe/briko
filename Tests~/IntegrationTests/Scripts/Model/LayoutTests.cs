@@ -32,11 +32,11 @@ namespace Briko.Tests.Model {
             Assert.That(root!.layout_id, Is.EqualTo("test_minimal"));
         }
 
-        [Test, Description("Root.grid_unit deserializes to 0.5f")]
-        public void Root_GridUnit_DeserializesToHalf() {
+        [Test, Description("Root.grid_unit deserializes to 0.25f")]
+        public void Root_GridUnit_DeserializesToQuarter() {
             string json = File.ReadAllText(Path.Combine("Fixtures", "sample_level_minimal.json"));
             Root? root = JsonConvert.DeserializeObject<Root>(json, _settings);
-            Assert.That(root!.grid_unit, Is.EqualTo(0.5f).Within(0.001f));
+            Assert.That(root!.grid_unit, Is.EqualTo(0.25f).Within(0.001f));
         }
 
         [Test, Description("Root.target_duration_sec deserializes to 180")]
