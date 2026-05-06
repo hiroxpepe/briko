@@ -5,8 +5,8 @@
 > LLM-driven Unity level generation via bidirectional Scene ↔ JSON conversion.
 
 [![Unity](https://img.shields.io/badge/Unity-6%20LTS-black?logo=unity)](https://unity.com/)
-[![License](https://img.shields.io/badge/license-GPL%20v2.0-blue.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/status-v0.1.0%20Phase%201-green)](docs/development_plan_v1_detail_JP.md)
+[![Version](https://img.shields.io/badge/version-v0.1.0--alpha-orange)]()
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ---
 
@@ -466,7 +466,7 @@ See [`docs/development_plan_v1_detail_JP.md`](docs/development_plan_v1_detail_JP
 
 ## License
 
-GPL v2.0 — same as Germio and the rest of the STUDIO MeowToon stack.
+MIT — see [LICENSE](LICENSE).
 
 ---
 
