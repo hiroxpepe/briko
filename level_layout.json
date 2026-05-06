@@ -1,6 +1,6 @@
-﻿{
+{
   "layout_id": "Level_1",
-  "grid_unit": 0.5,
+  "grid_unit": 0.25,
   "target_duration_sec": 180,
   "bgm_track": "",
   "platforms": [

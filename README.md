@@ -41,7 +41,7 @@ Briko sidesteps the problem by **shrinking the LLM's freedom**:
 | Continuous problem | Briko's discrete reformulation |
 |---|---|
 | "Place a block somewhere reasonable" | Pick from a fixed prefab catalog |
-| "Choose XYZ coordinates" | Snap to 0.5m grid (integer multiples only) |
+| "Choose XYZ coordinates" | Snap to 0.25m grid (integer multiples only) |
 | "Set the rotation" | Choose from `{0°, 90°, 180°, 270°}` |
 | "Imagine a full 3D scene" | Edit JSON arrays (a thing LLMs are great at) |
 
@@ -104,7 +104,7 @@ graph TB
     subgraph Briko["🏗️ Briko = Set Design (space)"]
         B1[Block - prefab placements]
         B2[Floor - hierarchical layers]
-        B3[Grid - 0.5m discrete units]
+        B3[Grid - 0.25m discrete units]
     end
 
     G2 -.zone_id string.-> B1
@@ -215,7 +215,7 @@ Briko's JSON is human-readable and LLM-friendly. Here's the minimal shape:
 ```json
 {
   "layout_id": "tropika_stage_01",
-  "grid_unit": 0.5,
+  "grid_unit": 0.25,
   "target_duration_sec": 180,
   "bgm_track": "track_01_tropika_morning.mp3",
   "platforms": [
@@ -256,7 +256,7 @@ graph TB
     P -->|"blocks[]"| I2[Item<br/>🟦 prefab, variant,<br/>position, rotation_y]
     P -->|"zones[]"| Z[Zone<br/>🔔 zone_id, position]
 
-    Z -.synced with.-> Germio[Germio<br/>germio_config.json]
+    Z -.synced with.-> Germio[Germio<br/>germio.json]
 
     style Root fill:#fff9c4
     style P fill:#bbdefb
@@ -289,7 +289,7 @@ briko/
 │   ├── ImportMenu.cs                   ← Tools/Briko/Import menu wiring
 │   ├── Internal/
 │   │   ├── PrefabNameParser.cs         ← parses naming convention regex
-│   │   └── GridSnapper.cs              ← 0.5m discrete snapping
+│   │   └── GridSnapper.cs              ← 0.25m discrete snapping
 │   └── Model/
 │       └── Layout.cs                   ← Root, Platform, Item, Zone (single file)
 ├── Tests~/                              ← UPM convention: hidden from Unity
@@ -383,7 +383,7 @@ Briko follows the conventions of [Stemic](https://github.com/hiroxpepe/stemic) (
 | Private fields | `_snake_case` | `_do_update`, `_jump_power` |
 | Local variables / parameters | `snake_case` | `base_path`, `grid_unit` |
 | Constants | `ALL_CAPS` | `GRID_UNIT`, `MENU_ROOT` |
-| Method calls (project-defined) | **Always use named parameters** | `Snap(raw: pos, grid_unit: 0.5f)` |
+| Method calls (project-defined) | **Always use named parameters** | `Snap(raw: pos, grid_unit: 0.25f)` |
 
 JSON serialization uses no `[JsonProperty]` attributes — property names are the JSON keys directly.
 

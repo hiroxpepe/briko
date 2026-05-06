@@ -349,7 +349,7 @@ graph TB
 ```mermaid
 sequenceDiagram
     participant LLM
-    participant Germio as germio_config.json
+    participant Germio as germio.json
     participant Briko as level_layout.json
     participant Unity
 
@@ -377,7 +377,7 @@ graph TB
     end
 
     subgraph "Adopted: separate documents"
-        S1["germio_config.json + level_layout.json"]
+        S1["germio.json + level_layout.json"]
         S1 --> S2[Single responsibility per file]
         S2 --> S3[zone_id is the only cross-reference]
         S3 --> S4[Each file remains independently editable]
@@ -475,9 +475,9 @@ The reference implementation uses `Math.Round(v, MidpointRounding.AwayFromZero)`
 ```mermaid
 flowchart TB
     Input["Raw coordinate v<br/>e.g., 0.473"]
-    Input --> Div["Divide by grid_unit<br/>0.473 / 0.5 = 0.946"]
+    Input --> Div["Divide by grid_unit<br/>0.473 / 0.25 = 1.892"]
     Div --> Round["Round to nearest integer<br/>0.946 → 1"]
-    Round --> Mul["Multiply by grid_unit<br/>1 × 0.5 = 0.5"]
+    Round --> Mul["Multiply by grid_unit<br/>2 × 0.25 = 0.5"]
     Mul --> Output["Snapped value<br/>0.5"]
 
     Input -.tolerance check.-> Warn{Difference > 0.01?}
