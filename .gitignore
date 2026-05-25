@@ -24,3 +24,6 @@ vs.code-workspace
 
 # Logs
 *.log
+
+# Generated code dump
+project_all_code.md
