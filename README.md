@@ -5,7 +5,8 @@
 > LLM-driven Unity level generation via bidirectional Scene ↔ JSON conversion.
 
 [![Unity](https://img.shields.io/badge/Unity-6%20LTS-black?logo=unity)](https://unity.com/)
-[![Version](https://img.shields.io/badge/version-v0.1.0--alpha-orange)]()
+[![Phase](https://img.shields.io/badge/phase-1-blue)]()
+[![Version](https://img.shields.io/badge/version-v0.1.9-orange)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ---
