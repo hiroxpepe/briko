@@ -15,30 +15,30 @@
 
 実装エージェントは本文書だけで以下を判断できる:
 
-- 何を実装すべきか（What）
-- どの順序で実装すべきか（When）
-- 完成判定の基準は何か（Acceptance Criteria）
-- コーディング規約は何か（How）
-- どのタイミングでコミットすべきか（Commit Policy）
++ 何を実装すべきか（What）
++ どの順序で実装すべきか（When）
++ 完成判定の基準は何か（Acceptance Criteria）
++ コーディング規約は何か（How）
++ どのタイミングでコミットすべきか（Commit Policy）
 
 ### 0.2 関連文書
 
-| 文書 | 役割 | 必読度 |
-|---|---|---|
-| `briko_spec.md` | 設計の why（なぜそうなるか） | 必読 |
-| 本文書 | 実装の what / how / when | 必読 |
-| Stemic 実コード（`game/Assets/Plugins/Germio/`） | コーディング規約の唯一のソース | 必読 |
+| 文書                                             | 役割                           | 必読度 |
+| ------------------------------------------------ | ------------------------------ | ------ |
+| `briko_spec.md`                                  | 設計の why（なぜそうなるか）   | 必読   |
+| 本文書                                           | 実装の what / how / when       | 必読   |
+| Stemic 実コード（`game/Assets/Plugins/Germio/`） | コーディング規約の唯一のソース | 必読   |
 
 ### 0.3 用語
 
-| 用語 | 意味 |
-|---|---|
-| **Briko** | 本パッケージ自身。レベル制作ツール（UPM パッケージ） |
-| **Germio** | 別パッケージ（git submodule）。シナリオフレームワーク |
-| **Stemic** | Sprout Quest のコードネーム（同一プロジェクトの別呼称） |
-| **UPM** | Unity Package Manager |
-| **実装エージェント** | Copilot CLI 上で本文書を実行する Claude Sonnet 4.7 |
-| **ユーザー** | hiroxpepe（プロジェクトオーナー、最終承認者） |
+| 用語                 | 意味                                                    |
+| -------------------- | ------------------------------------------------------- |
+| **Briko**            | 本パッケージ自身。レベル制作ツール（UPM パッケージ）    |
+| **Germio**           | 別パッケージ（git submodule）。シナリオフレームワーク   |
+| **Stemic**           | Sprout Quest のコードネーム（同一プロジェクトの別呼称） |
+| **UPM**              | Unity Package Manager                                   |
+| **実装エージェント** | Copilot CLI 上で本文書を実行する Claude Sonnet 4.7      |
+| **ユーザー**         | hiroxpepe（プロジェクトオーナー、最終承認者）           |
 
 ### 0.4 重要原則
 
@@ -51,13 +51,13 @@
 
 本リポジトリには **以前のバージョンの dev plan に基づいて Copilot が実装したコード** が既に存在している。本計画は Stemic v2.2 実コード調査を経て規約を厳密化した結果、以下の **リネーム / 再編** を要する:
 
-- `BrikoExporter.cs` → `Exporter.cs`
-- `BrikoImporter.cs` → `Importer.cs`
-- `BrikoMenuItems.cs` → `ExportMenu.cs` + `ImportMenu.cs` に分割
-- `Editor/Data/Layout*.cs` (4ファイル) → `Editor/Model/Layout.cs` (1ファイル4クラス)
-- 全プロパティを camelCase + `[JsonProperty]` から **snake_case 直接** に変更
-- 名前空間 `MeowToon.Briko.Editor.*` → `Briko.Editor.*`
-- テストファイルを `Tests~/IntegrationTests/Scripts/{Internal,Model}/` 配下に再配置
++ `BrikoExporter.cs` → `Exporter.cs`
++ `BrikoImporter.cs` → `Importer.cs`
++ `BrikoMenuItems.cs` → `ExportMenu.cs` + `ImportMenu.cs` に分割
++ `Editor/Data/Layout*.cs` (4ファイル) → `Editor/Model/Layout.cs` (1ファイル4クラス)
++ 全プロパティを camelCase + `[JsonProperty]` から **snake_case 直接** に変更
++ 名前空間 `MeowToon.Briko.Editor.*` → `Briko.Editor.*`
++ テストファイルを `Tests~/IntegrationTests/Scripts/{Internal,Model}/` 配下に再配置
 
 実装エージェントは **既存コードを本計画の目標状態にリファクタする** ものとし、Task ごとに必要な変更を行う。
 
@@ -71,14 +71,14 @@
 
 ### 1.2 含まれるもの（v1 のスコープ = `briko_spec.md` §12.1 全6項目）
 
-| # | 項目 | 状態 | 担当 Task |
-|---|---|---|---|
-| 1 | Briko リポジトリの作成 | ✅ 完了 | - |
-| 2 | `package.json` の最小実装 | ✅ 完了 | - |
-| 3 | Exporter の実装 | ⏳ リファクタ要 | Task 2 |
-| 4 | 既存 Level 1 の JSON 化 | ⏳ 未実装 | Task 5（手動） |
-| 5 | LLM に Level 2 生成させる | ⏳ 未実装 | Task 6（手動） |
-| 6 | Importer の実装 | ⏳ リファクタ要 | Task 3 |
+| #   | 項目                      | 状態            | 担当 Task      |
+| --- | ------------------------- | --------------- | -------------- |
+| 1   | Briko リポジトリの作成    | ✅ 完了         | -              |
+| 2   | `package.json` の最小実装 | ✅ 完了         | -              |
+| 3   | Exporter の実装           | ⏳ リファクタ要 | Task 2         |
+| 4   | 既存 Level 1 の JSON 化   | ⏳ 未実装       | Task 5（手動） |
+| 5   | LLM に Level 2 生成させる | ⏳ 未実装       | Task 6（手動） |
+| 6   | Importer の実装           | ⏳ リファクタ要 | Task 3         |
 
 加えて、**テストプロジェクト構築**（`Tests~/IntegrationTests/`）を Task 4 として追加する。
 
@@ -86,15 +86,15 @@
 
 実装エージェントは **以下に手を出してはならない**:
 
-- JSON Schema (`level_layout.schema.json`) の確定（`briko_spec.md` §12.2）
-- Validator の実装（zone_id 整合性チェック等）
-- バリアント自動選択ロジック
-- 音楽イベントとレベル構造の連動（SoundSystem 連携）
-- README の英語・日本語版執筆
-- Org `STUDIO-MeowToon` への移管
-- Sprout Quest 側のシーン編集
-- UI / インスペクタ拡張（v1 はメニューコマンドのみ）
-- Exporter / Importer の Unity 統合テスト（PlayMode/EditMode テスト）— Stemic でも MonoBehaviour 系（CameraSystem, Despawn, Home 等）に NUnit テストはなく、本計画でも踏襲
++ JSON Schema (`level_layout.schema.json`) の確定（`briko_spec.md` §12.2）
++ Validator の実装（zone_id 整合性チェック等）
++ バリアント自動選択ロジック
++ 音楽イベントとレベル構造の連動（SoundSystem 連携）
++ README の英語・日本語版執筆
++ Org `STUDIO-MeowToon` への移管
++ Sprout Quest 側のシーン編集
++ UI / インスペクタ拡張（v1 はメニューコマンドのみ）
++ Exporter / Importer の Unity 統合テスト（PlayMode/EditMode テスト）— Stemic でも MonoBehaviour 系（CameraSystem, Despawn, Home 等）に NUnit テストはなく、本計画でも踏襲
 
 ---
 
@@ -102,7 +102,7 @@
 
 `briko/` リポジトリ直下に以下のファイルが存在し、`master` ブランチに push 済み:
 
-```
+```text
 briko/
 ├── .gitignore
 ├── README.md
@@ -123,15 +123,15 @@ briko/
 
 ### 3.1 環境
 
-| 項目 | 値 |
-|---|---|
-| Unity（実装側） | Unity 6 LTS |
-| Unity（package.json 互換性） | 2022.3 以上 |
-| .NET（テストプロジェクト） | .NET 9 |
-| JSON ライブラリ | Newtonsoft.Json |
-| 名前空間ルート | `Briko` |
-| 文字コード | UTF-8（BOM なし） |
-| 改行コード | LF |
+| 項目                         | 値                |
+| ---------------------------- | ----------------- |
+| Unity（実装側）              | Unity 6 LTS       |
+| Unity（package.json 互換性） | 2022.3 以上       |
+| .NET（テストプロジェクト）   | .NET 9            |
+| JSON ライブラリ              | Newtonsoft.Json   |
+| 名前空間ルート               | `Briko`           |
+| 文字コード                   | UTF-8（BOM なし） |
+| 改行コード                   | LF                |
 
 ### 3.2 Newtonsoft.Json の参照方法
 
@@ -177,9 +177,9 @@ graph LR
     style GameDev fill:#ffe0b2
 ```
 
-- **Briko → Germio** の片方向参照は OK（v1 では未使用）
-- **Briko → GameDev**（Stemic 固有コード）は **絶対禁止**
-- **Germio → Briko** は **絶対禁止**（循環参照）
++ **Briko → Germio** の片方向参照は OK（v1 では未使用）
++ **Briko → GameDev**（Stemic 固有コード）は **絶対禁止**
++ **Germio → Briko** は **絶対禁止**（循環参照）
 
 ---
 
@@ -217,7 +217,7 @@ graph TB
 
 Briko が走査・生成する Unity シーンの構造:
 
-```
+```text
 {LevelRoot}                ← シーンルート（任意の名前）
 ├── System                 ← Briko は読み書きしない
 ├── Platform               ← Briko の主対象
@@ -231,18 +231,18 @@ Briko が走査・生成する Unity シーンの構造:
 
 ### 4.3 v1 における簡略化判断
 
-| 論点 | v1 の判断 | 根拠 |
-|---|---|---|
-| `blocks_*` の floor 判定 | Y 座標で推定（`y < 3.0` なら "1f"、それ以上は "2f"） | hierarchy 内の `blocks_plain` と `blocks_basic` には floor 情報が無いため |
-| `zones[]` の検出方法 | `Entity` GameObject 配下の、名前が正規表現 `^vol_[a-z0-9_]+$` にマッチする空 GameObject | `briko_spec.md` §3.2 シーケンス図の `vol_boss_start` 等の命名から推定 |
-| 既存シーンの自動修正 | しない | Exporter は読み取り専用 |
-| マテリアル / スケール | 一切変更しない | `briko_spec.md` §7.3 |
+| 論点                     | v1 の判断                                                                               | 根拠                                                                      |
+| ------------------------ | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `blocks_*` の floor 判定 | Y 座標で推定（`y < 3.0` なら "1f"、それ以上は "2f"）                                    | hierarchy 内の `blocks_plain` と `blocks_basic` には floor 情報が無いため |
+| `zones[]` の検出方法     | `Entity` GameObject 配下の、名前が正規表現 `^vol_[a-z0-9_]+$` にマッチする空 GameObject | `briko_spec.md` §3.2 シーケンス図の `vol_boss_start` 等の命名から推定     |
+| 既存シーンの自動修正     | しない                                                                                  | Exporter は読み取り専用                                                   |
+| マテリアル / スケール    | 一切変更しない                                                                          | `briko_spec.md` §7.3                                                      |
 
 ---
 
 ## 5. パッケージ構造（v1 完成形）
 
-```
+```text
 briko/
 ├── .gitignore                                          ✅ 既存
 ├── README.md                                           ✅ 既存
@@ -282,21 +282,21 @@ briko/
 
 ### 5.1 旧構造との対比（リファクタ作業のため）
 
-| 旧（既存）パス | 新パス |
-|---|---|
-| `Editor/BrikoExporter.cs` | `Editor/Exporter.cs` |
-| `Editor/BrikoImporter.cs` | `Editor/Importer.cs` |
-| `Editor/BrikoMenuItems.cs` | `Editor/ExportMenu.cs` + `Editor/ImportMenu.cs` |
-| `Editor/Data/LayoutRoot.cs` | （`Editor/Model/Layout.cs` に統合・削除） |
-| `Editor/Data/LayoutPlatform.cs` | （同上） |
-| `Editor/Data/LayoutItem.cs` | （同上） |
-| `Editor/Data/LayoutZone.cs` | （同上） |
-| `Editor/Internal/PrefabNameParser.cs` | 同じパス（namespace のみ変更） |
-| `Editor/Internal/GridSnapper.cs` | 同じパス（namespace のみ変更） |
-| `Tests~/IntegrationTests/Scripts/DataModelTests.cs` | `Tests~/IntegrationTests/Scripts/Model/LayoutTests.cs` |
-| `Tests~/IntegrationTests/Scripts/RoundTripTests.cs` | `Tests~/IntegrationTests/Scripts/Model/RoundTripTests.cs` |
+| 旧（既存）パス                                             | 新パス                                                              |
+| ---------------------------------------------------------- | ------------------------------------------------------------------- |
+| `Editor/BrikoExporter.cs`                                  | `Editor/Exporter.cs`                                                |
+| `Editor/BrikoImporter.cs`                                  | `Editor/Importer.cs`                                                |
+| `Editor/BrikoMenuItems.cs`                                 | `Editor/ExportMenu.cs` + `Editor/ImportMenu.cs`                     |
+| `Editor/Data/LayoutRoot.cs`                                | （`Editor/Model/Layout.cs` に統合・削除）                           |
+| `Editor/Data/LayoutPlatform.cs`                            | （同上）                                                            |
+| `Editor/Data/LayoutItem.cs`                                | （同上）                                                            |
+| `Editor/Data/LayoutZone.cs`                                | （同上）                                                            |
+| `Editor/Internal/PrefabNameParser.cs`                      | 同じパス（namespace のみ変更）                                      |
+| `Editor/Internal/GridSnapper.cs`                           | 同じパス（namespace のみ変更）                                      |
+| `Tests~/IntegrationTests/Scripts/DataModelTests.cs`        | `Tests~/IntegrationTests/Scripts/Model/LayoutTests.cs`              |
+| `Tests~/IntegrationTests/Scripts/RoundTripTests.cs`        | `Tests~/IntegrationTests/Scripts/Model/RoundTripTests.cs`           |
 | `Tests~/IntegrationTests/Scripts/PrefabNameParserTests.cs` | `Tests~/IntegrationTests/Scripts/Internal/PrefabNameParserTests.cs` |
-| `Tests~/IntegrationTests/Scripts/GridSnapperTests.cs` | `Tests~/IntegrationTests/Scripts/Internal/GridSnapperTests.cs` |
+| `Tests~/IntegrationTests/Scripts/GridSnapperTests.cs`      | `Tests~/IntegrationTests/Scripts/Internal/GridSnapperTests.cs`      |
 
 ---
 
@@ -316,22 +316,22 @@ Stemic の `Plugins/Germio/Scripts/Model/Data.cs` の慣習に厳密に従う:
 
 `briko_spec.md` §7.2 のサンプル JSON を C# クラスに対応させる:
 
-| JSON キー / プロパティ名 | 型 | 所属クラス | 備考 |
-|---|---|---|---|
-| `layout_id` | `string` | `Root` | レベル識別子 |
-| `grid_unit` | `float` | `Root` | 0.5 固定（v1） |
-| `target_duration_sec` | `int` | `Root` | 180 固定（v1） |
-| `bgm_track` | `string` | `Root` | 空文字許容 |
-| `platforms` | `List<Platform>` | `Root` | 1 件以上 |
-| `floor` | `string` | `Platform` | "1f" / "2f" |
-| `grounds` | `List<Item>` | `Platform` | 0 件以上 |
-| `blocks` | `List<Item>` | `Platform` | 0 件以上 |
-| `zones` | `List<Zone>` | `Platform` | 0 件以上 |
-| `prefab` | `string` | `Item` | バリアント番号を**含まない** |
-| `variant` | `int` | `Item` | 1 以上 |
-| `position` | `float[]` | `Item`, `Zone` | 長さ 3、grid_unit の整数倍 |
-| `rotation_y` | `int` | `Item` | 0/90/180/270、省略時 0 |
-| `zone_id` | `string` | `Zone` | `^vol_[a-z0-9_]+$` |
+| JSON キー / プロパティ名 | 型               | 所属クラス     | 備考                         |
+| ------------------------ | ---------------- | -------------- | ---------------------------- |
+| `layout_id`              | `string`         | `Root`         | レベル識別子                 |
+| `grid_unit`              | `float`          | `Root`         | 0.5 固定（v1）               |
+| `target_duration_sec`    | `int`            | `Root`         | 180 固定（v1）               |
+| `bgm_track`              | `string`         | `Root`         | 空文字許容                   |
+| `platforms`              | `List<Platform>` | `Root`         | 1 件以上                     |
+| `floor`                  | `string`         | `Platform`     | "1f" / "2f"                  |
+| `grounds`                | `List<Item>`     | `Platform`     | 0 件以上                     |
+| `blocks`                 | `List<Item>`     | `Platform`     | 0 件以上                     |
+| `zones`                  | `List<Zone>`     | `Platform`     | 0 件以上                     |
+| `prefab`                 | `string`         | `Item`         | バリアント番号を**含まない** |
+| `variant`                | `int`            | `Item`         | 1 以上                       |
+| `position`               | `float[]`        | `Item`, `Zone` | 長さ 3、grid_unit の整数倍   |
+| `rotation_y`             | `int`            | `Item`         | 0/90/180/270、省略時 0       |
+| `zone_id`                | `string`         | `Zone`         | `^vol_[a-z0-9_]+$`           |
 
 ### 6.3 `Editor/Model/Layout.cs` の完全スケルトン
 
@@ -434,9 +434,10 @@ new JsonSerializerSettings {
 ```
 
 これにより:
-- 整形済み JSON（人間が読める）
-- 既定値（例: `rotation_y: 0`）は出力されない（JSON が肥大化しない）
-- LLM が読みやすい形式
+
++ 整形済み JSON（人間が読める）
++ 既定値（例: `rotation_y: 0`）は出力されない（JSON が肥大化しない）
++ LLM が読みやすい形式
 
 ---
 
@@ -462,8 +463,8 @@ new JsonSerializerSettings {
    ```
 
 2. `Editor/Briko.Editor.asmdef` の修正:
-   - `rootNamespace` を `MeowToon.Briko.Editor` から **`Briko.Editor`** に変更
-   - `references` に `Newtonsoft.Json` を追加
+   + `rootNamespace` を `MeowToon.Briko.Editor` から **`Briko.Editor`** に変更
+   + `references` に `Newtonsoft.Json` を追加
 
    ```jsonc
    {
@@ -487,26 +488,26 @@ new JsonSerializerSettings {
 3. `Editor/Model/` フォルダを作成し、§6.3 のスケルトンに従って `Editor/Model/Layout.cs` を実装
 
 4. **既存ファイルの削除**:
-   - `Editor/Data/LayoutRoot.cs`
-   - `Editor/Data/LayoutPlatform.cs`
-   - `Editor/Data/LayoutItem.cs`
-   - `Editor/Data/LayoutZone.cs`
-   - `Editor/Data/` フォルダ自体（空になったら）
+   + `Editor/Data/LayoutRoot.cs`
+   + `Editor/Data/LayoutPlatform.cs`
+   + `Editor/Data/LayoutItem.cs`
+   + `Editor/Data/LayoutZone.cs`
+   + `Editor/Data/` フォルダ自体（空になったら）
 
 #### 7.1.2 受入基準
 
-- [ ] `Editor/Model/Layout.cs` が §6.3 のスケルトンに完全一致して実装されている
-- [ ] `Root`, `Platform`, `Item`, `Zone` の4クラスが**全て同じファイル**に格納されている
-- [ ] 全プロパティが **snake_case** で `[JsonProperty]` 属性を持たない
-- [ ] 全クラスが `Briko.Editor.Model` 名前空間に属している
-- [ ] 全クラスが §9 のコーディング規約に従っている（著作権ヘッダ、`#nullable enable`、`/// <author>` XMLドキュメント）
-- [ ] `Editor/Data/` フォルダおよびその中の旧4ファイルが削除されている
-- [ ] asmdef の `rootNamespace` が `Briko.Editor` に修正されている
-- [ ] Unity プロジェクトで file: 参照したとき、コンパイルエラーが出ない（ユーザーが手動確認）
++ [ ] `Editor/Model/Layout.cs` が §6.3 のスケルトンに完全一致して実装されている
++ [ ] `Root`, `Platform`, `Item`, `Zone` の4クラスが**全て同じファイル**に格納されている
++ [ ] 全プロパティが **snake_case** で `[JsonProperty]` 属性を持たない
++ [ ] 全クラスが `Briko.Editor.Model` 名前空間に属している
++ [ ] 全クラスが §9 のコーディング規約に従っている（著作権ヘッダ、`#nullable enable`、`/// <author>` XMLドキュメント）
++ [ ] `Editor/Data/` フォルダおよびその中の旧4ファイルが削除されている
++ [ ] asmdef の `rootNamespace` が `Briko.Editor` に修正されている
++ [ ] Unity プロジェクトで file: 参照したとき、コンパイルエラーが出ない（ユーザーが手動確認）
 
 #### 7.1.3 コミットメッセージ案
 
-```
+```text
 refactor: consolidate layout data model into single file
 
 - Merge LayoutRoot/LayoutPlatform/LayoutItem/LayoutZone into Editor/Model/Layout.cs
@@ -524,30 +525,31 @@ refactor: consolidate layout data model into single file
 #### 7.2.1 作業内容
 
 1. `Editor/Internal/PrefabNameParser.cs` の **namespace のみ変更**（既存実装を流用）:
-   - 旧: 不問（実コード調査）
-   - 新: `namespace Briko.Editor.Internal { ... }`
+   + 旧: 不問（実コード調査）
+   + 新: `namespace Briko.Editor.Internal { ... }`
 
    実装内容:
-   - 入力: `Ground_10.0x0.5x10.0_Green_1` のような GameObject 名（`(Clone)` 接尾辞は除去済み）
-   - 出力: `(prefab: "Ground_10.0x0.5x10.0_Green", variant: 1)`
-   - 正規表現: `^(Ground|Block)_([\d.]+x[\d.]+x[\d.]+)_(.+)_(\d+)$`
-   - マッチしない場合は `null` を返す
+
+   + 入力: `Ground_10.0x0.5x10.0_Green_1` のような GameObject 名（`(Clone)` 接尾辞は除去済み）
+   + 出力: `(prefab: "Ground_10.0x0.5x10.0_Green", variant: 1)`
+   + 正規表現: `^(Ground|Block)_([\d.]+x[\d.]+x[\d.]+)_(.+)_(\d+)$`
+   + マッチしない場合は `null` を返す
 
 2. `Editor/Exporter.cs` を実装（旧 `BrikoExporter.cs` のロジックを流用しつつ全面改名）:
-   - クラス名: `Exporter`（旧 `BrikoExporter`）
-   - 名前空間: `Briko.Editor`
-   - `using Briko.Editor.Model;` で `Root`, `Platform`, `Item`, `Zone` を参照
-   - `using Briko.Editor.Internal;` で `PrefabNameParser`, `GridSnapper` を参照
-   - 公開 API: `public static Root ExportFromActiveScene()`
-   - 内部処理は旧実装と同じ（`Platform` GameObject 走査 → grounds/blocks 収集 → `Entity` 走査 → zones 収集）
+   + クラス名: `Exporter`（旧 `BrikoExporter`）
+   + 名前空間: `Briko.Editor`
+   + `using Briko.Editor.Model;` で `Root`, `Platform`, `Item`, `Zone` を参照
+   + `using Briko.Editor.Internal;` で `PrefabNameParser`, `GridSnapper` を参照
+   + 公開 API: `public static Root ExportFromActiveScene()`
+   + 内部処理は旧実装と同じ（`Platform` GameObject 走査 → grounds/blocks 収集 → `Entity` 走査 → zones 収集）
 
    **プロパティアクセスの注意**: 新モデルは snake_case なので、`layout.layoutId` ではなく `layout.layout_id`、`item.rotationY` ではなく `item.rotation_y` を使う。
 
 3. `Editor/ExportMenu.cs` を実装（旧 `BrikoMenuItems.cs` から Export 部分のみを抽出）:
-   - クラス名: `ExportMenu`
-   - 名前空間: `Briko.Editor`
-   - メニュー: `Tools/Briko/Export Active Scene to JSON...`
-   - クリック時の動作:
+   + クラス名: `ExportMenu`
+   + 名前空間: `Briko.Editor`
+   + メニュー: `Tools/Briko/Export Active Scene to JSON...`
+   + クリック時の動作:
      1. `EditorUtility.SaveFilePanel` で保存先を選択（拡張子 `.json`、初期ファイル名 `level_layout.json`）
      2. キャンセルされたら何もしない
      3. `Exporter.ExportFromActiveScene()` を呼ぶ
@@ -576,17 +578,17 @@ refactor: consolidate layout data model into single file
 
 #### 7.2.4 受入基準
 
-- [ ] `Exporter.ExportFromActiveScene()` が `Briko.Editor.Model.Root` を返す
-- [ ] メニュー `Tools/Briko/Export Active Scene to JSON...` が動作する（手動確認）
-- [ ] 規格外の position（grid_unit の倍数でない）には Console 警告が出る
-- [ ] 規格外の rotation_y には Console 警告が出る
-- [ ] §9 のコーディング規約に準拠
-- [ ] Project-defined メソッド呼び出しは全て **named parameter**（Unity API/.NET BCL/Newtonsoft.Json は除外）
-- [ ] 旧 `Editor/BrikoExporter.cs` および旧 `Editor/BrikoMenuItems.cs` の **Export 部分が削除されている**
++ [ ] `Exporter.ExportFromActiveScene()` が `Briko.Editor.Model.Root` を返す
++ [ ] メニュー `Tools/Briko/Export Active Scene to JSON...` が動作する（手動確認）
++ [ ] 規格外の position（grid_unit の倍数でない）には Console 警告が出る
++ [ ] 規格外の rotation_y には Console 警告が出る
++ [ ] §9 のコーディング規約に準拠
++ [ ] Project-defined メソッド呼び出しは全て **named parameter**（Unity API/.NET BCL/Newtonsoft.Json は除外）
++ [ ] 旧 `Editor/BrikoExporter.cs` および旧 `Editor/BrikoMenuItems.cs` の **Export 部分が削除されている**
 
 #### 7.2.5 コミットメッセージ案
 
-```
+```text
 refactor: rename BrikoExporter to Exporter and split menu
 
 - Editor/Exporter.cs (was BrikoExporter.cs)
@@ -603,27 +605,28 @@ refactor: rename BrikoExporter to Exporter and split menu
 #### 7.3.1 作業内容
 
 1. `Editor/Internal/GridSnapper.cs` の **namespace のみ変更**（既存実装を流用）:
-   - 新: `namespace Briko.Editor.Internal { ... }`
+   + 新: `namespace Briko.Editor.Internal { ... }`
 
    実装内容:
-   - `public static float[] Snap(float[] raw, float grid_unit)` — 各成分を `Math.Round(value / grid_unit) * grid_unit` で丸める
+
+   + `public static float[] Snap(float[] raw, float grid_unit)` — 各成分を `Math.Round(value / grid_unit) * grid_unit` で丸める
 
 2. `Editor/Importer.cs` を実装（旧 `BrikoImporter.cs` のロジックを流用しつつ全面改名）:
-   - クラス名: `Importer`（旧 `BrikoImporter`）
-   - 名前空間: `Briko.Editor`
-   - `using Briko.Editor.Model;` で `Root`, `Platform`, `Item`, `Zone` を参照
-   - `using Briko.Editor.Internal;` で `GridSnapper` を参照
-   - 公開 API: `public static void ImportToNewScene(Root layout, string scene_path)`
-   - 内部処理は旧実装と同じ（新規シーン作成 → Level/System/Platform/Entity 階層生成 → プレハブ配置 → ゾーン配置 → シーン保存）
-   - **重要**: 旧実装にない `AssetDatabase.Refresh()` を `EditorSceneManager.SaveScene` の直後に追加
+   + クラス名: `Importer`（旧 `BrikoImporter`）
+   + 名前空間: `Briko.Editor`
+   + `using Briko.Editor.Model;` で `Root`, `Platform`, `Item`, `Zone` を参照
+   + `using Briko.Editor.Internal;` で `GridSnapper` を参照
+   + 公開 API: `public static void ImportToNewScene(Root layout, string scene_path)`
+   + 内部処理は旧実装と同じ（新規シーン作成 → Level/System/Platform/Entity 階層生成 → プレハブ配置 → ゾーン配置 → シーン保存）
+   + **重要**: 旧実装にない `AssetDatabase.Refresh()` を `EditorSceneManager.SaveScene` の直後に追加
 
    **プロパティアクセスの注意**: 新モデルは snake_case なので、`platform.floor` はそのままだが、`item.rotationY` ではなく `item.rotation_y`、`layout.layoutId` ではなく `layout.layout_id` を使う。
 
 3. `Editor/ImportMenu.cs` を実装（旧 `BrikoMenuItems.cs` から Import 部分のみを抽出）:
-   - クラス名: `ImportMenu`
-   - 名前空間: `Briko.Editor`
-   - メニュー: `Tools/Briko/Import JSON to New Scene...`
-   - クリック時の動作:
+   + クラス名: `ImportMenu`
+   + 名前空間: `Briko.Editor`
+   + メニュー: `Tools/Briko/Import JSON to New Scene...`
+   + クリック時の動作:
      1. `EditorUtility.OpenFilePanel` で読み込む JSON を選択
      2. キャンセルなら何もしない
      3. `JsonConvert.DeserializeObject<Root>` で復元
@@ -638,27 +641,29 @@ refactor: rename BrikoExporter to Exporter and split menu
 
 1. プレハブ名で完全一致検索
 2. ヒットがなければ Console 警告:
-   ```
+
+   ```text
    [Briko] Prefab not found: Ground_10.0x0.5x10.0_Green_1 (skipped)
    ```
+
 3. その GameObject の生成はスキップ（処理は続行）
 
 **根拠**: Stemic 側に対応プレハブが無い場合でも、Importer がクラッシュしないように。
 
 #### 7.3.3 受入基準
 
-- [ ] `Importer.ImportToNewScene()` が新規シーンを生成する
-- [ ] メニュー `Tools/Briko/Import JSON to New Scene...` が動作する（手動確認）
-- [ ] 全 position / rotation_y がグリッドにスナップされる
-- [ ] プレハブが見つからない場合、警告を出してスキップする（クラッシュしない）
-- [ ] **`EditorSceneManager.SaveScene` の直後に `AssetDatabase.Refresh()` が呼ばれる**（旧実装の不具合修正）
-- [ ] `briko_spec.md` §7.2 のサンプル JSON をそのまま入力にして動作する（プレハブが揃っている場合）
-- [ ] §9 のコーディング規約に準拠
-- [ ] 旧 `Editor/BrikoImporter.cs` および旧 `Editor/BrikoMenuItems.cs` が完全に削除されている
++ [ ] `Importer.ImportToNewScene()` が新規シーンを生成する
++ [ ] メニュー `Tools/Briko/Import JSON to New Scene...` が動作する（手動確認）
++ [ ] 全 position / rotation_y がグリッドにスナップされる
++ [ ] プレハブが見つからない場合、警告を出してスキップする（クラッシュしない）
++ [ ] **`EditorSceneManager.SaveScene` の直後に `AssetDatabase.Refresh()` が呼ばれる**（旧実装の不具合修正）
++ [ ] `briko_spec.md` §7.2 のサンプル JSON をそのまま入力にして動作する（プレハブが揃っている場合）
++ [ ] §9 のコーディング規約に準拠
++ [ ] 旧 `Editor/BrikoImporter.cs` および旧 `Editor/BrikoMenuItems.cs` が完全に削除されている
 
 #### 7.3.4 コミットメッセージ案
 
-```
+```text
 refactor: rename BrikoImporter to Importer and split menu
 
 - Editor/Importer.cs (was BrikoImporter.cs)
@@ -718,13 +723,14 @@ refactor: rename BrikoImporter to Importer and split menu
    ```
 
    **重要**:
-   - `EnableDefaultItems=false` のため新規 .cs は必ず `<Compile Include>` で明示
-   - 旧 `<Compile Include="..\..\Editor\Data\LayoutRoot.cs" />` 等の **4行は削除**
-   - 新たに `<Compile Include="..\..\Editor\Model\Layout.cs" />` を追加
+
+   + `EnableDefaultItems=false` のため新規 .cs は必ず `<Compile Include>` で明示
+   + 旧 `<Compile Include="..\..\Editor\Data\LayoutRoot.cs" />` 等の **4行は削除**
+   + 新たに `<Compile Include="..\..\Editor\Model\Layout.cs" />` を追加
 
 2. **テストファイルの再配置**（Stemic の `Plugins/Germio/Scripts/Model/Data.cs` ↔ `tests/IntegrationTests/Scripts/Model/DataModelTests.cs` 対応に準拠）:
 
-   ```
+   ```text
    旧 Tests~/IntegrationTests/Scripts/DataModelTests.cs
    → 新 Tests~/IntegrationTests/Scripts/Model/LayoutTests.cs
 
@@ -739,20 +745,20 @@ refactor: rename BrikoImporter to Importer and split menu
    ```
 
 3. **`LayoutTests.cs` の実装**（旧 `DataModelTests.cs` をベースに、新モデルに合わせて更新）:
-   - 名前空間: `Briko.Tests.Model`
-   - クラス名: `LayoutTests`
-   - 旧モデル `LayoutRoot/LayoutPlatform/LayoutItem/LayoutZone` への参照を `Root/Platform/Item/Zone` に置換
-   - プロパティ参照を `layoutId` → `layout_id` 等に置換
-   - テストメソッド命名: Stemic 慣習 `<TestedClass>_<Feature>_<ExpectedBehavior>`（例: `Root_LayoutId_DefaultsToEmpty`, `Item_RotationY_DefaultsToZero`）
+   + 名前空間: `Briko.Tests.Model`
+   + クラス名: `LayoutTests`
+   + 旧モデル `LayoutRoot/LayoutPlatform/LayoutItem/LayoutZone` への参照を `Root/Platform/Item/Zone` に置換
+   + プロパティ参照を `layoutId` → `layout_id` 等に置換
+   + テストメソッド命名: Stemic 慣習 `<TestedClass>_<Feature>_<ExpectedBehavior>`（例: `Root_LayoutId_DefaultsToEmpty`, `Item_RotationY_DefaultsToZero`）
 
 4. **`RoundTripTests.cs` の実装**（旧版をベースに更新）:
-   - 名前空間: `Briko.Tests.Model`
-   - `JsonConvert.DeserializeObject<Root>` で復元
-   - `JToken.DeepEquals` でラウンドトリップ等価性を検証
+   + 名前空間: `Briko.Tests.Model`
+   + `JsonConvert.DeserializeObject<Root>` で復元
+   + `JToken.DeepEquals` でラウンドトリップ等価性を検証
 
 5. **`PrefabNameParserTests.cs` / `GridSnapperTests.cs`**:
-   - 名前空間を `Briko.Tests.Internal` に変更
-   - その他のロジックは既存をそのまま流用
+   + 名前空間を `Briko.Tests.Internal` に変更
+   + その他のロジックは既存をそのまま流用
 
 #### 7.4.2 テスト命名規約（Stemic 準拠）
 
@@ -784,17 +790,17 @@ dotnet test briko/Tests~/IntegrationTests/IntegrationTests.csproj --filter "Full
 
 #### 7.4.4 受入基準
 
-- [ ] `dotnet test` で全テストが通る
-- [ ] テスト件数が最低 12 件以上（各テストファイルで3件以上）
-- [ ] `EnableDefaultItems=false` 設定が守られている（新規 .cs は `<Compile>` で明示）
-- [ ] テストファイルが `Internal/` および `Model/` サブフォルダに整理されている
-- [ ] テストの名前空間が `Briko.Tests.Internal` または `Briko.Tests.Model` のいずれか
-- [ ] テストメソッド名が Stemic 慣習（`<Class>_<Feature>_<Behavior>`）に従う
-- [ ] 旧 `DataModelTests.cs` がフラットな位置に残っていない（必ず `Model/LayoutTests.cs` に移動済み）
++ [ ] `dotnet test` で全テストが通る
++ [ ] テスト件数が最低 12 件以上（各テストファイルで3件以上）
++ [ ] `EnableDefaultItems=false` 設定が守られている（新規 .cs は `<Compile>` で明示）
++ [ ] テストファイルが `Internal/` および `Model/` サブフォルダに整理されている
++ [ ] テストの名前空間が `Briko.Tests.Internal` または `Briko.Tests.Model` のいずれか
++ [ ] テストメソッド名が Stemic 慣習（`<Class>_<Feature>_<Behavior>`）に従う
++ [ ] 旧 `DataModelTests.cs` がフラットな位置に残っていない（必ず `Model/LayoutTests.cs` に移動済み）
 
 #### 7.4.5 コミットメッセージ案
 
-```
+```text
 refactor: reorganize tests into Internal/Model subfolders
 
 - Tests~/.../Scripts/Internal/{PrefabNameParser,GridSnapper}Tests.cs
@@ -835,17 +841,17 @@ refactor: reorganize tests into Internal/Model subfolders
 
 #### 7.5.2 受入基準
 
-- [ ] `artifacts/level_01_export.json` が生成された
-- [ ] grounds, blocks, zones のいずれかが 0 件でない（実際のレベルが空でない限り）
-- [ ] Console に致命的エラーが出ていない（警告は許容）
++ [ ] `artifacts/level_01_export.json` が生成された
++ [ ] grounds, blocks, zones のいずれかが 0 件でない（実際のレベルが空でない限り）
++ [ ] Console に致命的エラーが出ていない（警告は許容）
 
 #### 7.5.3 想定される問題と対処
 
-| 症状 | 想定原因 | 対処 |
-|---|---|---|
-| `Platform` GameObject が見つからない | シーンの GameObject 階層が想定と異なる | `briko_spec.md` §4.4 と実シーンを比較。差分があれば本計画に追記してエージェントに修正依頼 |
-| プレハブ名が正規表現にマッチしない | 命名規則が §4.3 と違う | 実物を観察。エージェントに正規表現の調整を依頼 |
-| zone が 0 件 | `vol_*` 命名が使われていない、または `Entity` 階層が違う | 実物を観察。検出ロジックを調整 |
+| 症状                                 | 想定原因                                                 | 対処                                                                                      |
+| ------------------------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `Platform` GameObject が見つからない | シーンの GameObject 階層が想定と異なる                   | `briko_spec.md` §4.4 と実シーンを比較。差分があれば本計画に追記してエージェントに修正依頼 |
+| プレハブ名が正規表現にマッチしない   | 命名規則が §4.3 と違う                                   | 実物を観察。エージェントに正規表現の調整を依頼                                            |
+| zone が 0 件                         | `vol_*` 命名が使われていない、または `Entity` 階層が違う | 実物を観察。検出ロジックを調整                                                            |
 
 これらの問題が発生した場合、**v1 の範囲内で正規表現とロジックの調整は許容される**。
 
@@ -864,12 +870,12 @@ refactor: reorganize tests into Internal/Model subfolders
    > 添付の JSON は Unity ゲームのレベル 1 のレイアウトです。
    > これを参考に、難易度を少し上げた Level 2 のレイアウトを生成してください。
    > 制約:
-   > - JSON 構造は完全に同じ
-   > - position は grid_unit (0.5) の整数倍のみ
-   > - rotation_y は 0/90/180/270 のみ
-   > - プレハブ名と variant 番号の組み合わせは Level 1 で使われているものに限定
-   > - プレハブ数は ±20% の範囲で増減可
-   > - zones の zone_id は変更しない（Germio 側の `germio_config.json` と同期するため）
+   > + JSON 構造は完全に同じ
+   > + position は grid_unit (0.5) の整数倍のみ
+   > + rotation_y は 0/90/180/270 のみ
+   > + プレハブ名と variant 番号の組み合わせは Level 1 で使われているものに限定
+   > + プレハブ数は ±20% の範囲で増減可
+   > + zones の zone_id は変更しない（Germio 側の `germio_config.json` と同期するため）
 
 3. 生成された JSON を `briko/artifacts/level_02_generated.json` として保存
 
@@ -881,18 +887,18 @@ refactor: reorganize tests into Internal/Model subfolders
 
 #### 7.6.2 受入基準
 
-- [ ] `level_02_generated.json` が生成された
-- [ ] それを Importer で Unity シーンに変換できた
-- [ ] 生成されたシーンが Unity Editor 上で破綻なく表示される
++ [ ] `level_02_generated.json` が生成された
++ [ ] それを Importer で Unity シーンに変換できた
++ [ ] 生成されたシーンが Unity Editor 上で破綻なく表示される
 
 #### 7.6.3 v1 の合格判定
 
 **Level 2 の品質は問わない**。LLM による初回生成の品質が低くても、以下が達成できていれば v1 は合格:
 
-- Briko のラウンドトリップが動く
-- 既存資産から JSON を抽出できる
-- LLM が読める JSON を渡せる
-- LLM の出力を Unity シーンに戻せる
++ Briko のラウンドトリップが動く
++ 既存資産から JSON を抽出できる
++ LLM が読める JSON を渡せる
++ LLM の出力を Unity シーンに戻せる
 
 品質改善は v2 以降のプロンプトエンジニアリングおよび Validator 実装の領域。
 
@@ -900,7 +906,7 @@ refactor: reorganize tests into Internal/Model subfolders
 
 ## 8. v1 完成判定基準（最終チェックリスト）
 
-```
+```text
 [ ] Task 1 完了（Layout.cs 統合、snake_case 化、namespace 修正、Data/ 削除）
 [ ] Task 2 完了（Exporter.cs + ExportMenu.cs、旧 BrikoExporter 削除）
 [ ] Task 3 完了（Importer.cs + ImportMenu.cs、AssetDatabase.Refresh 追加、旧 BrikoImporter / BrikoMenuItems 削除）
@@ -922,17 +928,17 @@ refactor: reorganize tests into Internal/Model subfolders
 
 ### 9.1 命名規則
 
-| 対象 | 規則 | 例（Stemic 実物） |
-|---|---|---|
-| クラス名 | 単一プレフィックスなし、短く | `Storage`, `Validator`, `Vault`, `Bus`, `Zone`, `Block`, `Despawn`, `Home`, `Dashboard`, `MermaidParser` |
-| データクラス | 同上、特別扱いなし | `Scenario`, `State`, `World`, `Level`, `Next`, `Rule` |
-| 私有フィールド | `_snake_case` | `_do_update`, `_jump_power` |
-| ローカル変数 / 引数 | `snake_case` | `base_path`, `trigger_id`, `level_id` |
-| 公開プロパティ（**Data クラス**） | `snake_case`（JSON キーと一致） | `current_scene`, `fired_rules`, `schema_version`, `layout_id`, `grid_unit` |
-| 公開プロパティ（その他） | `camelCase` | `home`, `beat`, `mode` |
-| `[SerializeField]` | `_ALL_CAPS` | `_JUMP_POWER`, `_FORWARD_SPEED_LIMIT` |
-| 定数 | `ALL_CAPS` | `GRID_UNIT_DEFAULT`, `MENU_ROOT` |
-| 名前空間 | `<RootProject>.<Layer>` | `Germio.Core`, `Germio.Model`, `Germio.Editor`, `Briko.Editor.Model` |
+| 対象                              | 規則                            | 例（Stemic 実物）                                                                                        |
+| --------------------------------- | ------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| クラス名                          | 単一プレフィックスなし、短く    | `Storage`, `Validator`, `Vault`, `Bus`, `Zone`, `Block`, `Despawn`, `Home`, `Dashboard`, `MermaidParser` |
+| データクラス                      | 同上、特別扱いなし              | `Scenario`, `State`, `World`, `Level`, `Next`, `Rule`                                                    |
+| 私有フィールド                    | `_snake_case`                   | `_do_update`, `_jump_power`                                                                              |
+| ローカル変数 / 引数               | `snake_case`                    | `base_path`, `trigger_id`, `level_id`                                                                    |
+| 公開プロパティ（**Data クラス**） | `snake_case`（JSON キーと一致） | `current_scene`, `fired_rules`, `schema_version`, `layout_id`, `grid_unit`                               |
+| 公開プロパティ（その他）          | `camelCase`                     | `home`, `beat`, `mode`                                                                                   |
+| `[SerializeField]`                | `_ALL_CAPS`                     | `_JUMP_POWER`, `_FORWARD_SPEED_LIMIT`                                                                    |
+| 定数                              | `ALL_CAPS`                      | `GRID_UNIT_DEFAULT`, `MENU_ROOT`                                                                         |
+| 名前空間                          | `<RootProject>.<Layer>`         | `Germio.Core`, `Germio.Model`, `Germio.Editor`, `Briko.Editor.Model`                                     |
 
 **重要**: Briko の Data クラスは `snake_case` プロパティ。`[JsonProperty]` 属性は使わない（Stemic も使っていない）。
 
@@ -992,16 +998,17 @@ GridSnapper.Snap(transform.position, 0.5f);
 ```
 
 **例外（named parameter 不要）**:
-- .NET BCL: `Math.Round(value)`, `string.IsNullOrEmpty(s)`
-- Unity API: `GameObject.Find("Platform")`, `transform.position`
-- Newtonsoft.Json: `JsonConvert.SerializeObject(obj)`
+
++ .NET BCL: `Math.Round(value)`, `string.IsNullOrEmpty(s)`
++ Unity API: `GameObject.Find("Platform")`, `transform.position`
++ Newtonsoft.Json: `JsonConvert.SerializeObject(obj)`
 
 ### 9.6 1ファイル1クラスの例外（Data クラス）
 
 **Stemic は Data 系を1ファイルに集約する**:
 
-- `Plugins/Germio/Scripts/Model/Data.cs` には `CounterOp / Scenario / State / World / Level / Next / Rule / Command...` が同居
-- Briko も同パターン: `Editor/Model/Layout.cs` に `Root / Platform / Item / Zone` を同居
++ `Plugins/Germio/Scripts/Model/Data.cs` には `CounterOp / Scenario / State / World / Level / Next / Rule / Command...` が同居
++ Briko も同パターン: `Editor/Model/Layout.cs` に `Root / Platform / Item / Zone` を同居
 
 サービスクラスや Editor 拡張クラスは1ファイル1クラス。
 
@@ -1009,7 +1016,7 @@ GridSnapper.Snap(transform.position, 0.5f);
 
 **Stemic の実慣習**:
 
-```
+```text
 ソース                        テスト
 Storage.cs       ↔  StorageTests.cs        (1対1)
 Validator.cs     ↔  ValidatorTests.cs      (1対1)
@@ -1022,24 +1029,28 @@ Data.cs          ↔  DataModelTests.cs      (1対1、複数クラス内包の D
 ```
 
 **追加テスト**（1対1 を置き換えず、上に積む）:
-- `EvaluatorAdvancedTests.cs`（`EvaluatorTests.cs` に加えて）
-- `StorageEncryptionTests.cs`, `StorageIntegrationTests.cs`
-- `ValidatorLlmFormatTests.cs`
-- `BusClearTests.cs`
+
++ `EvaluatorAdvancedTests.cs`（`EvaluatorTests.cs` に加えて）
++ `StorageEncryptionTests.cs`, `StorageIntegrationTests.cs`
++ `ValidatorLlmFormatTests.cs`
++ `BusClearTests.cs`
 
 **横断テスト**（cross-cutting）:
-- `EdgeCaseTests.cs`, `PersistenceTests.cs`, `CookbookExamplesTests.cs`, `Phase2EdgeCaseTests.cs`
+
++ `EdgeCaseTests.cs`, `PersistenceTests.cs`, `CookbookExamplesTests.cs`, `Phase2EdgeCaseTests.cs`
 
 **testless なクラス**（Unity API 依存、NUnit ではテスト不可）:
-- MonoBehaviour 系: `CameraSystem.cs`, `GameSystem.cs`, `SoundSystem.cs`, `Despawn.cs`, `Home.cs`
-- Editor 拡張: `Dashboard.cs`, `McpServerMenu.cs`, `SchemaExportMenu.cs`
+
++ MonoBehaviour 系: `CameraSystem.cs`, `GameSystem.cs`, `SoundSystem.cs`, `Despawn.cs`, `Home.cs`
++ Editor 拡張: `Dashboard.cs`, `McpServerMenu.cs`, `SchemaExportMenu.cs`
 
 **Briko への適用**:
-- `PrefabNameParser.cs` ↔ `PrefabNameParserTests.cs`（1対1）
-- `GridSnapper.cs` ↔ `GridSnapperTests.cs`（1対1）
-- `Layout.cs` ↔ `LayoutTests.cs`（1対1、複数クラス内包の Layout はまとめて1テスト）
-- `RoundTripTests.cs`（cross-cutting、Stemic の `PersistenceTests` 同様）
-- `Exporter.cs` / `Importer.cs` / `ExportMenu.cs` / `ImportMenu.cs` は **testless**（Unity API 依存、PlayMode/EditMode 統合テストは v2）
+
++ `PrefabNameParser.cs` ↔ `PrefabNameParserTests.cs`（1対1）
++ `GridSnapper.cs` ↔ `GridSnapperTests.cs`（1対1）
++ `Layout.cs` ↔ `LayoutTests.cs`（1対1、複数クラス内包の Layout はまとめて1テスト）
++ `RoundTripTests.cs`（cross-cutting、Stemic の `PersistenceTests` 同様）
++ `Exporter.cs` / `Importer.cs` / `ExportMenu.cs` / `ImportMenu.cs` は **testless**（Unity API 依存、PlayMode/EditMode 統合テストは v2）
 
 ### 9.8 標準 import
 
@@ -1059,9 +1070,9 @@ using Briko.Editor.Internal;
 
 v1 では以下のパターンを使用しない（v2 以降の検討項目）:
 
-- UniRx の `UpdateAsObservable()`
-- 拡張メソッド `Get<T>()`, `Add<T>()`, `Like()`
-- `EvtArgs` / `Changed` デリゲート
++ UniRx の `UpdateAsObservable()`
++ 拡張メソッド `Get<T>()`, `Add<T>()`, `Like()`
++ `EvtArgs` / `Changed` デリゲート
 
 理由: v1 は Editor 拡張のみで、ランタイム MonoBehaviour を持たないため。
 
@@ -1086,9 +1097,10 @@ graph LR
 ```
 
 これにより:
-- Stemic の Data クラス慣習を維持
-- `[JsonProperty]` 属性が不要（コードがクリーン）
-- LLM 生成の親和性を確保
+
++ Stemic の Data クラス慣習を維持
++ `[JsonProperty]` 属性が不要（コードがクリーン）
++ LLM 生成の親和性を確保
 
 ### 10.2 シリアライザ設定
 
@@ -1112,14 +1124,14 @@ graph LR
 
 Conventional Commits に準拠:
 
-| プレフィックス | 用途 |
-|---|---|
-| `feat:` | 新機能 |
-| `fix:` | バグ修正 |
-| `chore:` | 設定 / メンテナンス |
-| `docs:` | ドキュメントのみ |
-| `test:` | テスト追加 / 修正 |
-| `refactor:` | 機能変更なしのリファクタ |
+| プレフィックス | 用途                     |
+| -------------- | ------------------------ |
+| `feat:`        | 新機能                   |
+| `fix:`         | バグ修正                 |
+| `chore:`       | 設定 / メンテナンス      |
+| `docs:`        | ドキュメントのみ         |
+| `test:`        | テスト追加 / 修正        |
+| `refactor:`    | 機能変更なしのリファクタ |
 
 各 Task の §X.Y.5 のコミットメッセージ案を参考にする。**今回はリファクタ中心なので `refactor:` が多くなる**。
 
@@ -1162,8 +1174,9 @@ Conventional Commits に準拠:
 **論点**: UPM 版 (`com.unity.nuget.newtonsoft-json`) と NuGet 版 (`Newtonsoft.Json`) のバージョン整合性。
 
 **v1 判断**:
-- Unity 側: `com.unity.nuget.newtonsoft-json@3.2.1`（内部的に Newtonsoft.Json 13.x ベース）
-- .NET 9 テスト側: `Newtonsoft.Json` 13.0.3
+
++ Unity 側: `com.unity.nuget.newtonsoft-json@3.2.1`（内部的に Newtonsoft.Json 13.x ベース）
++ .NET 9 テスト側: `Newtonsoft.Json` 13.0.3
 
 メジャーバージョンが揃っているので、シリアライズ結果は一致する想定。
 
@@ -1197,28 +1210,28 @@ Assert.That(JToken.DeepEquals(json_before, json_after), Is.True);
 
 ### 13.1 必読
 
-- `docs/briko_spec.md` — Briko の設計仕様（why）
-- 本文書 — Briko の実装計画（what / how / when）
-- Stemic 実コード（`game/Assets/Plugins/Germio/Scripts/`）— コーディング規約の唯一のソース
++ `docs/briko_spec.md` — Briko の設計仕様（why）
++ 本文書 — Briko の実装計画（what / how / when）
++ Stemic 実コード（`game/Assets/Plugins/Germio/Scripts/`）— コーディング規約の唯一のソース
 
 ### 13.2 Stemic の参考ファイル（パターンの出典）
 
-| パターン | Stemic 実装 |
-|---|---|
-| 1ファイル複数 Data クラス | `Plugins/Germio/Scripts/Model/Data.cs` |
-| 1対1 テスト命名 | `tests/IntegrationTests/Scripts/Core/StorageTests.cs` 他 |
-| Editor 拡張命名 | `Plugins/Germio/Scripts/Editor/Dashboard.cs`, `SchemaExportMenu.cs` |
-| サービスクラス命名 | `Plugins/Germio/Scripts/Core/Validator.cs`, `Storage.cs`, `Vault.cs` |
-| テストフォルダ階層 | `tests/IntegrationTests/Scripts/{Core,Model,Systems,Schema}/` |
+| パターン                  | Stemic 実装                                                          |
+| ------------------------- | -------------------------------------------------------------------- |
+| 1ファイル複数 Data クラス | `Plugins/Germio/Scripts/Model/Data.cs`                               |
+| 1対1 テスト命名           | `tests/IntegrationTests/Scripts/Core/StorageTests.cs` 他             |
+| Editor 拡張命名           | `Plugins/Germio/Scripts/Editor/Dashboard.cs`, `SchemaExportMenu.cs`  |
+| サービスクラス命名        | `Plugins/Germio/Scripts/Core/Validator.cs`, `Storage.cs`, `Vault.cs` |
+| テストフォルダ階層        | `tests/IntegrationTests/Scripts/{Core,Model,Systems,Schema}/`        |
 
 ### 13.3 Unity / UPM
 
-- [UPM Custom Package Layout](https://docs.unity3d.com/Manual/cus-layout.html)
-- [com.unity.nuget.newtonsoft-json](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@latest)
++ [UPM Custom Package Layout](https://docs.unity3d.com/Manual/cus-layout.html)
++ [com.unity.nuget.newtonsoft-json](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@latest)
 
 ### 13.4 NUnit
 
-- [NUnit Documentation](https://docs.nunit.org/) — 4.x 系
++ [NUnit Documentation](https://docs.nunit.org/) — 4.x 系
 
 ---
 
@@ -1226,7 +1239,7 @@ Assert.That(JToken.DeepEquals(json_before, json_after), Is.True);
 
 実装エージェントは以下の順番で作業を進める。各項目完了時にユーザーへ報告し、コミット承認を得る。
 
-```
+```text
 ☐ Task 1.1: package.json に dependencies 追加
 ☐ Task 1.2: Briko.Editor.asmdef の rootNamespace を Briko.Editor に変更
 ☐ Task 1.3: Briko.Editor.asmdef に Newtonsoft.Json 参照追加
@@ -1276,9 +1289,9 @@ Assert.That(JToken.DeepEquals(json_before, json_after), Is.True);
 
 ## 15. 改訂履歴
 
-| 版 | 日付 | 変更点 | 著者 |
-|---|---|---|---|
-| 1.0 | 2026-04-29 | 初版（Stemic v2.2 実コード調査結果に基づく規約反映、リファクタ前提の構成） | Claude Opus 4.7 + h.adachi |
+| 版  | 日付       | 変更点                                                                                                                                                                                                                   | 著者                       |
+| --- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------- |
+| 1.0 | 2026-04-29 | 初版（Stemic v2.2 実コード調査結果に基づく規約反映、リファクタ前提の構成）                                                                                                                                               | Claude Opus 4.7 + h.adachi |
 | 1.1 | 2026-04-29 | `gridUnit` → `grid_unit` 統一（§7.2.2, §7.3.1, §9.5）。Stemic 規約「ローカル変数・引数は snake_case」を厳格適用。実装側コード（GridSnapper, Exporter, Importer, GridSnapperTests 計11箇所）は別途 Copilot CLI が修正済み | Claude Opus 4.7 + h.adachi |
 
 ---

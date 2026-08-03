@@ -29,23 +29,23 @@ graph LR
     style Tests fill:#c8e6c9
 ```
 
-| Section | Topic |
-|---|---|
-| 1 | Overview |
-| 2 | Design Philosophy |
-| 3 | Relationship with Germio |
-| 4 | Coordinate System and Grid |
-| 5 | Prefab Naming Convention |
-| 6 | Scene Hierarchy |
-| 7 | Layout JSON Format |
-| 8 | Bidirectional Converter |
-| 9 | Repository Structure |
-| 10 | Coding Conventions |
-| 11 | Common Layout Patterns |
-| 12 | LLM Workflow Models |
-| 13 | Failure Mode Catalog |
-| 14 | Roadmap |
-| 15 | References |
+| Section | Topic                      |
+| ------- | -------------------------- |
+| 1       | Overview                   |
+| 2       | Design Philosophy          |
+| 3       | Relationship with Germio   |
+| 4       | Coordinate System and Grid |
+| 5       | Prefab Naming Convention   |
+| 6       | Scene Hierarchy            |
+| 7       | Layout JSON Format         |
+| 8       | Bidirectional Converter    |
+| 9       | Repository Structure       |
+| 10      | Coding Conventions         |
+| 11      | Common Layout Patterns     |
+| 12      | LLM Workflow Models        |
+| 13      | Failure Mode Catalog       |
+| 14      | Roadmap                    |
+| 15      | References                 |
 
 ---
 
@@ -75,14 +75,14 @@ graph LR
 
 ### 1.2 What Briko Is Not
 
-| Briko is not | Justification |
-|---|---|
-| A runtime level editor | All operations execute in the Unity Editor only |
-| A procedural generator | Briko has no random-generation logic; it transforms between two representations |
-| An ML-based generator | Briko provides no learned model; LLM intelligence is external |
-| A scenario / state machine engine | That responsibility belongs to Germio |
-| An asset creation tool | Prefabs must already exist in the host project |
-| A universal level format | The format is specific to a constrained genre and prefab convention |
+| Briko is not                      | Justification                                                                   |
+| --------------------------------- | ------------------------------------------------------------------------------- |
+| A runtime level editor            | All operations execute in the Unity Editor only                                 |
+| A procedural generator            | Briko has no random-generation logic; it transforms between two representations |
+| An ML-based generator             | Briko provides no learned model; LLM intelligence is external                   |
+| A scenario / state machine engine | That responsibility belongs to Germio                                           |
+| An asset creation tool            | Prefabs must already exist in the host project                                  |
+| A universal level format          | The format is specific to a constrained genre and prefab convention             |
 
 ### 1.3 Position Relative to Germio
 
@@ -140,14 +140,14 @@ graph TB
     style Script fill:#fff4cc
 ```
 
-| Approach | LLM-friendly | Bidirectional | Deterministic | Explainable |
-|---|---|---|---|---|
-| UI-driven editor | No | No | Yes | Yes |
-| Manual 3D modeling | No | No | Yes | Yes |
-| Procedural generation | Partial | No | No (random) | Partial |
-| ML-based generation | Partial | No | No | No |
-| Scripted construction | Partial | No | Yes | Yes |
-| **Briko** | **Yes** | **Yes** | **Yes** | **Yes** |
+| Approach              | LLM-friendly | Bidirectional | Deterministic | Explainable |
+| --------------------- | ------------ | ------------- | ------------- | ----------- |
+| UI-driven editor      | No           | No            | Yes           | Yes         |
+| Manual 3D modeling    | No           | No            | Yes           | Yes         |
+| Procedural generation | Partial      | No            | No (random)   | Partial     |
+| ML-based generation   | Partial      | No            | No            | No          |
+| Scripted construction | Partial      | No            | Yes           | Yes         |
+| **Briko**             | **Yes**      | **Yes**       | **Yes**       | **Yes**     |
 
 ---
 
@@ -263,14 +263,14 @@ The discrete constraints from §2.2 mathematically guarantee this round-trip pro
 
 Briko inherits a subset of design principles from Germio's LLM-First framework:
 
-| Principle | Application in Briko |
-|---|---|
-| Closed minimal vocabulary | Fixed prefab catalog, fixed rotation values |
-| Declarative not procedural | JSON describes state, not steps |
-| Self-correcting error format | Failed parse logs warning and skips, never crashes |
-| snake_case throughout | All JSON keys and C# data class properties |
-| Public JSON schema | The format is the API |
-| Layered namespace architecture | `Briko.Editor.{Model, Internal}` |
+| Principle                      | Application in Briko                               |
+| ------------------------------ | -------------------------------------------------- |
+| Closed minimal vocabulary      | Fixed prefab catalog, fixed rotation values        |
+| Declarative not procedural     | JSON describes state, not steps                    |
+| Self-correcting error format   | Failed parse logs warning and skips, never crashes |
+| snake_case throughout          | All JSON keys and C# data class properties         |
+| Public JSON schema             | The format is the API                              |
+| Layered namespace architecture | `Briko.Editor.{Model, Internal}`                   |
 
 ---
 
@@ -406,9 +406,9 @@ graph LR
     style GameDev fill:#ffe0b2
 ```
 
-- Briko → Germio: permitted but unused in v1
-- Germio → Briko: forbidden (would create circular dependency)
-- Briko → host project: forbidden (Briko remains generic)
++ Briko → Germio: permitted but unused in v1
++ Germio → Briko: forbidden (would create circular dependency)
++ Briko → host project: forbidden (Briko remains generic)
 
 ---
 
@@ -416,7 +416,7 @@ graph LR
 
 ### 4.1 Unit System
 
-```
+```text
 1 Briko unit = 1 meter (matches Unity's default world unit)
 ```
 
@@ -454,19 +454,19 @@ graph TB
 
 ### 4.3 Discrete Constraints
 
-| Quantity | Constraint | Domain |
-|---|---|---|
-| `position[i]` | Integer multiple of `grid_unit` | `{ k × 0.25 \| k ∈ ℤ }` |
-| `rotation_y` | Discrete cardinal | `{ 0, 90, 180, 270 }` |
-| `prefab` | Member of the prefab catalog | finite set, project-specific |
-| `variant` | Positive integer | `{ 1, 2, 3, ... }` |
-| `grid_unit` | Fixed value | `0.25` (v1) |
+| Quantity      | Constraint                      | Domain                       |          |
+| ------------- | ------------------------------- | ---------------------------- | -------- |
+| `position[i]` | Integer multiple of `grid_unit` | `{ k × 0.25 \                | k ∈ ℤ }` |
+| `rotation_y`  | Discrete cardinal               | `{ 0, 90, 180, 270 }`        |          |
+| `prefab`      | Member of the prefab catalog    | finite set, project-specific |          |
+| `variant`     | Positive integer                | `{ 1, 2, 3, ... }`           |          |
+| `grid_unit`   | Fixed value                     | `0.25` (v1)                  |          |
 
 ### 4.4 Snap Algorithm
 
 For each axis component `v`:
 
-```
+```text
 snapped(v) = round(v / grid_unit) × grid_unit
 ```
 
@@ -499,26 +499,26 @@ When the difference between raw and snapped exceeds 0.01m on any axis, the expor
 
 Prefab assets must follow this naming pattern:
 
-```
+```text
 <Kind>_<Width>x<Height>x<Depth>_<Descriptor>_<Variant>
 ```
 
 Where:
 
-- `Kind` is any arbitrary word (e.g., `Ground`, `Block`, `Enemy`, `Wall`, `Trap`). Open-ended and extensible.
-- `Width`, `Height`, `Depth` are decimal numbers in meters
-- `Descriptor` is a free-form identifier, may contain underscores (e.g., `Green`, `Plain_Green`)
-- `Variant` is a positive integer
++ `Kind` is any arbitrary word (e.g., `Ground`, `Block`, `Enemy`, `Wall`, `Trap`). Open-ended and extensible.
++ `Width`, `Height`, `Depth` are decimal numbers in meters
++ `Descriptor` is a free-form identifier, may contain underscores (e.g., `Green`, `Plain_Green`)
++ `Variant` is a positive integer
 
 ### 5.2 Examples
 
-| Prefab name | Kind | Dimensions | Descriptor | Variant |
-|---|---|---|---|---|
-| `Ground_10.0x0.5x10.0_Green_1` | Ground | 10×0.5×10 | Green | 1 |
-| `Block_1.0x1.0x1.0_Plain_Green_3` | Block | 1×1×1 | Plain_Green | 3 |
-| `Ground_2.5x0.5x2.5_Stone_2` | Ground | 2.5×0.5×2.5 | Stone | 2 |
-| `Enemy_1.0x2.0x1.0_Red_1` | Enemy | 1×2×1 | Red | 1 |
-| `Bipyramid_0.5x1.0x0.5_Plain_Blue_1` | Bipyramid | 0.5×1×0.5 | Plain_Blue | 1 |
+| Prefab name                          | Kind      | Dimensions  | Descriptor  | Variant |
+| ------------------------------------ | --------- | ----------- | ----------- | ------- |
+| `Ground_10.0x0.5x10.0_Green_1`       | Ground    | 10×0.5×10   | Green       | 1       |
+| `Block_1.0x1.0x1.0_Plain_Green_3`    | Block     | 1×1×1       | Plain_Green | 3       |
+| `Ground_2.5x0.5x2.5_Stone_2`         | Ground    | 2.5×0.5×2.5 | Stone       | 2       |
+| `Enemy_1.0x2.0x1.0_Red_1`            | Enemy     | 1×2×1       | Red         | 1       |
+| `Bipyramid_0.5x1.0x0.5_Plain_Blue_1` | Bipyramid | 0.5×1×0.5   | Plain_Blue  | 1       |
 
 ### 5.3 Parser State Machine
 
@@ -580,7 +580,7 @@ LLM cognitive load is partitioned: structural choices (size, kind, descriptor) r
 
 Briko expects scenes to follow this top-level hierarchy:
 
-```
+```text
 {LevelRoot}                ← scene root, name is arbitrary
 ├── System                 ← Briko does not read or write
 ├── Platform               ← Briko's primary target for grounds and blocks
@@ -620,25 +620,26 @@ graph TB
 
 ### 6.3 GameObject Naming Patterns
 
-| Container | Pattern | Example | Contents |
-|---|---|---|---|
-| Ground container | `grounds_<floor>` | `grounds_1f`, `grounds_2f` | Ground prefabs |
-| Block container | `blocks_<variant>` | `blocks_plain`, `blocks_basic` | Block prefabs |
-| Zone marker | `vol_<identifier>` | `vol_spawn`, `vol_boss_start` | Empty GameObject |
+| Container        | Pattern            | Example                        | Contents         |
+| ---------------- | ------------------ | ------------------------------ | ---------------- |
+| Ground container | `grounds_<floor>`  | `grounds_1f`, `grounds_2f`     | Ground prefabs   |
+| Block container  | `blocks_<variant>` | `blocks_plain`, `blocks_basic` | Block prefabs    |
+| Zone marker      | `vol_<identifier>` | `vol_spawn`, `vol_boss_start`  | Empty GameObject |
 
 ### 6.4 Floor Inference for Blocks
 
 Because Block containers are not floor-grouped in the reference implementation, the floor for each Block is inferred from its world Y-coordinate:
 
-```
+```text
 floor(block) = "1f"  if block.position.y < 3.0
              = "2f"  otherwise
 ```
 
 The threshold `3.0` is justified by:
-- Floor 1 ground thickness: 0.5m
-- Possible block stack height on floor 1: up to 2.5m
-- Total: 3.0m maximum reachable Y on floor 1
+
++ Floor 1 ground thickness: 0.5m
++ Possible block stack height on floor 1: up to 2.5m
++ Total: 3.0m maximum reachable Y on floor 1
 
 Future versions may eliminate this heuristic by introducing explicit `blocks_<floor>` containers.
 
@@ -712,38 +713,38 @@ graph TB
 
 #### Root
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `layout_id` | string | yes | Unique identifier; used as default scene name on import |
-| `grid_unit` | float | yes | Grid quantization in meters (fixed at `0.25` in v1) |
-| `target_duration_sec` | int | yes | Intended play duration in seconds |
-| `bgm_track` | string | optional | BGM filename (relative to host project's StreamingAssets) |
-| `platforms` | array of Platform | yes | One or more floor layers |
+| Field                 | Type              | Required | Description                                               |
+| --------------------- | ----------------- | -------- | --------------------------------------------------------- |
+| `layout_id`           | string            | yes      | Unique identifier; used as default scene name on import   |
+| `grid_unit`           | float             | yes      | Grid quantization in meters (fixed at `0.25` in v1)       |
+| `target_duration_sec` | int               | yes      | Intended play duration in seconds                         |
+| `bgm_track`           | string            | optional | BGM filename (relative to host project's StreamingAssets) |
+| `platforms`           | array of Platform | yes      | One or more floor layers                                  |
 
 #### Platform
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `floor` | string | yes | Floor identifier (`"1f"`, `"2f"`, etc.) |
-| `grounds` | array of Item | optional | Ground tile placements |
-| `blocks` | array of Item | optional | Block obstacle placements |
-| `zones` | array of Zone | optional | Trigger zone markers |
+| Field     | Type          | Required | Description                             |
+| --------- | ------------- | -------- | --------------------------------------- |
+| `floor`   | string        | yes      | Floor identifier (`"1f"`, `"2f"`, etc.) |
+| `grounds` | array of Item | optional | Ground tile placements                  |
+| `blocks`  | array of Item | optional | Block obstacle placements               |
+| `zones`   | array of Zone | optional | Trigger zone markers                    |
 
 #### Item
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `prefab` | string | yes | Prefab asset name **without** trailing variant number (e.g. `"Ground_10.0x0.5x10.0_Green"`) |
-| `variant` | int | yes | Variant number (1-based); used for scene object naming only, not appended to prefab asset name on import |
-| `position` | float[3] | yes | World coordinates `[x, y, z]` in meters |
-| `rotation_y` | int | optional | Y-axis rotation in degrees, default `0` |
+| Field        | Type     | Required | Description                                                                                              |
+| ------------ | -------- | -------- | -------------------------------------------------------------------------------------------------------- |
+| `prefab`     | string   | yes      | Prefab asset name **without** trailing variant number (e.g. `"Ground_10.0x0.5x10.0_Green"`)              |
+| `variant`    | int      | yes      | Variant number (1-based); used for scene object naming only, not appended to prefab asset name on import |
+| `position`   | float[3] | yes      | World coordinates `[x, y, z]` in meters                                                                  |
+| `rotation_y` | int      | optional | Y-axis rotation in degrees, default `0`                                                                  |
 
 #### Zone
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `zone_id` | string | yes | Identifier matching `^vol_[a-z0-9_]+$` |
-| `position` | float[3] | yes | World coordinates `[x, y, z]` in meters |
+| Field      | Type     | Required | Description                             |
+| ---------- | -------- | -------- | --------------------------------------- |
+| `zone_id`  | string   | yes      | Identifier matching `^vol_[a-z0-9_]+$`  |
+| `position` | float[3] | yes      | World coordinates `[x, y, z]` in meters |
 
 ### 7.4 Constraints Summary
 
@@ -801,9 +802,10 @@ new JsonSerializerSettings {
 ```
 
 Effects:
-- Output is indented for human and LLM readability
-- Default values (e.g., `rotation_y: 0`) are omitted, reducing noise
-- Nulls are omitted
+
++ Output is indented for human and LLM readability
++ Default values (e.g., `rotation_y: 0`) are omitted, reducing noise
++ Nulls are omitted
 
 ### 7.7 C# Class Diagram
 
@@ -944,20 +946,22 @@ flowchart TB
 
 The bidirectional converter satisfies:
 
-```
+```text
 ∀ valid JSON j:        Export(Import(j)) ≡_semantic j
 ∀ valid Scene s:       Import(Export(s)) ≈_layout s
 ```
 
 Where:
-- `≡_semantic` means JSON documents are equivalent under `JToken.DeepEquals`
-- `≈_layout` means scenes contain identical prefab placements and zone positions (other scene attributes such as material instance IDs may differ)
+
++ `≡_semantic` means JSON documents are equivalent under `JToken.DeepEquals`
++ `≈_layout` means scenes contain identical prefab placements and zone positions (other scene attributes such as material instance IDs may differ)
 
 The discreteness of the input space (§4.3) is what mathematically guarantees this property:
-- No floating-point drift accumulates across round trips
-- Every position has a unique grid-snapped representation
-- Every rotation has a unique cardinal representation
-- Every prefab has a unique name encoding
+
++ No floating-point drift accumulates across round trips
++ Every position has a unique grid-snapped representation
++ Every rotation has a unique cardinal representation
++ Every prefab has a unique name encoding
 
 ### 8.4 Round-trip Test Strategy
 
@@ -973,12 +977,12 @@ This test exercises the JSON ↔ POCO round-trip but not the JSON ↔ Scene roun
 
 ### 8.5 Tolerance Handling
 
-| Quantity | Tolerance | Action when exceeded |
-|---|---|---|
-| Position drift from grid | 0.01m per axis | Console warning, continue |
-| Rotation drift from cardinal | 1.0° | Console warning, continue |
-| Prefab name pattern mismatch | exact match required | Skip object silently |
-| Missing prefab on import | exact match required | Console warning, skip GameObject |
+| Quantity                     | Tolerance            | Action when exceeded             |
+| ---------------------------- | -------------------- | -------------------------------- |
+| Position drift from grid     | 0.01m per axis       | Console warning, continue        |
+| Rotation drift from cardinal | 1.0°                 | Console warning, continue        |
+| Prefab name pattern mismatch | exact match required | Skip object silently             |
+| Missing prefab on import     | exact match required | Console warning, skip GameObject |
 
 Briko **never throws fatal exceptions** on data anomalies. The principle: a partial result with warnings is more useful than a complete failure.
 
@@ -988,7 +992,7 @@ Briko **never throws fatal exceptions** on data anomalies. The principle: a part
 
 ### 9.1 UPM Package Layout
 
-```
+```text
 briko/
 ├── package.json
 ├── README.md
@@ -1100,9 +1104,10 @@ The test project uses **shared source compilation**: it directly compiles select
 `<EnableDefaultItems>false</EnableDefaultItems>` ensures every file is explicitly listed.
 
 This pattern allows:
-- Tests run on plain .NET 9 without Unity
-- No double-compilation of source files
-- Clear visibility of which Editor classes have NUnit coverage
+
++ Tests run on plain .NET 9 without Unity
++ No double-compilation of source files
++ Clear visibility of which Editor classes have NUnit coverage
 
 ### 9.5 Class Coverage Pattern
 
@@ -1132,25 +1137,25 @@ Classes that depend on Unity APIs (GameObject, Transform, EditorSceneManager, As
 
 Classes use **single words without project prefix**:
 
-| Used | Avoided |
-|---|---|
-| `Exporter` | `BrikoExporter` |
-| `Importer` | `BrikoImporter` |
+| Used                               | Avoided                              |
+| ---------------------------------- | ------------------------------------ |
+| `Exporter`                         | `BrikoExporter`                      |
+| `Importer`                         | `BrikoImporter`                      |
 | `Root`, `Platform`, `Item`, `Zone` | `LayoutRoot`, `LayoutPlatform`, etc. |
-| `PrefabNameParser` | `BrikoPrefabNameParser` |
+| `PrefabNameParser`                 | `BrikoPrefabNameParser`              |
 
 Disambiguation when needed is achieved through namespaces: `Briko.Editor.Exporter` vs `OtherPackage.Exporter`.
 
 ### 10.2 Property Naming
 
-| Class type | Convention | Example |
-|---|---|---|
-| Data class (Layout, etc.) | `snake_case` (matches JSON) | `layout_id`, `grid_unit` |
-| Service / behavior class | `camelCase` | `home`, `beat`, `mode` |
-| Private field | `_snake_case` | `_do_update`, `_jump_power` |
-| Local variable / parameter | `snake_case` | `base_path`, `grid_unit` |
-| Constant | `ALL_CAPS` | `GRID_UNIT`, `MENU_ROOT` |
-| `[SerializeField]` (Unity) | `_ALL_CAPS` | `_JUMP_POWER` |
+| Class type                 | Convention                  | Example                     |
+| -------------------------- | --------------------------- | --------------------------- |
+| Data class (Layout, etc.)  | `snake_case` (matches JSON) | `layout_id`, `grid_unit`    |
+| Service / behavior class   | `camelCase`                 | `home`, `beat`, `mode`      |
+| Private field              | `_snake_case`               | `_do_update`, `_jump_power` |
+| Local variable / parameter | `snake_case`                | `base_path`, `grid_unit`    |
+| Constant                   | `ALL_CAPS`                  | `GRID_UNIT`, `MENU_ROOT`    |
+| `[SerializeField]` (Unity) | `_ALL_CAPS`                 | `_JUMP_POWER`               |
 
 ### 10.3 Named Arguments Rule
 
@@ -1166,9 +1171,10 @@ GridSnapper.Snap(position, 0.5f);
 ```
 
 Exceptions (positional permitted):
-- .NET BCL: `Math.Round(value)`, `string.IsNullOrEmpty(s)`
-- Unity API: `GameObject.Find("Platform")`, `transform.position`
-- Newtonsoft.Json: `JsonConvert.SerializeObject(obj)`
+
++ .NET BCL: `Math.Round(value)`, `string.IsNullOrEmpty(s)`
++ Unity API: `GameObject.Find("Platform")`, `transform.position`
++ Newtonsoft.Json: `JsonConvert.SerializeObject(obj)`
 
 ### 10.4 File Header
 
@@ -1214,7 +1220,7 @@ namespace Briko.Editor {
 
 Data classes are grouped into a single file rather than one-class-per-file:
 
-- `Editor/Model/Layout.cs` contains `Root`, `Platform`, `Item`, `Zone`
++ `Editor/Model/Layout.cs` contains `Root`, `Platform`, `Item`, `Zone`
 
 This convention matches Germio's `Data.cs` (containing `Scenario`, `State`, `World`, `Level`, `Next`, `Rule`, etc.). Service and behavior classes use one-file-per-class.
 
@@ -1490,14 +1496,14 @@ graph LR
 
 ### 14.2 v1.0 — Implemented
 
-- ✅ Layout JSON format defined and stable
-- ✅ Exporter (Scene → JSON)
-- ✅ Importer (JSON → Scene)
-- ✅ Editor menu integration
-- ✅ Round-trip property guaranteed by discrete constraints
-- ✅ Test suite (NUnit, 18 tests, shared source compilation)
-- ✅ Stemic-aligned coding conventions
-- ✅ BrikoLog diagnostic logger
++ ✅ Layout JSON format defined and stable
++ ✅ Exporter (Scene → JSON)
++ ✅ Importer (JSON → Scene)
++ ✅ Editor menu integration
++ ✅ Round-trip property guaranteed by discrete constraints
++ ✅ Test suite (NUnit, 18 tests, shared source compilation)
++ ✅ Stemic-aligned coding conventions
++ ✅ BrikoLog diagnostic logger
 
 ### 14.3 v2.0 — Planned
 
@@ -1532,11 +1538,11 @@ graph TB
 
 The following are explicitly **not** Briko's responsibility:
 
-- Scenario logic (delegated to Germio)
-- Procedural generation algorithms
-- Prefab asset creation
-- Game runtime (Briko is Editor-only)
-- Asset-store distribution
++ Scenario logic (delegated to Germio)
++ Procedural generation algorithms
++ Prefab asset creation
++ Game runtime (Briko is Editor-only)
++ Asset-store distribution
 
 ---
 
@@ -1544,17 +1550,17 @@ The following are explicitly **not** Briko's responsibility:
 
 ### 15.1 Companion Documents
 
-| Document | Purpose |
-|---|---|
-| `docs/development_plan_v1_detail_JP.md` | Step-by-step v1 implementation guide (Japanese) |
-| `README.md` | User-facing introduction |
-| Germio specification (separate repository) | Companion framework reference |
+| Document                                   | Purpose                                         |
+| ------------------------------------------ | ----------------------------------------------- |
+| `docs/development_plan_v1_detail_JP.md`    | Step-by-step v1 implementation guide (Japanese) |
+| `README.md`                                | User-facing introduction                        |
+| Germio specification (separate repository) | Companion framework reference                   |
 
 ### 15.2 External Resources
 
-- [Unity Package Manager Custom Layout](https://docs.unity3d.com/Manual/cus-layout.html) — `Tests~` directory convention
-- [com.unity.nuget.newtonsoft-json](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@latest) — JSON library
-- [NUnit Documentation](https://docs.nunit.org/) — test framework
++ [Unity Package Manager Custom Layout](https://docs.unity3d.com/Manual/cus-layout.html) — `Tests~` directory convention
++ [com.unity.nuget.newtonsoft-json](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@latest) — JSON library
++ [NUnit Documentation](https://docs.nunit.org/) — test framework
 
 ### 15.3 Conformance
 

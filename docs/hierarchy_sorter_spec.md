@@ -14,17 +14,17 @@
 
 ## Table of Contents
 
-| Section | Topic |
-|---|---|
-| 1 | Overview |
-| 2 | Floor Detection |
-| 3 | Block Assignment |
-| 4 | Landing and Corridor Assignment |
-| 5 | Variant Renumbering |
-| 6 | Output Hierarchy |
-| 7 | Exporter Compatibility |
-| 8 | Algorithm Flow |
-| 9 | Failure Modes |
+| Section | Topic                           |
+| ------- | ------------------------------- |
+| 1       | Overview                        |
+| 2       | Floor Detection                 |
+| 3       | Block Assignment                |
+| 4       | Landing and Corridor Assignment |
+| 5       | Variant Renumbering             |
+| 6       | Output Hierarchy                |
+| 7       | Exporter Compatibility          |
+| 8       | Algorithm Flow                  |
+| 9       | Failure Modes                   |
 
 ---
 
@@ -45,19 +45,19 @@ graph LR
 
 ### 1.1 What It Does
 
-- Groups Ground and Block prefabs under floor containers (`2F`, `1F`, `B1F`, ...)
-- Renumbers variant suffixes within each floor (`_1`, `_2`, `_3`, ...)
-- Leaves world positions, rotations, and scales untouched
++ Groups Ground and Block prefabs under floor containers (`2F`, `1F`, `B1F`, ...)
++ Renumbers variant suffixes within each floor (`_1`, `_2`, `_3`, ...)
++ Leaves world positions, rotations, and scales untouched
 
 ### 1.2 What It Does Not Do
 
-- Move any prefab in 3D space
-- Modify prefab assets
-- Change game logic or zone assignments
++ Move any prefab in 3D space
++ Modify prefab assets
++ Change game logic or zone assignments
 
 ### 1.3 Menu Entry
 
-```
+```text
 Tools > Briko > Sort Hierarchy by Floor
 ```
 
@@ -81,17 +81,17 @@ flowchart TB
     style Landing fill:#fff9c4
 ```
 
-| Prefab dimensions | Role |
-|---|---|
-| `10.0 × 0.5 × 10.0` | Floor anchor |
-| `5.0 × 0.5 × 5.0` | Floor anchor |
-| `2.5 × 0.5 × 2.5` | Landing / corridor |
+| Prefab dimensions   | Role               |
+| ------------------- | ------------------ |
+| `10.0 × 0.5 × 10.0` | Floor anchor       |
+| `5.0 × 0.5 × 5.0`   | Floor anchor       |
+| `2.5 × 0.5 × 2.5`   | Landing / corridor |
 
 ### 2.2 Surface Y Calculation
 
 The **surface Y** of a Ground prefab is its top face in world space:
 
-```
+```text
 surface_Y = prefab_position_Y + (prefab_height / 2)
            = prefab_position_Y + 0.25
 ```
@@ -210,7 +210,7 @@ flowchart LR
 
 The **order of groups** is determined by the first occurrence of each base_name in the globally Z/X-sorted list.
 
-```
+```text
 Example — 1F blocks (global Z order):
   Plain(z=2.5) ← FIRST Plain → Plain group is 1st
   0.5  (z=3.25) ← FIRST 0.5 → 0.5 group is 2nd
@@ -236,14 +236,14 @@ Output (grouped):
 
 ### 5.2 Rationale
 
-- Each prefab type (base_name) is numbered independently starting from _1
-- All instances of the same type appear contiguously in the Hierarchy
-- Group order is deterministic: determined by the smallest Z of each type
-- Designers can see all Ground_10, all Ground_5, all Ground_2.5 as separate blocks
++ Each prefab type (base_name) is numbered independently starting from_1
++ All instances of the same type appear contiguously in the Hierarchy
++ Group order is deterministic: determined by the smallest Z of each type
++ Designers can see all Ground_10, all Ground_5, all Ground_2.5 as separate blocks
 
 ### 5.3 Name Format
 
-```
+```text
 {prefab_base_name}_{variant_number}
 
 Groups are output in first-appearance Z order. Within each group: Z asc → X asc.
@@ -289,13 +289,13 @@ graph TB
 
 ### 6.1 Container Naming Rules
 
-| Container | Name | Example |
-|---|---|---|
-| Floor above ground | `{N}F` | `2F`, `3F` |
-| Ground floor | `1F` | `1F` |
-| Floor below ground | `B{N}F` | `B1F`, `B2F` |
-| Ground container | `grounds` | `grounds` |
-| Block container | `blocks` | `blocks` |
+| Container          | Name      | Example      |
+| ------------------ | --------- | ------------ |
+| Floor above ground | `{N}F`    | `2F`, `3F`   |
+| Ground floor       | `1F`      | `1F`         |
+| Floor below ground | `B{N}F`   | `B1F`, `B2F` |
+| Ground container   | `grounds` | `grounds`    |
+| Block container    | `blocks`  | `blocks`     |
 
 ---
 
@@ -305,7 +305,7 @@ The Exporter must be updated to read the new hierarchy structure.
 
 ### 7.1 Previous Structure (v1)
 
-```
+```text
 Platform
 ├── grounds_1f     ← prefix-based detection
 ├── grounds_2f
@@ -315,7 +315,7 @@ Platform
 
 ### 7.2 New Structure (post-sort)
 
-```
+```text
 Platform
 ├── 1F
 │   ├── grounds    ← fixed name under floor container
@@ -404,12 +404,12 @@ graph TB
     style S4 fill:#c8e6c9
 ```
 
-| Failure | Action |
-|---|---|
-| No floor anchor found | Log warning, abort |
-| `vol_spawn` / `vol_exit` missing | Log warning, default to descend |
-| Block not assignable | Log warning, assign to nearest floor below |
-| `Platform` root not found | Log error, abort |
+| Failure                          | Action                                     |
+| -------------------------------- | ------------------------------------------ |
+| No floor anchor found            | Log warning, abort                         |
+| `vol_spawn` / `vol_exit` missing | Log warning, default to descend            |
+| Block not assignable             | Log warning, assign to nearest floor below |
+| `Platform` root not found        | Log error, abort                           |
 
 Briko never crashes on data anomalies. Partial results with warnings are preferred over complete failure.
 
@@ -436,7 +436,7 @@ flowchart TB
 
 The predicate for identifying structural containers (safe to destroy) is:
 
-```
+```text
 IsStructuralContainer(name) =
     IsFloorContainer(name)     // 1F, 2F, B1F, ...
     OR IsGroundsContainer(name)  // grounds, grounds_1f, ...
@@ -448,9 +448,10 @@ IsStructuralContainer(name) =
 After `RenumberContainerChildren`, sibling indices must be updated so the Unity Hierarchy displays children in Z ascending → X ascending order (matching the variant number order).
 
 `SetSiblingIndex(i)` is called on each child after renaming so that:
-- Child with `_1` appears first
-- Child with `_2` appears second
-- etc.
+
++ Child with `_1` appears first
++ Child with `_2` appears second
++ etc.
 
 Validation: `IsVariantOrderValid(items_in_sibling_order)` checks that for each base_name, variants appear in ascending order starting from `_1`.
 
@@ -492,24 +493,25 @@ classDiagram
 #### IsFloorContainer(string name) → bool
 
 Returns `true` if `name` matches a floor container label.
-- Above / at ground: regex `^\d+F$` → `"1F"`, `"2F"`, `"3F"` ...
-- Below ground: regex `^B\d+F$` → `"B1F"`, `"B2F"` ...
-- Case-sensitive: uppercase `F` only.
+
++ Above / at ground: regex `^\d+F$` → `"1F"`, `"2F"`, `"3F"` ...
++ Below ground: regex `^B\d+F$` → `"B1F"`, `"B2F"` ...
++ Case-sensitive: uppercase `F` only.
 
 Used by `HierarchySorter` to distinguish floor containers from `grounds` / `blocks` / `Platform` when walking the post-sort hierarchy, and by `Exporter` (Task C) for the same purpose.
 
-#### RenumberVariants(List<(string base_name, float x, float z)> items) → List<string>
+#### RenumberVariants(`List<(string base_name, float x, float z)>` items) → `List<string>`
 
 Sorts `items` by **Z ascending → X ascending**, then returns new names with sequential `_1`, `_2`, ... suffix.
 
-- Input: list of `(prefab_base_name, world_x, world_z)` for all items in one container
-- Output: renamed list in sorted order
-- Empty input → empty output (no crash)
-- Mixed base names within one container are numbered sequentially across the whole list
++ Input: list of `(prefab_base_name, world_x, world_z)` for all items in one container
++ Output: renamed list in sorted order
++ Empty input → empty output (no crash)
++ Mixed base names within one container are numbered sequentially across the whole list
 
 ### 10.3 HierarchySorter Menu Entry
 
-```
+```text
 Tools > Briko > Sort Hierarchy by Floor
 ```
 

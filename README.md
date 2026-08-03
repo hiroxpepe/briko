@@ -5,8 +5,8 @@
 > LLM-driven Unity level generation via bidirectional Scene ↔ JSON conversion.
 
 [![Unity](https://img.shields.io/badge/Unity-6%20LTS-black?logo=unity)](https://unity.com/)
-[![Phase](https://img.shields.io/badge/phase-1-blue)]()
-[![Version](https://img.shields.io/badge/version-v0.1.9-orange)]()
+![Phase](https://img.shields.io/badge/phase-1-blue)
+![Version](https://img.shields.io/badge/version-v0.1.9-orange)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ---
@@ -39,12 +39,12 @@ This was the founding observation. Ask Claude or GPT to "design a Mario level" a
 
 Briko sidesteps the problem by **shrinking the LLM's freedom**:
 
-| Continuous problem | Briko's discrete reformulation |
-|---|---|
-| "Place a block somewhere reasonable" | Pick from a fixed prefab catalog |
-| "Choose XYZ coordinates" | Snap to 0.25m grid (integer multiples only) |
-| "Set the rotation" | Choose from `{0°, 90°, 180°, 270°}` |
-| "Imagine a full 3D scene" | Edit JSON arrays (a thing LLMs are great at) |
+| Continuous problem                   | Briko's discrete reformulation               |
+| ------------------------------------ | -------------------------------------------- |
+| "Place a block somewhere reasonable" | Pick from a fixed prefab catalog             |
+| "Choose XYZ coordinates"             | Snap to 0.25m grid (integer multiples only)  |
+| "Set the rotation"                   | Choose from `{0°, 90°, 180°, 270°}`          |
+| "Imagine a full 3D scene"            | Edit JSON arrays (a thing LLMs are great at) |
 
 By constraining the search space to **a discrete vocabulary the LLM can actually reason over**, Briko turns level design from an unsolved problem into an **autocomplete problem**.
 
@@ -171,8 +171,8 @@ graph LR
 
 ### Prerequisites
 
-- **Unity 6 LTS** or **Unity 2022.3+**
-- **.NET 9 SDK** (only for running the test suite)
++ **Unity 6 LTS** or **Unity 2022.3+**
++ **.NET 9 SDK** (only for running the test suite)
 
 ### Installation (UPM `file:` reference)
 
@@ -204,8 +204,8 @@ graph LR
     style Import fill:#ffe66d,stroke:#000
 ```
 
-- **Export**: dumps the active scene's `Platform` and `Entity` hierarchies into a JSON file.
-- **Import**: reads a JSON file and constructs a new scene with prefabs placed and zones marked.
++ **Export**: dumps the active scene's `Platform` and `Entity` hierarchies into a JSON file.
++ **Import**: reads a JSON file and constructs a new scene with prefabs placed and zones marked.
 
 ---
 
@@ -269,18 +269,18 @@ graph TB
 
 ### Design Principles
 
-| Principle | Rationale |
-|---|---|
-| **Integer multiples of grid_unit** | Float drift is eliminated; LLMs can never produce "almost on the grid" placements |
-| **rotation_y ∈ {0, 90, 180, 270}** | Discretization makes intent unambiguous |
+| Principle                           | Rationale                                                                          |
+| ----------------------------------- | ---------------------------------------------------------------------------------- |
+| **Integer multiples of grid_unit**  | Float drift is eliminated; LLMs can never produce "almost on the grid" placements  |
+| **rotation_y ∈ {0, 90, 180, 270}**  | Discretization makes intent unambiguous                                            |
 | **Prefab name + variant separated** | LLM picks from a finite catalog; visual variation is decoupled from spatial choice |
-| **No materials, no scales** | Already baked into prefabs; nothing for the LLM to hallucinate |
+| **No materials, no scales**         | Already baked into prefabs; nothing for the LLM to hallucinate                     |
 
 ---
 
 ## Project Structure
 
-```
+```text
 briko/
 ├── Editor/                              ← all package code is editor-only
 │   ├── Briko.Editor.asmdef             ← assembly definition (Editor platform only)
@@ -366,9 +366,9 @@ graph LR
     style GameDev fill:#ffe0b2
 ```
 
-- **Briko → Germio**: one-way reference allowed (currently unused in v1)
-- **Germio → Briko**: forbidden (would create circular dependency)
-- **Briko → game-specific code**: forbidden (Briko is a generic tool, not Sprout Quest's helper)
++ **Briko → Germio**: one-way reference allowed (currently unused in v1)
++ **Germio → Briko**: forbidden (would create circular dependency)
++ **Briko → game-specific code**: forbidden (Briko is a generic tool, not Sprout Quest's helper)
 
 ---
 
@@ -376,15 +376,15 @@ graph LR
 
 Briko follows the conventions of [Stemic](https://github.com/hiroxpepe/stemic) (the parent game project) precisely. Key rules:
 
-| Element | Convention | Example |
-|---|---|---|
-| Class name | Single word, no project prefix | `Exporter`, not `BrikoExporter` |
-| Public properties (data classes) | `snake_case` (matches JSON keys) | `layout_id`, `grid_unit` |
-| Public properties (other) | `camelCase` | `home`, `beat`, `mode` |
-| Private fields | `_snake_case` | `_do_update`, `_jump_power` |
-| Local variables / parameters | `snake_case` | `base_path`, `grid_unit` |
-| Constants | `ALL_CAPS` | `GRID_UNIT`, `MENU_ROOT` |
-| Method calls (project-defined) | **Always use named parameters** | `Snap(raw: pos, grid_unit: 0.25f)` |
+| Element                          | Convention                       | Example                            |
+| -------------------------------- | -------------------------------- | ---------------------------------- |
+| Class name                       | Single word, no project prefix   | `Exporter`, not `BrikoExporter`    |
+| Public properties (data classes) | `snake_case` (matches JSON keys) | `layout_id`, `grid_unit`           |
+| Public properties (other)        | `camelCase`                      | `home`, `beat`, `mode`             |
+| Private fields                   | `_snake_case`                    | `_do_update`, `_jump_power`        |
+| Local variables / parameters     | `snake_case`                     | `base_path`, `grid_unit`           |
+| Constants                        | `ALL_CAPS`                       | `GRID_UNIT`, `MENU_ROOT`           |
+| Method calls (project-defined)   | **Always use named parameters**  | `Snap(raw: pos, grid_unit: 0.25f)` |
 
 JSON serialization uses no `[JsonProperty]` attributes — property names are the JSON keys directly.
 
@@ -456,10 +456,10 @@ gantt
 
 ### Current Status: **v0.1.0 — Phase 1 Complete** ✅
 
-- ✅ Bidirectional Scene ↔ JSON conversion working
-- ✅ 18/18 tests passing
-- ✅ Stemic conventions enforced
-- ⏳ Manual round-trip validation in progress (Tasks 5-6)
++ ✅ Bidirectional Scene ↔ JSON conversion working
++ ✅ 18/18 tests passing
++ ✅ Stemic conventions enforced
++ ⏳ Manual round-trip validation in progress (Tasks 5-6)
 
 See [`docs/development_plan_v1_detail_JP.md`](docs/development_plan_v1_detail_JP.md) for detailed implementation status.
 
