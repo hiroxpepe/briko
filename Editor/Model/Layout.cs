@@ -1,6 +1,7 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
-// Licensed under GPL v2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System;
 using System.Collections.Generic;
 
 namespace Briko.Editor.Model {
@@ -10,6 +11,7 @@ namespace Briko.Editor.Model {
     /// Maps to level_layout.json (briko_spec.md §7.2).
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
+    [Serializable]
     public class Root {
 #nullable enable
         /// <summary>Level identifier, used as scene name on import.</summary>
@@ -32,6 +34,7 @@ namespace Briko.Editor.Model {
     /// Per-floor layer holding ground tiles, block obstacles, and trigger zones.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
+    [Serializable]
     public class Platform {
 #nullable enable
         /// <summary>Floor identifier ("1f", "2f", ...).</summary>
@@ -51,6 +54,7 @@ namespace Briko.Editor.Model {
     /// Single prefab placement (ground tile or block obstacle).
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
+    [Serializable]
     public class Item {
 #nullable enable
         /// <summary>Prefab asset name without trailing variant number (e.g. "Ground_10.0x0.5x10.0_Green").</summary>
@@ -70,6 +74,7 @@ namespace Briko.Editor.Model {
     /// Trigger zone marker. The zone_id string is the contract with Germio.
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
+    [Serializable]
     public class Zone {
 #nullable enable
         /// <summary>Zone identifier matching Germio's germio_config.json (e.g. "vol_boss_start").</summary>

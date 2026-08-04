@@ -1,5 +1,5 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
-// Licensed under GPL v2.0. See LICENSE in the project root for license information.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.IO;
 using Briko.Editor.Model;
@@ -35,7 +35,7 @@ namespace Briko.Editor {
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
         [MenuItem(MENU_ROOT + "Import JSON to New Scene...")]
-        public static void ImportJsonToNewScene() {
+        public static void ImportJSONToNewScene() {
             string json_path = EditorUtility.OpenFilePanel(
                 "Select Level Layout JSON",
                 "",
