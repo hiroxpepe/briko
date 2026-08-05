@@ -2,10 +2,10 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.IO;
-using Briko.Editor.Model;
 using Newtonsoft.Json;
 using UnityEditor;
 using UnityEngine;
+using Briko.Editor.Model;
 
 namespace Briko.Editor {
 
@@ -19,9 +19,9 @@ namespace Briko.Editor {
         ///////////////////////////////////////////////////////////////////////
         // Private constants
 
-        private const string MENU_ROOT = "Tools/Briko/";
+        const string MENU_ROOT = "Tools/Briko/";
 
-        private static readonly JsonSerializerSettings JSON_SETTINGS = new JsonSerializerSettings {
+        static readonly JsonSerializerSettings JSON_SETTINGS = new JsonSerializerSettings {
             Formatting = Formatting.Indented,
             NullValueHandling = NullValueHandling.Ignore,
             DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,

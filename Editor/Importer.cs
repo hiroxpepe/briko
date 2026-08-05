@@ -2,11 +2,11 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System.IO;
-using Briko.Editor.Internal;
-using Briko.Editor.Model;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using Briko.Editor.Internal;
+using Briko.Editor.Model;
 
 namespace Briko.Editor {
 

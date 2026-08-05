@@ -3,10 +3,10 @@
 
 using System;
 using System.Collections.Generic;
-using Briko.Editor.Internal;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Briko.Editor.Internal;
 
 namespace Briko.Editor {
 

@@ -4,10 +4,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Briko.Editor.Internal;
-using Briko.Editor.Model;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Briko.Editor.Internal;
+using Briko.Editor.Model;
 
 namespace Briko.Editor {
 
@@ -21,15 +21,15 @@ namespace Briko.Editor {
         ///////////////////////////////////////////////////////////////////////
         // Private constants
 
-        private const float GRID_UNIT = 0.25f;
-        private const float GRID_WARN_THRESHOLD = 0.01f;
-        private const float ROTATION_WARN_THRESHOLD = 1.0f;
-        private const float FLOOR_2F_Y_THRESHOLD = 3.0f;
-        private const string ZONE_PATTERN = @"^vol_[a-z0-9_]+$";
-        private const string GROUNDS_PREFIX = "grounds_";
-        private const string BLOCKS_PREFIX = "blocks_";
-        private const string PLATFORM_NAME = "Platform";
-        private const string ENTITY_NAME = "Entity";
+        const float GRID_UNIT = 0.25f;
+        const float GRID_WARN_THRESHOLD = 0.01f;
+        const float ROTATION_WARN_THRESHOLD = 1.0f;
+        const float FLOOR_2F_Y_THRESHOLD = 3.0f;
+        const string ZONE_PATTERN = @"^vol_[a-z0-9_]+$";
+        const string GROUNDS_PREFIX = "grounds_";
+        const string BLOCKS_PREFIX = "blocks_";
+        const string PLATFORM_NAME = "Platform";
+        const string ENTITY_NAME = "Entity";
 
         ///////////////////////////////////////////////////////////////////////
         // Public methods [verb, verb phrase]
@@ -83,7 +83,7 @@ namespace Briko.Editor {
         /// Finds a root-level GameObject in the active scene by name.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static GameObject? findRootObject(string name) {
+        static GameObject? findRootObject(string name) {
             foreach (GameObject root in SceneManager.GetActiveScene().GetRootGameObjects()) {
                 if (root.name == name) {
                     return root;
@@ -96,7 +96,7 @@ namespace Briko.Editor {
         /// Iterates the children of the Platform GameObject and collects grounds and blocks.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static void collectPlatformChildren(
+        static void collectPlatformChildren(
             GameObject platform_root,
             Dictionary<string, Platform> platform_map) {
 
@@ -118,7 +118,7 @@ namespace Briko.Editor {
         /// Collects Item entries from all descendants of <paramref name="parent"/>.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static void collectItems(Transform parent, List<Item> items) {
+        static void collectItems(Transform parent, List<Item> items) {
             foreach (Transform child in parent) {
                 string clean_name = child.name.Replace("(Clone)", "").Trim();
                 var parsed = PrefabNameParser.Parse(name: clean_name);
@@ -151,7 +151,7 @@ namespace Briko.Editor {
         /// Collects Block items, inferring floor from Y coordinate.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static void collectBlockItems(
+        static void collectBlockItems(
             Transform parent,
             Dictionary<string, Platform> platform_map) {
 
@@ -192,7 +192,7 @@ namespace Briko.Editor {
         /// Collects Zone entries from the Entity hierarchy.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static void collectZones(GameObject entity_root, List<Zone> zones) {
+        static void collectZones(GameObject entity_root, List<Zone> zones) {
             foreach (Transform child in entity_root.transform) {
                 if (!Regex.IsMatch(child.name, ZONE_PATTERN)) {
                     continue;
@@ -214,7 +214,7 @@ namespace Briko.Editor {
         /// Gets or creates a Platform for the given floor key.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static Platform getOrCreatePlatform(
+        static Platform getOrCreatePlatform(
             Dictionary<string, Platform> platform_map,
             string floor) {
 
@@ -229,7 +229,7 @@ namespace Briko.Editor {
         /// Snaps rotation_y to nearest 0/90/180/270, warning if drift exceeds threshold.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static int snapRotationY(float raw_y, string go_name) {
+        static int snapRotationY(float raw_y, string go_name) {
             int[] candidates = new int[] { 0, 90, 180, 270 };
             float normalized = ((raw_y % 360f) + 360f) % 360f;
             int best = 0;
@@ -252,7 +252,7 @@ namespace Briko.Editor {
         /// Emits a Console warning if position was not on the grid.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static void warnIfPositionSnapDiffers(
+        static void warnIfPositionSnapDiffers(
             float[] raw_position,
             float[] snapped,
             string go_name) {

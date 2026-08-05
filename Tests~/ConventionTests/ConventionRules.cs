@@ -265,6 +265,14 @@ static class ConventionRules
                 found.Add($"{label}:{line(type)}: type '{id}' must be PascalCase");
         }
 
+        // A member with no access modifier is already private by C# default,
+        // so writing the keyword out is redundant noise. Say it once here
+        // instead of on every field, method, and property.
+        foreach (var member in root.DescendantNodes().OfType<MemberDeclarationSyntax>()) {
+            if (has(modifiers_of(member), "private"))
+                found.Add($"{label}:{line(member)}: '{name_of(member)}' must omit the redundant 'private' keyword");
+        }
+
         // Namespace names are PascalCase in every dotted segment (Animo.Core,
         // not animo.core). The spelling pass below also holds for each segment.
         foreach (var ns in root.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>()) {
@@ -406,6 +414,74 @@ static class ConventionRules
                 }
                 if (key.CompareTo(high) > 0) high = key;
             }
+        }
+        found.Sort(StringComparer.Ordinal);
+        return found;
+    }
+
+    // A type, a method body, or a control-flow block must open its brace on
+    // the same line as the line before it — `void run() {`, not `void run()`
+    // then `{` alone on the next line.
+    internal static List<string> find_brace_violations(string code, string label)
+    {
+        var found = new List<string>();
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var unit = tree.GetCompilationUnitRoot();
+
+        void check(SyntaxToken open_brace)
+        {
+            var prev = open_brace.GetPreviousToken();
+            if (prev.Kind() == SyntaxKind.None) return;
+            var brace_line = tree.GetLineSpan(open_brace.Span).StartLinePosition.Line;
+            var prev_line = tree.GetLineSpan(prev.Span).StartLinePosition.Line;
+            if (brace_line != prev_line)
+                found.Add($"{label}:{brace_line + 1}: opening brace must join the line above, not stand alone");
+        }
+
+        foreach (var block in unit.DescendantNodes().OfType<BlockSyntax>())
+            check(block.OpenBraceToken);
+
+        foreach (var type in unit.DescendantNodes().OfType<BaseTypeDeclarationSyntax>())
+            check(type.OpenBraceToken);
+
+        foreach (var ns in unit.DescendantNodes().OfType<NamespaceDeclarationSyntax>())
+            check(ns.OpenBraceToken);
+
+        found.Sort(StringComparer.Ordinal);
+        return found;
+    }
+
+    // A file's using directives fall into three groups, in this order:
+    // System, then Unity or any other third-party OSS library, then this
+    // project's own namespace. Within that, the file need not be
+    // alphabetical — only the group order is enforced.
+    internal static List<string> find_using_order_violations(string code, string label)
+    {
+        var found = new List<string>();
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var unit = tree.GetCompilationUnitRoot();
+
+        var own_ns = unit.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>().FirstOrDefault();
+        var own_root = own_ns?.Name.ToString().Split('.')[0];
+
+        int group_of(string name)
+        {
+            var root = name.Split('.')[0];
+            if (root == "System") return 0;
+            if (own_root != null && root == own_root) return 2;
+            return 1;
+        }
+
+        int high = -1;
+        foreach (var u in unit.DescendantNodes().OfType<UsingDirectiveSyntax>()) {
+            if (u.StaticKeyword.IsKind(SyntaxKind.StaticKeyword) || u.Alias != null) continue;
+            var name = u.Name?.ToString() ?? "";
+            var group = group_of(name);
+            if (group < high) {
+                var at = tree.GetLineSpan(u.Span).StartLinePosition.Line + 1;
+                found.Add($"{label}:{at}: using '{name}' is out of group order (system, then third-party, then own code)");
+            }
+            if (group > high) high = group;
         }
         found.Sort(StringComparer.Ordinal);
         return found;

@@ -33,6 +33,60 @@ public class ConventionRulesTests
     }
 
     [Test]
+    public void Catches_OwnNamespaceUsingBeforeThirdParty()
+    {
+        var code = "namespace Briko.Editor {\n"
+            + "    using System;\n"
+            + "    using Briko.Editor.Internal;\n"
+            + "    using UnityEngine;\n"
+            + "    class Mock {}\n"
+            + "}";
+        var found = ConventionRules.find_using_order_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("out of group order")), Is.True);
+    }
+
+    [Test]
+    public void Passes_UsingsInSystemThenThirdPartyThenOwnOrder()
+    {
+        var code = "namespace Briko.Editor {\n"
+            + "    using System;\n"
+            + "    using UnityEngine;\n"
+            + "    using Briko.Editor.Internal;\n"
+            + "    class Mock {}\n"
+            + "}";
+        var found = ConventionRules.find_using_order_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("out of group order")), Is.False);
+    }
+
+    [Test]
+    public void Catches_OpeningBraceOnItsOwnLine()
+    {
+        var code = "class Mock\n{\n    void run() {}\n}";
+        var found = ConventionRules.find_brace_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("opening brace must join the line above")), Is.True);
+    }
+
+    [Test]
+    public void Passes_OpeningBraceOnTheSameLine()
+    {
+        var code = "class Mock {\n    void run() {}\n}";
+        var found = ConventionRules.find_brace_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("opening brace must join the line above")), Is.False);
+    }
+
+    [Test]
+    public void Catches_ExplicitPrivateKeyword()
+    {
+        Assert.That(caught("class Mock { private void run() {} }", "must omit the redundant 'private' keyword"), Is.True);
+    }
+
+    [Test]
+    public void Passes_ImplicitPrivateWithNoKeyword()
+    {
+        Assert.That(caught("class Mock { void run() {} }", "must omit the redundant 'private' keyword"), Is.False);
+    }
+
+    [Test]
     public void Catches_ConstNotUpperSnake()
     {
         Assert.That(caught("class Mock { const int maxSize = 1; }", "must be UPPER_SNAKE"), Is.True);
