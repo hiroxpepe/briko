@@ -20,7 +20,7 @@ namespace Briko.Editor {
         // Static fields
 
         /// <summary>Enable / disable the logger globally.</summary>
-        public static bool enabled = true;
+        public static bool Enabled = true;
 
         /// <summary>Cached log file path (relative to project root: game/briko.log).</summary>
         static string? _path;
@@ -36,7 +36,7 @@ namespace Briko.Editor {
         /// First call clears any previous log file.
         /// </summary>
         public static void Write(string message) {
-            if (!enabled) { return; }
+            if (!Enabled) { return; }
             try {
                 if (_path == null) {
                     _path = Path.Combine(Application.dataPath, "..", "briko.log");

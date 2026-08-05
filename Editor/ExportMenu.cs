@@ -21,7 +21,7 @@ namespace Briko.Editor {
 
         private const string MENU_ROOT = "Tools/Briko/";
 
-        private static readonly JsonSerializerSettings _json_settings = new JsonSerializerSettings {
+        private static readonly JsonSerializerSettings JSON_SETTINGS = new JsonSerializerSettings {
             Formatting = Formatting.Indented,
             NullValueHandling = NullValueHandling.Ignore,
             DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
@@ -48,7 +48,7 @@ namespace Briko.Editor {
 
             Root layout = Exporter.ExportFromActiveScene();
 
-            string json = JsonConvert.SerializeObject(layout, _json_settings);
+            string json = JsonConvert.SerializeObject(layout, JSON_SETTINGS);
             File.WriteAllText(save_path, json, System.Text.Encoding.UTF8);
 
             int grounds_count = 0;

@@ -1,5 +1,5 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
-// Licensed under the MIT License. See LICENSE in the project root for license information.
+// Licensed under the MIT License.
 #nullable enable
 using System.IO;
 using Microsoft.CodeAnalysis;
@@ -44,11 +44,19 @@ static class ConventionRules
     //   plain_words   — Basic English plus the plain code words of this repo
     //   project_words — the made-up names of this repo (webio, crown, ...)
     //   unit_marks    — unit marks kept in print form (hz, db, ms, ...)
+    static readonly HashSet<string> BASIC_WORDS = load_words("basic_words.md");
+    static readonly HashSet<string> LANG_WORDS = load_words("lang_words.md");
     static readonly HashSet<string> PLAIN_WORDS = load_words("plain_words.md");
+    static readonly HashSet<string> DRAFT_WORDS = load_words("draft_words.md");
     static readonly HashSet<string> PROJECT_WORDS = load_words("project_words.md");
-    static readonly HashSet<string> UNIT_MARKS = load_words("unit_marks.md");
+    static readonly HashSet<string> UNIT_WORDS = load_words("unit_words.md");
     static readonly HashSet<string> LETTER_WORDS = load_words("letter_words.md");
-    static readonly HashSet<string> SINGLE_LETTERS = load_words("single_letters.md");
+    static readonly HashSet<string> SINGLE_WORDS = load_words("single_words.md");
+    // Methods a framework calls by name (Unity messages like OnEnable). Their
+    // names are fixed by the framework, so the casing check skips them. The file
+    // is optional: a plain dotnet project has none, so the set is empty and the
+    // check behaves as before.
+    static readonly HashSet<string> UNITY_METHODS = load_words("unity_methods.md");
     static readonly HashSet<string> TECH_TERMS = load_tech_terms();
 
     // The tech-terms list is the same one the documents use. Each entry is a
@@ -82,7 +90,8 @@ static class ConventionRules
                 return new HashSet<string>(
                     File.ReadAllLines(path)
                         .Where(line => line.StartsWith("+ "))
-                        .Select(line => line.Substring(2).Trim().ToLowerInvariant())
+                        .SelectMany(line => line.Substring(2).Trim().ToLowerInvariant()
+                            .Split(' ', StringSplitOptions.RemoveEmptyEntries))
                         .Where(w => w.Length > 0));
         }
         return new HashSet<string>();
@@ -97,16 +106,16 @@ static class ConventionRules
         // A run of caps that ends in a lone lower 's' is a plural letter word
         // (URLs -> URL + s), so the caps run stops before that 's'.
         foreach (Match m in Regex.Matches(trimmed,
-                @"[A-Z]+(?=s(?![a-z]))|[A-Z]+(?![a-z])|[A-Z][a-z]*|[a-z]+|[0-9]+"))
+                @"[0-9]+[A-Z]+(?![a-z])|[A-Z]+(?=s(?![a-z]))|[A-Z]+(?![a-z])|[A-Z][a-z0-9]*|[a-z0-9]+"))
             yield return m.Value;
     }
 
     static bool known_word(string part)
     {
         var lower = part.ToLowerInvariant();
-        return PLAIN_WORDS.Contains(lower) || PROJECT_WORDS.Contains(lower)
-            || UNIT_MARKS.Contains(lower) || TECH_TERMS.Contains(lower)
-            || (part.Length > 0 && char.IsDigit(part[0]));
+        return BASIC_WORDS.Contains(lower) || LANG_WORDS.Contains(lower) || PLAIN_WORDS.Contains(lower) || DRAFT_WORDS.Contains(lower) || PROJECT_WORDS.Contains(lower)
+            || UNIT_WORDS.Contains(lower) || TECH_TERMS.Contains(lower)
+            || part.All(char.IsDigit);
     }
 
     // An all-caps letter word (ID, API, JSON): two or more letters, all upper
@@ -181,6 +190,7 @@ static class ConventionRules
             var id = parameter.Identifier.ValueText;
             if (id.Length == 0) continue;
             if (in_overriding_member(parameter)) continue;
+            if (in_extern_member(parameter)) continue;
             if (!SNAKE.IsMatch(id))
                 found.Add($"{label}:{line(parameter)}: parameter '{id}' must be snake_case");
         }
@@ -190,6 +200,7 @@ static class ConventionRules
             if (has(method.Modifiers, "extern")) continue;
             if (method.ExplicitInterfaceSpecifier != null) continue;
             if (method.Parent is InterfaceDeclarationSyntax) continue;
+            if (UNITY_METHODS.Contains(method.Identifier.ValueText.ToLowerInvariant())) continue;
             check_casing(found, label, method, method.Identifier.ValueText, method.Modifiers, "method");
         }
 
@@ -249,7 +260,7 @@ static class ConventionRules
                 if (part == "s" && pi > 0 && parts[pi - 1].All(char.IsUpper)) continue;
                 if (part.Length == 1) {
                     if (char.IsDigit(part[0])) continue;
-                    if (!SINGLE_LETTERS.Contains(part.ToLowerInvariant()))
+                    if (!SINGLE_WORDS.Contains(part.ToLowerInvariant()))
                         found.Add($"{label}:{at}: '{id}' has the one-letter name '{part}', use a full word");
                     continue;
                 }
@@ -283,6 +294,7 @@ static class ConventionRules
         foreach (var method in root.DescendantNodes().OfType<MethodDeclarationSyntax>()) {
             if (has(method.Modifiers, "override") || has(method.Modifiers, "extern")) continue;
             if (method.ExplicitInterfaceSpecifier != null) continue;
+            if (UNITY_METHODS.Contains(method.Identifier.ValueText.ToLowerInvariant())) continue;
             yield return (method.Identifier.ValueText, line(method));
         }
 
@@ -304,6 +316,7 @@ static class ConventionRules
         foreach (var parameter in root.DescendantNodes().OfType<ParameterSyntax>()) {
             if (parameter.Identifier.ValueText.Length == 0) continue;
             if (in_overriding_member(parameter)) continue;
+            if (in_extern_member(parameter)) continue;
             yield return (parameter.Identifier.ValueText, line(parameter));
         }
 
@@ -331,7 +344,7 @@ static class ConventionRules
         var stem = file_name.EndsWith(".cs") ? file_name.Substring(0, file_name.Length - 3) : file_name;
         foreach (var part in word_parts(stem)) {
             if (part.Length == 1) {
-                if (!SINGLE_LETTERS.Contains(part.ToLowerInvariant()))
+                if (!SINGLE_WORDS.Contains(part.ToLowerInvariant()))
                     found.Add($"{file_name}: file name has the one-letter name '{part}', use a full word");
                 continue;
             }
@@ -487,6 +500,15 @@ static class ConventionRules
                 return has(m.Modifiers, "override") || m.ExplicitInterfaceSpecifier != null;
             if (current is BasePropertyDeclarationSyntax p)
                 return has(p.Modifiers, "override");
+        }
+        return false;
+    }
+
+    static bool in_extern_member(SyntaxNode node)
+    {
+        for (var current = node.Parent; current != null; current = current.Parent) {
+            if (current is MethodDeclarationSyntax m)
+                return has(m.Modifiers, "extern");
         }
         return false;
     }

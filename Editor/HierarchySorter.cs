@@ -40,7 +40,7 @@ namespace Briko.Editor {
         [MenuItem(MENU_ROOT + "Sort Hierarchy by Floor")]
         public static void SortHierarchyByFloor() {
             // Step 1: Find Platform root
-            GameObject? platform_root = FindRootObject(name: PLATFORM_NAME);
+            GameObject? platform_root = findRootObject(name: PLATFORM_NAME);
             if (platform_root == null) {
                 Debug.LogError(message: "[Briko] 'Platform' root not found. Aborting sort.");
                 return;
@@ -49,20 +49,20 @@ namespace Briko.Editor {
             // Step 2: Collect all Ground and Block GameObjects from Platform hierarchy
             List<GameObject> all_grounds = new();
             List<GameObject> all_blocks = new();
-            CollectItemsByKind(
+            collectItemsByKind(
                 parent: platform_root.transform,
                 grounds: all_grounds,
                 blocks: all_blocks);
 
             // Step 3: Detect floor anchors and collect unique surface Y values
             List<float> anchor_surfaces = new();
-            foreach (GameObject g in all_grounds) {
-                string clean = g.name.Replace("(Clone)", "").Trim();
-                var dims = FloorDetector.ParseDimensions(name: clean);
-                if (dims == null) { continue; }
-                if (!FloorDetector.IsFloorAnchor(x: dims.Value.x, z: dims.Value.z)) { continue; }
-                float surf = FloorDetector.CalcSurfaceY(prefab_y: g.transform.position.y);
-                float rounded = MathF.Round(surf * 100f) / 100f;
+            foreach (GameObject ground in all_grounds) {
+                string clean = ground.name.Replace("(Clone)", "").Trim();
+                var dimensions = FloorDetector.ParseDimensions(name: clean);
+                if (dimensions == null) { continue; }
+                if (!FloorDetector.IsFloorAnchor(x: dimensions.Value.x, z: dimensions.Value.z)) { continue; }
+                float surface = FloorDetector.CalculateSurfaceY(prefab_y: ground.transform.position.y);
+                float rounded = MathF.Round(surface * 100f) / 100f;
                 bool already_exists = false;
                 for (int i = 0; i < anchor_surfaces.Count; i++) {
                     if (MathF.Abs(anchor_surfaces[i] - rounded) < 0.01f) {
@@ -76,7 +76,7 @@ namespace Briko.Editor {
                 Debug.LogWarning(message: "[Briko] No floor anchors found (no Ground with X >= 5.0 and Z >= 5.0). Aborting sort.");
                 return;
             }
-            anchor_surfaces.Sort((a, b) => b.CompareTo(a));
+            anchor_surfaces.Sort((first, second) => second.CompareTo(first));
 
             // Step 4: Assign floor labels
             List<(float surface_y, string label)> floor_labels =
@@ -85,7 +85,7 @@ namespace Briko.Editor {
             // Step 5: Detect travel direction from zone positions
             float spawn_y = 0f;
             float exit_y = 0f;
-            GameObject? entity_root = FindRootObject(name: ENTITY_NAME);
+            GameObject? entity_root = findRootObject(name: ENTITY_NAME);
             if (entity_root == null) {
                 Debug.LogWarning(message: "[Briko] 'Entity' root not found. Defaulting to descend mode.");
             } else {
@@ -120,34 +120,34 @@ namespace Briko.Editor {
             }
 
             // Step 8: Assign and reparent Ground GameObjects
-            foreach (GameObject g in all_grounds) {
-                string clean = g.name.Replace("(Clone)", "").Trim();
-                var dims = FloorDetector.ParseDimensions(name: clean);
+            foreach (GameObject ground in all_grounds) {
+                string clean = ground.name.Replace("(Clone)", "").Trim();
+                var dimensions = FloorDetector.ParseDimensions(name: clean);
                 string target_label;
-                if (dims != null && FloorDetector.IsFloorAnchor(x: dims.Value.x, z: dims.Value.z)) {
-                    float surf = FloorDetector.CalcSurfaceY(prefab_y: g.transform.position.y);
-                    float rounded = MathF.Round(surf * 100f) / 100f;
-                    target_label = FindFloorLabelBySurface(
+                if (dimensions != null && FloorDetector.IsFloorAnchor(x: dimensions.Value.x, z: dimensions.Value.z)) {
+                    float surface = FloorDetector.CalculateSurfaceY(prefab_y: ground.transform.position.y);
+                    float rounded = MathF.Round(surface * 100f) / 100f;
+                    target_label = findFloorLabelBySurface(
                         surface_y: rounded, floor_labels: floor_labels);
                 } else {
-                    float surf = FloorDetector.CalcSurfaceY(prefab_y: g.transform.position.y);
-                    target_label = AssignLandingToFloor(
-                        landing_surface_y: surf,
-                        floors_desc: floor_labels,
+                    float surface = FloorDetector.CalculateSurfaceY(prefab_y: ground.transform.position.y);
+                    target_label = assignLandingToFloor(
+                        landing_surface_y: surface,
+                        floors_descending: floor_labels,
                         is_descending: is_descending);
                 }
-                Transform grounds_t = FindGroundsContainer(
+                Transform grounds_t = findGroundsContainer(
                     label: target_label, containers: floor_containers);
-                g.transform.SetParent(grounds_t, worldPositionStays: true);
+                ground.transform.SetParent(grounds_t, worldPositionStays: true);
             }
 
             // Step 9: Assign and reparent Block GameObjects
-            foreach (GameObject b in all_blocks) {
+            foreach (GameObject block in all_blocks) {
                 string floor_label = FloorDetector.AssignBlockToFloor(
-                    block_y: b.transform.position.y, floors_desc: floor_labels);
-                Transform blocks_t = FindBlocksContainer(
+                    block_y: block.transform.position.y, floors_descending: floor_labels);
+                Transform blocks_t = findBlocksContainer(
                     label: floor_label, containers: floor_containers);
-                b.transform.SetParent(blocks_t, worldPositionStays: true);
+                block.transform.SetParent(blocks_t, worldPositionStays: true);
             }
 
             // Step 10: Remove old containers unconditionally (idempotency — re-run safe).
@@ -164,8 +164,8 @@ namespace Briko.Editor {
 
             // Step 11: Renumber variants in each floor container
             foreach ((string label, Transform grounds_t, Transform blocks_t) in floor_containers) {
-                RenumberContainerChildren(container: grounds_t);
-                RenumberContainerChildren(container: blocks_t);
+                renumberContainerChildren(container: grounds_t);
+                renumberContainerChildren(container: blocks_t);
             }
 
             EditorUtility.SetDirty(platform_root);
@@ -179,7 +179,7 @@ namespace Briko.Editor {
         /// Finds a root-level GameObject in the active scene by name.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        static GameObject? FindRootObject(string name) {
+        static GameObject? findRootObject(string name) {
             foreach (GameObject root in SceneManager.GetActiveScene().GetRootGameObjects()) {
                 if (root.name == name) { return root; }
             }
@@ -191,7 +191,7 @@ namespace Briko.Editor {
         /// Recurses into containers (floor labels, grounds_*, blocks_*).
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        static void CollectItemsByKind(
+        static void collectItemsByKind(
             Transform parent,
             List<GameObject> grounds,
             List<GameObject> blocks) {
@@ -204,7 +204,7 @@ namespace Briko.Editor {
                 } else if (kind == "Block") {
                     blocks.Add(child.gameObject);
                 } else {
-                    CollectItemsByKind(parent: child, grounds: grounds, blocks: blocks);
+                    collectItemsByKind(parent: child, grounds: grounds, blocks: blocks);
                 }
             }
         }
@@ -214,7 +214,7 @@ namespace Briko.Editor {
         /// Falls back to the lowest floor if no exact match is found.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        static string FindFloorLabelBySurface(
+        static string findFloorLabelBySurface(
             float surface_y,
             List<(float surface_y, string label)> floor_labels) {
 
@@ -230,22 +230,22 @@ namespace Briko.Editor {
         /// Ascend: nearest floor above (smallest surface_y >= landing surface_y).
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        static string AssignLandingToFloor(
+        static string assignLandingToFloor(
             float landing_surface_y,
-            List<(float surface_y, string label)> floors_desc,
+            List<(float surface_y, string label)> floors_descending,
             bool is_descending) {
 
             if (is_descending) {
-                string nearest = floors_desc[floors_desc.Count - 1].label;
-                foreach ((float sy, string label) in floors_desc) {
+                string nearest = floors_descending[floors_descending.Count - 1].label;
+                foreach ((float sy, string label) in floors_descending) {
                     if (sy <= landing_surface_y) { nearest = label; break; }
                 }
                 return nearest;
             } else {
-                string nearest = floors_desc[0].label;
-                for (int i = floors_desc.Count - 1; i >= 0; i--) {
-                    if (floors_desc[i].surface_y >= landing_surface_y) {
-                        nearest = floors_desc[i].label;
+                string nearest = floors_descending[0].label;
+                for (int i = floors_descending.Count - 1; i >= 0; i--) {
+                    if (floors_descending[i].surface_y >= landing_surface_y) {
+                        nearest = floors_descending[i].label;
                         break;
                     }
                 }
@@ -258,12 +258,12 @@ namespace Briko.Editor {
         /// Falls back to the last entry if the label is not found.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        static Transform FindGroundsContainer(
+        static Transform findGroundsContainer(
             string label,
             List<(string label, Transform grounds_t, Transform blocks_t)> containers) {
 
-            foreach ((string l, Transform g, Transform b) in containers) {
-                if (l == label) { return g; }
+            foreach ((string entry_label, Transform grounds, Transform blocks) in containers) {
+                if (entry_label == label) { return grounds; }
             }
             return containers[containers.Count - 1].grounds_t;
         }
@@ -273,12 +273,12 @@ namespace Briko.Editor {
         /// Falls back to the last entry if the label is not found.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        static Transform FindBlocksContainer(
+        static Transform findBlocksContainer(
             string label,
             List<(string label, Transform grounds_t, Transform blocks_t)> containers) {
 
-            foreach ((string l, Transform g, Transform b) in containers) {
-                if (l == label) { return b; }
+            foreach ((string entry_label, Transform grounds, Transform blocks) in containers) {
+                if (entry_label == label) { return blocks; }
             }
             return containers[containers.Count - 1].blocks_t;
         }
@@ -291,19 +291,19 @@ namespace Briko.Editor {
         /// SetSiblingIndex is called so Hierarchy display matches the grouped order.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        static void RenumberContainerChildren(Transform container) {
+        static void renumberContainerChildren(Transform container) {
             if (container.childCount == 0) { return; }
-            List<(Transform t, string base_name, float x, float z)> entries = new();
+            List<(Transform transform_target, string base_name, float x, float z)> entries = new();
             foreach (Transform child in container) {
                 string clean = child.name.Replace("(Clone)", "").Trim();
                 var parsed = PrefabNameParser.Parse(name: clean);
                 string base_name = parsed != null ? parsed.Value.prefab : clean;
                 entries.Add((child, base_name, child.position.x, child.position.z));
             }
-            entries.Sort((a, b) => {
-                int cz = a.z.CompareTo(b.z);
-                if (cz != 0) { return cz; }
-                return a.x.CompareTo(b.x);
+            entries.Sort((first, second) => {
+                int z_comparison = first.z.CompareTo(second.z);
+                if (z_comparison != 0) { return z_comparison; }
+                return first.x.CompareTo(second.x);
             });
             List<string> group_order = new();
             for (int i = 0; i < entries.Count; i++) {
@@ -314,20 +314,20 @@ namespace Briko.Editor {
                 }
                 if (!already_in) { group_order.Add(name); }
             }
-            List<(Transform t, string new_name)> output = new();
-            for (int g = 0; g < group_order.Count; g++) {
-                string group_name = group_order[g];
+            List<(Transform transform_target, string new_name)> output = new();
+            for (int group_index = 0; group_index < group_order.Count; group_index++) {
+                string group_name = group_order[group_index];
                 int variant = 1;
                 for (int i = 0; i < entries.Count; i++) {
                     if (entries[i].base_name == group_name) {
-                        output.Add((entries[i].t, $"{group_name}_{variant}"));
+                        output.Add((entries[i].transform_target, $"{group_name}_{variant}"));
                         variant++;
                     }
                 }
             }
             for (int i = 0; i < output.Count; i++) {
-                output[i].t.name = output[i].new_name;
-                output[i].t.SetSiblingIndex(i);
+                output[i].transform_target.name = output[i].new_name;
+                output[i].transform_target.SetSiblingIndex(i);
             }
         }
     }

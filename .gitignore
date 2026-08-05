@@ -27,3 +27,6 @@ vs.code-workspace
 
 # Generated code dump
 project_all_code.md
+
+# Local NuGet feed config (environment-specific)
+Tests~/ConventionTests/nuget.config

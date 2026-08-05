@@ -21,10 +21,10 @@ namespace Briko.Editor.Model {
         public float grid_unit { get; set; } = 0.25f;
 
         /// <summary>Target play duration. Fixed at 180 (Beatles single rule) for v1.</summary>
-        public int target_duration_sec { get; set; } = 180;
+        public int target_duration_second { get; set; } = 180;
 
         /// <summary>BGM track filename (placed under StreamingAssets/).</summary>
-        public string bgm_track { get; set; } = "";
+        public string background_music_track { get; set; } = "";
 
         /// <summary>Per-floor layout layers.</summary>
         public List<Platform> platforms { get; set; } = new();

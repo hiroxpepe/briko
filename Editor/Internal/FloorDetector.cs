@@ -58,7 +58,7 @@ namespace Briko.Editor.Internal {
         /// surface_Y = prefab_position_Y + GROUND_HALF_HEIGHT
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        public static float CalcSurfaceY(float prefab_y) {
+        public static float CalculateSurfaceY(float prefab_y) {
             return prefab_y + GROUND_HALF_HEIGHT;
         }
 
@@ -70,32 +70,32 @@ namespace Briko.Editor.Internal {
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
         public static List<(float surface_y, string label)> AssignFloorLabels(
-            List<float> surface_y_values_desc) {
+            List<float> surface_y_values_descending) {
 
-            if (surface_y_values_desc.Count == 0) {
+            if (surface_y_values_descending.Count == 0) {
                 return new List<(float, string)>();
             }
-            int base_idx = 0;
-            float min_dist = float.MaxValue;
-            for (int i = 0; i < surface_y_values_desc.Count; i++) {
-                float dist = MathF.Abs(surface_y_values_desc[i]);
-                if (dist < min_dist) {
-                    min_dist = dist;
-                    base_idx = i;
+            int base_index = 0;
+            float min_distance = float.MaxValue;
+            for (int i = 0; i < surface_y_values_descending.Count; i++) {
+                float distance = MathF.Abs(surface_y_values_descending[i]);
+                if (distance < min_distance) {
+                    min_distance = distance;
+                    base_index = i;
                 }
             }
             var result = new List<(float, string)>();
-            for (int i = 0; i < surface_y_values_desc.Count; i++) {
-                int rel = base_idx - i;
+            for (int i = 0; i < surface_y_values_descending.Count; i++) {
+                int relative_level = base_index - i;
                 string label;
-                if (rel == 0) {
+                if (relative_level == 0) {
                     label = "1F";
-                } else if (rel > 0) {
-                    label = $"{rel + 1}F";
+                } else if (relative_level > 0) {
+                    label = $"{relative_level + 1}F";
                 } else {
-                    label = $"B{-rel}F";
+                    label = $"B{-relative_level}F";
                 }
-                result.Add((surface_y_values_desc[i], label));
+                result.Add((surface_y_values_descending[i], label));
             }
             return result;
         }
@@ -105,21 +105,21 @@ namespace Briko.Editor.Internal {
         /// Assigns to the floor whose surface Y satisfies:
         ///   floor_surface_Y <= block_Y AND block_Y - floor_surface_Y <= CHARACTER_HEIGHT
         /// If no floor qualifies, assigns to the nearest floor below.
-        /// floors_desc must be sorted descending.
+        /// floors_descending must be sorted descending.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
         public static string AssignBlockToFloor(
             float block_y,
-            List<(float surface_y, string label)> floors_desc) {
+            List<(float surface_y, string label)> floors_descending) {
 
-            foreach (var floor in floors_desc) {
-                float diff = block_y - floor.surface_y;
-                if (diff >= 0f && diff <= CHARACTER_HEIGHT) {
+            foreach (var floor in floors_descending) {
+                float difference = block_y - floor.surface_y;
+                if (difference >= 0f && difference <= CHARACTER_HEIGHT) {
                     return floor.label;
                 }
             }
-            string nearest = floors_desc[floors_desc.Count - 1].label;
-            foreach (var floor in floors_desc) {
+            string nearest = floors_descending[floors_descending.Count - 1].label;
+            foreach (var floor in floors_descending) {
                 if (floor.surface_y <= block_y) {
                     nearest = floor.label;
                     break;
@@ -161,10 +161,10 @@ namespace Briko.Editor.Internal {
 
             if (items.Count == 0) { return new List<string>(); }
             List<(string base_name, float x, float z)> sorted = new(items);
-            sorted.Sort((a, b) => {
-                int cz = a.z.CompareTo(b.z);
-                if (cz != 0) { return cz; }
-                return a.x.CompareTo(b.x);
+            sorted.Sort((first, second) => {
+                int z_comparison = first.z.CompareTo(second.z);
+                if (z_comparison != 0) { return z_comparison; }
+                return first.x.CompareTo(second.x);
             });
             List<string> group_order = new();
             for (int i = 0; i < sorted.Count; i++) {
@@ -176,8 +176,8 @@ namespace Briko.Editor.Internal {
                 if (!already_in) { group_order.Add(name); }
             }
             List<string> result = new();
-            for (int g = 0; g < group_order.Count; g++) {
-                string group_name = group_order[g];
+            for (int group_index = 0; group_index < group_order.Count; group_index++) {
+                string group_name = group_order[group_index];
                 int variant = 1;
                 for (int i = 0; i < sorted.Count; i++) {
                     if (sorted[i].base_name == group_name) {

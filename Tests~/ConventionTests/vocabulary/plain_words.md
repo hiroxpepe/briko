@@ -1,1562 +1,390 @@
 # Plain Words
 
-Basic English plus the plain code words this project accepts.
+The plain code words this project accepts on top of Basic English.
+The Basic English base itself lives in basic_words.md.
 
-+ abandon
-+ able
-+ about
-+ above
-+ accept
-+ access
-+ account
-+ acid
-+ acquire
-+ across
-+ act
-+ action
-+ actions
-+ active
-+ acts
++ abandon abandons abandoned abandoning
++ accept accepts accepted accepting
++ access accesses accessed accessing
++ acquire acquires acquired acquiring
++ action actions actioned actioning
 + actual
-+ add
-+ added
-+ addition
-+ address
-+ adj
-+ adjustment
-+ advertisement
-+ affect
-+ after
-+ again
-+ against
-+ agents
-+ agreement
-+ air
-+ alert
-+ alignment
-+ all
-+ allow
-+ allowed
-+ almost
-+ alpha
-+ already
-+ among
-+ amount
-+ amusement
-+ analysis
-+ anchor
-+ and
-+ angle
-+ angry
-+ animal
-+ animation
-+ answer
-+ answering
-+ ant
-+ any
-+ ap
-+ app
-+ apparatus
-+ appearance
-+ append
-+ apple
-+ application
-+ apply
-+ approval
-+ arch
-+ args
-+ argument
-+ arm
-+ army
-+ arrow
-+ art
-+ as
-+ ask
-+ assembly
-+ asset
-+ assign
-+ asterisk
-+ async
-+ at
-+ attach
-+ attack
-+ attempt
-+ attention
-+ attraction
-+ attribute
-+ audio
-+ authority
-+ automatic
-+ awake
-+ baby
-+ back
-+ background
-+ bad
-+ badge
-+ bag
-+ balance
-+ ball
-+ balloon
-+ band
-+ bar
-+ bars
-+ base
-+ basin
-+ basket
-+ bath
-+ battery
-+ be
-+ beautiful
-+ because
-+ bed
-+ bee
-+ before
-+ begin
-+ beh
-+ behavior
-+ behaviour
-+ belief
-+ bell
-+ bent
-+ berry
-+ best
-+ between
-+ bgm
-+ big
-+ bind
-+ binding
-+ bird
-+ birth
-+ bit
-+ bite
-+ bitter
-+ black
-+ blade
-+ block
-+ blocked
-+ blocks
-+ blood
-+ blow
-+ blue
-+ board
-+ boat
-+ body
-+ boiling
-+ bone
-+ bonus
-+ book
-+ boot
-+ bootstrapper
-+ border
-+ bottle
-+ bottom
-+ boundary
-+ bounds
-+ box
-+ boy
-+ brain
-+ brake
-+ branch
-+ brass
-+ bread
-+ break
-+ breath
-+ brick
-+ bridge
-+ bright
-+ bring
-+ broken
-+ brother
-+ brown
-+ brush
-+ bucket
-+ build
-+ builder
-+ building
-+ bulb
-+ burn
-+ burst
-+ business
-+ but
-+ butter
-+ button
-+ by
-+ bytes
-+ cache
-+ cached
-+ cake
-+ calc
-+ call
-+ callback
-+ camera
-+ can
-+ candidates
-+ canvas
-+ card
-+ care
-+ carriage
-+ carries
-+ carry
-+ cart
-+ case
-+ cat
-+ catch
-+ caught
-+ cause
-+ cdp
-+ center
-+ certain
-+ chain
-+ chalk
-+ chance
-+ change
-+ changed
-+ channel
-+ char
-+ character
-+ chat
-+ cheap
-+ check
-+ checked
-+ cheese
-+ chemical
-+ chest
-+ chief
-+ child
-+ children
-+ chin
-+ choice
-+ choices
-+ chosen
-+ church
-+ circle
-+ clamp
-+ class
-+ clean
-+ clear
-+ click
-+ client
-+ clip
-+ clock
-+ close
-+ closed
-+ cloth
-+ cloud
-+ coal
-+ coat
-+ coefficient
-+ cold
-+ collar
-+ collect
-+ color
-+ colour
-+ comb
-+ combine
-+ come
-+ comfort
-+ command
-+ committee
-+ common
-+ company
-+ comparison
-+ competition
-+ complete
-+ completed
-+ completion
-+ complex
-+ component
-+ compose
-+ composed
-+ composition
-+ condition
-+ confirmed
-+ connection
-+ conscious
-+ const
-+ consumed
-+ container
-+ containers
-+ contains
-+ context
-+ continue
-+ control
-+ controller
-+ converter
-+ cook
-+ cookie
-+ cookies
-+ copper
-+ copy
-+ cord
-+ core
-+ cork
-+ cost
-+ cotton
-+ cough
-+ count
-+ country
-+ cover
-+ cow
-+ crack
-+ create
-+ created
-+ creation
-+ credit
-+ crime
-+ crowns
-+ cruel
-+ crush
-+ cry
-+ csv
-+ cup
-+ curr
-+ current
-+ curtain
-+ curve
-+ cushion
-+ cut
-+ cycle
-+ cz
-+ damage
-+ danger
-+ dark
-+ data
-+ database
-+ date
-+ daughter
-+ day
-+ dead
-+ dear
-+ death
-+ debt
-+ debug
-+ decay
-+ decision
-+ dedup
++ add adds added adding
++ address addresses addressed addressing
++ alert alerts alerted alerting alerter alertest
++ alignment alignments
++ allow allows allowed allowing
++ alpha alphas
++ anchor anchors anchored anchoring
++ animation animations
++ answer answers answered answering
++ app apps
++ appearance appearances
++ append appends appended appending
++ application applications
++ apply applies applied applying
++ arrow arrows
++ ask asks asked asking
++ asterisk asterisks asterisked asterisking
++ attach attaches attached attaching
++ attribute attributes attributed attributing
++ audio audios
++ background backgrounds backgrounded backgrounding
++ badge badges badged badging
++ balloon balloons ballooned ballooning
++ bar bars barred barring
++ battery batteries
++ begin begins began begun beginning
++ behavior behaviors
++ big bigger biggest
++ bind binds bound binding
++ block blocks blocked blocking
++ border borders bordered bordering
++ bottom bottoms bottomed bottoming bottomer bottomest
++ bound bounds bounded bounding
++ break breaks broke broken breaking
++ bring brings brought bringing
++ build builds built building
++ builder builders
++ byte bytes
++ call calls called calling
++ carry carries carried carrying
++ case cases cased casing
++ catch catches caught catching
++ center centers centered centering centerer centerest
++ change changes changed changing
++ channel channels channeled channeling
++ char chars
++ character characters charactered charactering
++ chat chats chatted chatting
++ check checks checked checking
++ child children
++ choice choices choicer choicest
++ choose chooses chose chosen choosing
++ clamp clamps clamped clamping
++ click clicks clicked clicking
++ client clients
++ clip clips clipped clipping
++ close closes closed closing closer closest
++ color colors colored coloring colorer colorest
++ combine combines combined combining
++ command commands commanded commanding
++ complete completes completed completing
++ completion completions
++ component components
++ composition compositions
++ confirm confirms confirmed confirming
++ contain contains contained containing
++ context contexts
++ continue continues continued continuing
++ controller controllers
++ cookie cookies
++ core cores cored coring
++ count counts counted counting
++ create creates created creating
++ creation creations
++ crown crowns
++ data datas
++ database databases
++ date dates dated dating
++ debug debugs debugged debugging
 + deed
-+ deep
-+ default
-+ defaults
-+ deg
-+ degree
-+ delay
-+ delayed
-+ delete
-+ delicate
-+ delta
-+ dependent
-+ desc
-+ descending
-+ deserialize
-+ design
-+ desire
-+ desired
-+ destroy
-+ destruction
-+ detail
-+ detector
-+ dev
-+ development
++ default defaults defaulted defaulting
++ delay delays delayed delaying
++ delete deletes deleted deleting
++ desire desires desired desiring
++ destroy destroys destroyed destroying
++ detector detectors
 + diagnostics
-+ dictionary
-+ diff
-+ different
-+ differs
-+ digestion
-+ dimensions
-+ dims
-+ dir
-+ direction
-+ directory
-+ dirty
-+ disable
-+ discovery
-+ discussion
-+ disease
-+ disgust
-+ dispose
-+ disposed
-+ dist
-+ distance
-+ distribution
-+ division
-+ do
-+ document
-+ documents
-+ dog
-+ door
-+ dot
-+ dots
-+ double
-+ doubt
-+ down
-+ drag
-+ dragged
-+ drain
-+ drawer
-+ drawing
-+ dress
-+ drink
-+ driving
-+ drop
-+ dry
-+ dt
-+ duck
-+ ducking
-+ dup
-+ duration
-+ dust
++ dictionary dictionaries
++ directory directories
++ dispose disposes disposed disposing
++ document documents documented documenting
++ dot dots dotted dotting
++ double doubles doubled doubling
++ drag drags dragged dragging
++ draw draws drew drawn drawing
++ duck ducks ducked ducking
++ duration durations
 + each
-+ ear
-+ early
-+ earth
-+ east
-+ edge
-+ edges
-+ edit
-+ editor
-+ education
-+ eff
-+ effect
-+ egg
-+ elastic
-+ electric
-+ element
-+ ellipsis
++ edit edits edited editing
++ editor editors
++ element elements
++ ellipsis ellipsises
 + else
-+ emit
-+ empty
-+ enable
-+ enabled
-+ end
-+ engine
-+ enough
-+ ensure
-+ entered
-+ entity
-+ entries
-+ entry
-+ enum
-+ environment
-+ equal
-+ error
-+ errors
-+ escape
-+ ev
-+ evaluate
-+ even
-+ event
-+ events
-+ ever
-+ every
-+ example
-+ exception
-+ exchange
-+ exclusive
-+ execute
-+ existence
-+ existing
-+ exists
-+ exit
-+ exited
-+ expanded
-+ expansion
-+ experience
-+ expert
-+ exponent
-+ exported
-+ exporter
-+ extern
-+ eye
-+ face
-+ fact
-+ factor
-+ fade
-+ faded
-+ fall
-+ fallback
-+ false
-+ family
-+ far
-+ farm
-+ fat
-+ father
-+ fear
-+ feather
-+ feeble
-+ feeling
-+ female
-+ fertile
-+ fiction
-+ field
-+ fields
-+ fight
-+ file
-+ files
-+ fill
-+ filter
-+ find
-+ finger
-+ finish
-+ finished
-+ fire
-+ fired
-+ fires
-+ first
-+ fish
-+ fixed
-+ flag
-+ flags
-+ flame
-+ flat
-+ flight
-+ floor
-+ floors
-+ flower
-+ flush
-+ fly
-+ focus
-+ fold
-+ font
-+ food
-+ foolish
-+ foot
-+ for
-+ force
-+ foreach
-+ foreground
-+ fork
-+ form
-+ format
-+ formatted
-+ forward
-+ found
-+ fowl
-+ frame
-+ frames
-+ free
-+ freedom
-+ frequent
-+ fresh
-+ friend
-+ from
-+ front
-+ fruit
-+ frustration
-+ full
-+ future
-+ gain
-+ garden
-+ general
-+ generation
++ empty empties emptied emptying emptier emptiest
++ enable enables enabled enabling
++ ensure ensures ensured ensuring
++ enter enters entered entering
++ entry entries
++ environment environments
++ escape escapes escaped escaping
++ evaluate evaluates evaluated evaluating
++ exception exceptions
++ exclusive exclusives
++ execute executes executed executing
++ exist exists existed existing
++ exit exits exited exiting
++ export exports exported exporting
++ fade fades faded fading
++ file files filed filing
++ fill fills filled filling
++ filter filters filtered filtering
++ find finds found finding
++ finish finishes finished finishing
++ fire fires fired firing
++ flag flags flagged flagging
++ flush flushes flushed flushing flusher flushest
++ focus focuses focused focusing
++ font fonts
++ foreground foregrounds foregrounded foregrounding
++ format formats formatted formatting
++ freedom freedoms
++ fresh fresher freshest
++ gain gains gained gaining
++ generation generations
 + generic
-+ gesture
-+ gestures
-+ get
-+ girl
-+ give
-+ glass
-+ glove
-+ go
-+ goat
-+ going
-+ gold
-+ good
-+ government
-+ grain
-+ granted
-+ graph
++ gesture gestures gestured gesturing
++ go goes went gone going
++ grant grants granted granting
 + graphics
-+ grass
-+ great
-+ green
-+ grey
-+ grip
-+ grounds
-+ group
-+ growth
-+ guid
-+ guide
-+ guids
-+ gun
-+ hair
-+ hammer
-+ hand
-+ handle
-+ handled
-+ handler
-+ hanging
-+ happy
-+ harbour
-+ hard
-+ harmony
-+ has
-+ hash
-+ hat
-+ hate
-+ have
-+ he
-+ head
-+ header
-+ headers
-+ healthy
-+ hearing
-+ heart
-+ heat
-+ height
-+ held
-+ help
-+ here
-+ hierarchy
-+ high
-+ history
-+ hit
-+ hold
-+ holds
-+ hole
-+ hollow
-+ home
-+ hook
-+ hope
-+ horizontal
-+ horn
-+ horse
-+ hospital
-+ host
-+ hour
-+ house
-+ how
-+ humour
-+ ic
-+ ice
-+ icon
-+ icons
-+ id
-+ idea
-+ idle
-+ ids
-+ idx
-+ if
-+ ignore
-+ ignoring
-+ ill
-+ import
-+ importance
-+ important
-+ importer
-+ impulse
-+ in
++ handle handles handled handling
++ handler handlers
++ hash hashes hashed hashing
++ header headers
++ height heights
++ hold holds held holding
++ hit hits hitting
++ home homes homed homing homer homest
++ horizontal horizontals
++ host hosts hosted hosting
++ icon icons
++ id ids
++ idle idles idled idling idler idlest
++ ignore ignores ignored ignoring
++ import imports imported importing
++ importance importances
 + inclusive
-+ incoming
-+ increase
-+ index
-+ indices
-+ industry
-+ inf
-+ infinity
-+ inflate
-+ influences
-+ info
-+ information
-+ infos
-+ infs
-+ initialize
-+ initialized
-+ injectors
-+ ink
-+ inlines
++ index indexes indexed indexing
++ infinity infinities
++ inflate inflates inflated inflating
++ info infoes
++ information informations
++ initialize initializes initialized initializing
++ injector injectors
++ inline inlines inlined inlining
 + inner
-+ input
-+ insect
-+ insert
-+ inset
-+ insets
-+ instance
-+ instances
-+ instrument
-+ insurance
-+ integer
-+ inten
-+ intensity
-+ intercept
-+ interest
-+ interface
-+ internal
-+ interop
-+ interval
-+ invention
-+ invoke
-+ iron
-+ is
-+ island
-+ issue
-+ issues
-+ item
-+ items
++ input inputs
++ insert inserts inserted inserting
++ inset insets
++ instance instances instanced instancing
++ integer integers
++ intercept intercepts intercepted intercepting
++ interval intervals
++ invoke invokes invoked invoking
++ item items
 + itself
-+ java
-+ javascript
-+ jelly
-+ jewel
-+ join
-+ journey
-+ json
-+ judge
-+ jump
-+ keep
-+ kept
-+ kettle
-+ key
-+ keys
-+ ki
-+ kick
-+ kid
-+ kind
-+ kinds
-+ kiss
-+ knee
-+ knife
-+ knot
-+ knowledge
-+ known
-+ kp
-+ kv
-+ label
-+ labels
-+ land
-+ landing
-+ lang
-+ language
-+ last
-+ late
-+ laugh
-+ law
-+ layout
-+ lead
-+ leaf
-+ learning
++ keep keeps kept keeping
++ label labels labeled labeling
++ layout layouts
 + least
-+ leather
-+ left
-+ leg
-+ length
-+ let
-+ letter
-+ level
-+ levenshtein
-+ library
-+ lift
-+ light
-+ like
-+ limit
-+ line
++ length lengths
 + linear
-+ linen
-+ lines
-+ lip
-+ liquid
-+ list
-+ listener
-+ little
-+ living
-+ load
-+ loaded
++ line lines lined lining
++ listener listeners
++ load loads loaded loading
 + local
-+ location
-+ lock
-+ locked
-+ log
-+ logger
-+ long
-+ look
-+ loop
-+ loops
-+ loose
-+ loss
-+ loud
-+ love
-+ low
-+ lower
-+ lparam
-+ machine
++ location locations
++ log logs logged logging
++ logger loggers
 + main
-+ make
-+ male
-+ man
-+ manager
 + manual
-+ map
-+ margin
-+ mark
-+ marked
-+ market
-+ marks
-+ married
-+ mask
-+ mass
-+ match
-+ material
-+ math
++ margin margins
++ mark marks marked marking
++ mask masks masked masking
++ math maths
 + max
-+ maximise
-+ maximize
-+ maximized
-+ may
-+ meal
-+ measure
-+ meat
-+ media
-+ medical
-+ meeting
-+ memory
-+ menu
-+ merge
-+ merged
-+ message
-+ meta
-+ metadata
-+ metal
-+ method
-+ microsoft
-+ middle
-+ military
-+ milk
-+ milliseconds
++ maximize maximizes maximized maximizing
++ media medias
++ menu menus
++ message messages messaged messaging
++ method methods
++ millisecond milliseconds
 + min
-+ mind
-+ mine
-+ minimise
-+ minimized
-+ minimum
-+ minute
-+ missing
-+ mist
-+ mixed
-+ mode
-+ model
-+ modify
-+ money
-+ monitor
-+ monkey
-+ month
-+ moon
-+ morning
-+ mother
-+ motion
-+ mountain
-+ mouse
-+ mouth
-+ move
-+ moved
-+ msgs
-+ much
-+ multiplier
-+ muscle
-+ music
-+ nail
-+ name
-+ names
-+ namespace
-+ narrow
-+ nation
-+ natural
-+ near
-+ nearest
-+ necessary
-+ neck
-+ need
-+ needle
-+ needs
-+ nerve
-+ net
-+ new
-+ news
++ minimize minimizes minimized minimizing
++ minimum minimums
++ mode modes
++ modify modifies modified modifying
++ monitor monitors monitored monitoring
++ mouse mouses moused mousing
++ move moves moved moving
++ name names named naming
 + next
-+ ni
-+ night
-+ no
-+ node
-+ noise
-+ non
-+ normal
-+ normalized
-+ north
-+ nose
-+ not
-+ note
-+ notice
-+ notification
-+ notifications
++ node nodes
++ notice notices noticed noticing
++ notification notifications
 + notifier
-+ notify
-+ notifyicon
-+ now
-+ null
-+ number
-+ nut
-+ obj
-+ object
-+ observation
-+ of
-+ off
-+ offer
-+ office
-+ offset
-+ oi
-+ oil
++ notify notifies notified notifying
++ null nulls
++ object objects objected objecting
++ offset offsets
 + ok
-+ old
-+ on
 + one
 + ongoing
-+ only
-+ open
-+ opened
-+ operating
-+ operation
-+ opinion
-+ opposite
-+ optimizations
-+ or
-+ orange
-+ order
-+ ordered
-+ ordinal
-+ organization
-+ ornament
-+ other
-+ out
-+ outcome
-+ output
-+ oven
-+ over
-+ override
-+ own
-+ owner
-+ package
-+ padding
-+ page
-+ pages
-+ pain
-+ paint
-+ pair
-+ panel
-+ paper
-+ parallel
-+ parameters
-+ parcel
-+ parent
-+ parse
-+ parsed
-+ parser
-+ part
++ operate operates operated operating
++ optimization optimizations
++ order orders ordered ordering
++ outcome outcomes
++ package packages packaged packaging
++ pad pads padded padding
++ page pages paged paging
++ pair pairs paired pairing
++ parameter parameters
++ parent parents parented parenting
++ parse parses parsed parsing
 + partial
-+ party
-+ past
-+ paste
-+ path
-+ pause
-+ paused
-+ payment
-+ peace
-+ pen
-+ pencil
++ party parties partied partying
++ path paths
++ pause pauses paused pausing
 + pending
 + per
-+ permission
-+ permissions
-+ person
-+ personas
-+ phrase
-+ physical
-+ pi
-+ picture
-+ pig
-+ pilot
-+ pin
-+ pipe
-+ place
-+ placeholder
-+ placeholders
-+ placement
-+ plain
-+ plan
-+ plane
-+ plant
-+ plat
-+ plate
-+ platform
-+ platforms
-+ play
-+ player
-+ please
-+ pleasure
-+ plough
-+ pocket
-+ point
-+ poison
-+ polish
-+ political
-+ poor
-+ popup
-+ porter
-+ pos
-+ position
-+ positive
-+ possible
-+ post
-+ pot
-+ potato
-+ powder
-+ power
-+ pp
-+ preferences
-+ preferred
-+ prepare
-+ present
-+ preserve
-+ press
-+ pressed
-+ prev
-+ preview
-+ previous
-+ price
-+ print
-+ prison
-+ private
-+ probable
-+ process
-+ produce
-+ profile
-+ profit
-+ project
-+ prompt
-+ prop
-+ property
-+ prose
-+ protected
-+ protest
-+ protocol
-+ provider
-+ public
-+ pull
-+ pump
-+ punishment
-+ purpose
-+ push
-+ put
-+ quality
-+ query
-+ question
-+ queue
-+ quick
-+ quiet
-+ quietly
-+ quite
-+ rail
-+ rain
-+ raise
-+ range
-+ rat
-+ rate
-+ rates
-+ raw
-+ ray
-+ reaction
-+ read
-+ reader
-+ readers
-+ reading
-+ readonly
-+ ready
-+ reason
-+ rebuild
-+ receipt
-+ receive
-+ record
-+ recording
-+ recordings
-+ red
-+ referenced
-+ region
-+ register
-+ registered
-+ regret
-+ regular
-+ rejected
-+ rel
-+ relation
-+ relative
-+ release
-+ religion
-+ reload
-+ remaining
-+ remove
-+ render
++ permission permissions
++ phrase phrases phrased phrasing
++ pilot pilots piloted piloting
++ placeholder placeholders
++ placement placements
++ plain plainer plainest
++ plan plans planned planning
++ player players
++ positive positives
++ post posts posted posting
++ preference preferences
++ prefer prefers preferred preferring
++ prepare prepares prepared preparing
++ preserve preserves preserved preserving
++ press presses pressed pressing
++ preview previews previewed previewing
++ profile profiles profiled profiling
++ prompt prompts prompted prompting prompter promptest
++ protect protects protected protecting
++ provider providers
++ query queries queried querying
++ raise raises raised raising
++ raw rawer rawest
++ read reads reading
++ reader readers
++ rebuild rebuilds rebuilt rebuilding
++ receive receives received receiving
++ region regions
++ register registers registered registering
++ release releases released releasing
++ reload reloads reloaded reloading
++ remove removes removed removing
++ render renders rendered rendering
 + renumber
-+ replace
-+ reply
-+ report
-+ reported
-+ representative
-+ request
-+ reset
-+ resolve
-+ resource
-+ respect
-+ response
-+ responsible
-+ rest
-+ restore
-+ result
-+ resume
-+ return
-+ reward
-+ rhythm
-+ rice
-+ right
-+ ring
-+ ringer
++ replace replaces replaced replacing
++ reply replies replied replying
++ report reports reported reporting
++ reset resets
++ resource resources
++ response responses
++ restore restores restored restoring
++ result results resulted resulting
++ resume resumes resumed resuming
++ return returns returned returning
++ ringer ringers
 + ringtone
-+ river
-+ rk
-+ road
-+ rod
-+ role
-+ roll
-+ roof
-+ room
-+ root
-+ rotate
-+ rotation
-+ rough
-+ round
-+ rounded
-+ routed
-+ rub
-+ rule
-+ run
-+ runner
-+ running
-+ sad
-+ safe
-+ sail
-+ salt
-+ same
-+ sample
-+ sand
-+ save
-+ saved
-+ say
-+ sb
-+ scale
-+ scaled
-+ scan
-+ scenario
-+ schema
-+ scheme
-+ school
-+ science
-+ scissors
-+ scores
-+ scratch
-+ screw
-+ script
-+ scroll
-+ scrolls
-+ sea
-+ sealed
-+ seat
-+ sec
-+ second
-+ secret
-+ secretary
-+ see
-+ seed
-+ seem
-+ seen
-+ select
-+ selected
-+ selection
-+ self
-+ send
-+ sender
-+ sense
-+ sent
-+ separate
-+ separator
-+ seq
++ role roles
++ rotate rotates rotated rotating
++ route routes routed routing
++ run runs ran running
++ sample samples sampled sampling
++ save saves saved saving
++ scale scales scaled scaling
++ scheme schemes schemed scheming
++ script scripts scripted scripting
++ scroll scrolls scrolled scrolling
++ select selects selected selecting selecter selectest
++ sender senders
++ send sends sent sending
++ separator separators
 + sequential
-+ serialize
-+ serializer
-+ serious
-+ servant
-+ service
-+ services
-+ set
-+ setting
-+ settings
-+ settle
-+ setup
-+ setversion
-+ severity
-+ sex
-+ sf
-+ shade
-+ shadow
-+ shake
-+ shame
-+ shared
-+ sharp
-+ sheep
-+ shelf
-+ shell
-+ ship
-+ shirt
-+ shock
-+ shoe
-+ short
-+ should
-+ show
-+ shut
-+ si
-+ side
-+ sign
-+ signal
-+ signals
-+ silk
-+ silver
-+ simple
-+ single
-+ sink
-+ sister
-+ site
-+ size
-+ sizeof
-+ skin
-+ skip
-+ skirt
-+ sky
-+ sleep
-+ slide
-+ slip
-+ slope
-+ slot
-+ slots
-+ slow
-+ small
-+ smash
-+ smell
-+ smile
-+ smoke
-+ smooth
-+ sn
-+ snake
-+ snap
-+ snapped
-+ snapper
-+ sneeze
-+ snow
-+ so
-+ soap
-+ society
-+ sock
-+ soft
-+ solid
-+ some
-+ son
-+ song
-+ sort
-+ sorted
-+ sorter
-+ sound
-+ soup
-+ source
-+ south
-+ space
-+ spade
-+ span
-+ spawn
-+ special
-+ spill
-+ split
-+ sponge
-+ spoon
-+ spring
-+ square
-+ src
-+ stack
-+ stage
-+ stages
-+ stamp
-+ star
-+ start
-+ state
-+ statement
-+ states
-+ static
-+ station
-+ status
-+ std
-+ steam
-+ steel
-+ stem
-+ step
-+ steps
-+ stick
-+ sticky
-+ stiff
-+ still
-+ stitch
-+ stocking
-+ stomach
-+ stone
-+ stop
-+ stopped
-+ storage
-+ store
-+ story
-+ straight
-+ strange
-+ stream
-+ street
-+ stretch
++ service services serviced servicing
++ set sets setting settings
++ settle settles settled settling
++ setup setups
++ shadow shadows shadowed shadowing
++ share shares shared sharing
++ shell shells shelled shelling
++ show shows showed showing
++ single singles
++ sink sinks sinked sinking
++ site sites sited siting
++ slide slides slided sliding
++ slot slots slotted slotting
++ source sources sourced sourcing
++ span spans spanned spanning
++ spill spills spilled spilling
++ split splits splitting
++ stage stages staged staging
++ state states stated stating
++ status statuses
++ stop stops stopped stopping
++ storage storages
++ stream streams streamed streaming
 + string
-+ strong
-+ struct
-+ structural
-+ structure
-+ stuck
-+ style
-+ submit
-+ substance
++ stick sticks stuck sticking
++ style styles styled styling
++ submit submits submitted submitting
 + substring
-+ such
-+ sudden
-+ sugar
-+ suggestion
-+ summer
-+ sun
-+ sup
-+ supp
-+ support
-+ surf
-+ surface
-+ surfaces
-+ surprise
-+ sweep
-+ sweet
-+ swim
-+ switch
-+ system
-+ tab
-+ table
-+ tabs
-+ tag
-+ tail
-+ take
-+ talk
-+ tall
-+ tap
-+ target
-+ targets
-+ taste
-+ tax
-+ teaching
-+ template
-+ tendency
-+ test
-+ testing
-+ text
-+ than
-+ that
-+ the
-+ theme
-+ then
-+ theory
-+ there
-+ thick
-+ thickness
-+ thin
-+ thing
-+ thinking
++ tab tabs
++ tag tags tagged tagging
++ tap taps tapped tapping
++ target targets targeted targeting
++ template templates
++ text texts
++ theme themes themed theming
++ thickness thicknesses
++ think thinks thought thinking
 + third
-+ this
-+ though
-+ thought
-+ thread
-+ thresholds
-+ throat
-+ through
-+ throw
-+ thumb
-+ thunder
-+ ti
-+ tick
-+ ticket
-+ tight
-+ till
-+ time
-+ timed
-+ timer
-+ timers
-+ tin
-+ tip
-+ tired
-+ title
-+ tmpl
-+ to
-+ toast
-+ toe
-+ together
-+ tomorrow
-+ tone
-+ tongue
-+ tool
-+ tools
++ throw throws threw thrown throwing
++ tick ticks ticked ticking
++ timer timers
++ tip tips tipped tipping
++ title titles titled titling
++ toast toasts toasted toasting
++ tone tones toned toning
++ tool tools tooled tooling
 + tooltip
-+ tooth
-+ top
-+ topo
-+ total
-+ touch
-+ town
-+ tp
-+ trace
-+ track
-+ tracker
-+ trade
-+ train
++ tracker trackers
 + transient
-+ transport
-+ tray
-+ tree
-+ trick
-+ tries
-+ trigger
-+ triggers
-+ trim
-+ trimmed
-+ trimming
-+ trouble
-+ trousers
-+ true
-+ truncate
-+ try
-+ turn
-+ twist
-+ type
-+ typeof
-+ types
-+ umbrella
++ trim trims trimmed trimming trimmer trimmest
++ truncate truncates truncated truncating
++ try tries tried trying
++ type types typed typing
++ authorize authorizes authorized authorizing
 + unauthorized
-+ under
-+ unicode
-+ unit
-+ unknown
-+ unlock
-+ unregister
-+ unwrap
-+ up
-+ update
-+ url
-+ urls
-+ use
-+ user
-+ uses
-+ using
-+ val
-+ valid
-+ validate
-+ validation
-+ value
-+ values
-+ variant
-+ variants
-+ verify
-+ verse
-+ version
-+ vertical
-+ very
-+ vessel
-+ vi
-+ view
-+ violent
-+ visibility
++ unknown unknowns unknowner unknownest
++ unwrap unwraps unwrapped unwrapping
++ update updates updated updating
++ url urls
++ user users
++ use uses used using
++ verify verifies verified verifying
++ version versions
++ vertical verticals
++ visibility visibilities
 + visible
-+ visited
-+ voice
-+ void
-+ volume
-+ wait
-+ waiting
-+ wake
-+ walk
-+ wall
-+ wanted
-+ war
-+ warm
-+ warn
-+ warning
-+ warnings
-+ was
-+ wash
-+ waste
-+ watch
-+ watched
-+ watcher
-+ water
-+ wave
-+ wax
-+ way
-+ weather
-+ web
-+ week
-+ weight
-+ well
-+ west
-+ wet
-+ wheel
-+ when
-+ where
-+ while
-+ whip
-+ whistle
-+ white
-+ who
-+ why
-+ wide
-+ widget
-+ width
-+ will
-+ win64
-+ wind
-+ window
-+ wine
-+ wing
-+ winter
-+ wire
-+ wise
-+ with
-+ woman
-+ wood
-+ wool
-+ word
-+ work
-+ worm
-+ wound
-+ wparam
-+ wrap
-+ write
-+ writing
-+ wrong
-+ year
-+ yellow
-+ yes
-+ yesterday
-+ yield
-+ you
-+ young
-+ zero
-+ zone
-+ zones
++ volume volumes
++ wait waits waited waiting
++ wake wakes woke woken waking
++ want wants wanted wanting
++ warn warns warned warning
++ watch watches watched watching
++ watcher watchers
++ web webs
++ widget widgets
++ width widths
++ wrap wraps wrapped wrapping
++ write writes wrote written writing
++ zero zeroes zeroed zeroing

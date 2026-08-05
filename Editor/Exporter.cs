@@ -47,9 +47,9 @@ namespace Briko.Editor {
 
             Dictionary<string, Platform> platform_map = new();
 
-            GameObject? platform_root = FindRootObject(name: PLATFORM_NAME);
+            GameObject? platform_root = findRootObject(name: PLATFORM_NAME);
             if (platform_root != null) {
-                CollectPlatformChildren(
+                collectPlatformChildren(
                     platform_root: platform_root,
                     platform_map: platform_map);
             } else {
@@ -57,13 +57,13 @@ namespace Briko.Editor {
             }
 
             List<Zone> zones = new();
-            GameObject? entity_root = FindRootObject(name: ENTITY_NAME);
+            GameObject? entity_root = findRootObject(name: ENTITY_NAME);
             if (entity_root != null) {
-                CollectZones(entity_root: entity_root, zones: zones);
+                collectZones(entity_root: entity_root, zones: zones);
             }
 
-            foreach (Platform plat in platform_map.Values) {
-                layout.platforms.Add(plat);
+            foreach (Platform platform in platform_map.Values) {
+                layout.platforms.Add(platform);
             }
 
             if (zones.Count > 0) {
@@ -83,7 +83,7 @@ namespace Briko.Editor {
         /// Finds a root-level GameObject in the active scene by name.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static GameObject? FindRootObject(string name) {
+        private static GameObject? findRootObject(string name) {
             foreach (GameObject root in SceneManager.GetActiveScene().GetRootGameObjects()) {
                 if (root.name == name) {
                     return root;
@@ -96,7 +96,7 @@ namespace Briko.Editor {
         /// Iterates the children of the Platform GameObject and collects grounds and blocks.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static void CollectPlatformChildren(
+        private static void collectPlatformChildren(
             GameObject platform_root,
             Dictionary<string, Platform> platform_map) {
 
@@ -104,12 +104,12 @@ namespace Briko.Editor {
                 string child_name = child.name;
                 if (child_name.StartsWith(GROUNDS_PREFIX)) {
                     string floor = child_name.Substring(GROUNDS_PREFIX.Length);
-                    Platform plat = GetOrCreatePlatform(
+                    Platform platform = getOrCreatePlatform(
                         platform_map: platform_map,
                         floor: floor);
-                    CollectItems(parent: child, items: plat.grounds);
+                    collectItems(parent: child, items: platform.grounds);
                 } else if (child_name.StartsWith(BLOCKS_PREFIX)) {
-                    CollectBlockItems(parent: child, platform_map: platform_map);
+                    collectBlockItems(parent: child, platform_map: platform_map);
                 }
             }
         }
@@ -118,22 +118,22 @@ namespace Briko.Editor {
         /// Collects Item entries from all descendants of <paramref name="parent"/>.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static void CollectItems(Transform parent, List<Item> items) {
+        private static void collectItems(Transform parent, List<Item> items) {
             foreach (Transform child in parent) {
                 string clean_name = child.name.Replace("(Clone)", "").Trim();
                 var parsed = PrefabNameParser.Parse(name: clean_name);
                 if (parsed == null) {
                     continue;
                 }
-                float[] raw_pos = new float[] {
+                float[] raw_position = new float[] {
                     child.position.x,
                     child.position.y,
                     child.position.z
                 };
-                float[] snapped = GridSnapper.Snap(raw: raw_pos, grid_unit: GRID_UNIT);
-                WarnIfPositionSnapDiffers(raw_pos: raw_pos, snapped: snapped, go_name: child.name);
+                float[] snapped = GridSnapper.Snap(raw: raw_position, grid_unit: GRID_UNIT);
+                warnIfPositionSnapDiffers(raw_position: raw_position, snapped: snapped, go_name: child.name);
 
-                int rotation_y = SnapRotationY(
+                int rotation_y = snapRotationY(
                     raw_y: child.rotation.eulerAngles.y,
                     go_name: child.name);
 
@@ -151,7 +151,7 @@ namespace Briko.Editor {
         /// Collects Block items, inferring floor from Y coordinate.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static void CollectBlockItems(
+        private static void collectBlockItems(
             Transform parent,
             Dictionary<string, Platform> platform_map) {
 
@@ -161,20 +161,20 @@ namespace Briko.Editor {
                 if (parsed == null) {
                     continue;
                 }
-                float[] raw_pos = new float[] {
+                float[] raw_position = new float[] {
                     child.position.x,
                     child.position.y,
                     child.position.z
                 };
-                float[] snapped = GridSnapper.Snap(raw: raw_pos, grid_unit: GRID_UNIT);
-                WarnIfPositionSnapDiffers(raw_pos: raw_pos, snapped: snapped, go_name: child.name);
+                float[] snapped = GridSnapper.Snap(raw: raw_position, grid_unit: GRID_UNIT);
+                warnIfPositionSnapDiffers(raw_position: raw_position, snapped: snapped, go_name: child.name);
 
-                int rotation_y = SnapRotationY(
+                int rotation_y = snapRotationY(
                     raw_y: child.rotation.eulerAngles.y,
                     go_name: child.name);
 
                 string floor = child.position.y < FLOOR_2F_Y_THRESHOLD ? "1f" : "2f";
-                Platform plat = GetOrCreatePlatform(
+                Platform platform = getOrCreatePlatform(
                     platform_map: platform_map,
                     floor: floor);
 
@@ -184,7 +184,7 @@ namespace Briko.Editor {
                     position = snapped,
                     rotation_y = rotation_y,
                 };
-                plat.blocks.Add(item);
+                platform.blocks.Add(item);
             }
         }
 
@@ -192,17 +192,17 @@ namespace Briko.Editor {
         /// Collects Zone entries from the Entity hierarchy.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static void CollectZones(GameObject entity_root, List<Zone> zones) {
+        private static void collectZones(GameObject entity_root, List<Zone> zones) {
             foreach (Transform child in entity_root.transform) {
                 if (!Regex.IsMatch(child.name, ZONE_PATTERN)) {
                     continue;
                 }
-                float[] raw_pos = new float[] {
+                float[] raw_position = new float[] {
                     child.position.x,
                     child.position.y,
                     child.position.z
                 };
-                float[] snapped = GridSnapper.Snap(raw: raw_pos, grid_unit: GRID_UNIT);
+                float[] snapped = GridSnapper.Snap(raw: raw_position, grid_unit: GRID_UNIT);
                 zones.Add(new Zone {
                     zone_id = child.name,
                     position = snapped,
@@ -214,31 +214,31 @@ namespace Briko.Editor {
         /// Gets or creates a Platform for the given floor key.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static Platform GetOrCreatePlatform(
+        private static Platform getOrCreatePlatform(
             Dictionary<string, Platform> platform_map,
             string floor) {
 
-            if (!platform_map.TryGetValue(floor, out Platform? plat)) {
-                plat = new Platform { floor = floor };
-                platform_map[floor] = plat;
+            if (!platform_map.TryGetValue(floor, out Platform? platform)) {
+                platform = new Platform { floor = floor };
+                platform_map[floor] = platform;
             }
-            return plat;
+            return platform;
         }
 
         /// <summary>
         /// Snaps rotation_y to nearest 0/90/180/270, warning if drift exceeds threshold.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static int SnapRotationY(float raw_y, string go_name) {
+        private static int snapRotationY(float raw_y, string go_name) {
             int[] candidates = new int[] { 0, 90, 180, 270 };
             float normalized = ((raw_y % 360f) + 360f) % 360f;
             int best = 0;
-            float best_diff = float.MaxValue;
-            foreach (int c in candidates) {
-                float diff = MathF.Abs(normalized - c);
-                if (diff < best_diff) {
-                    best_diff = diff;
-                    best = c;
+            float best_difference = float.MaxValue;
+            foreach (int candidate in candidates) {
+                float difference = MathF.Abs(normalized - candidate);
+                if (difference < best_difference) {
+                    best_difference = difference;
+                    best = candidate;
                 }
             }
             if (best_diff > ROTATION_WARN_THRESHOLD) {
@@ -252,16 +252,16 @@ namespace Briko.Editor {
         /// Emits a Console warning if position was not on the grid.
         /// </summary>
         /// <author>h.adachi (STUDIO MeowToon)</author>
-        private static void WarnIfPositionSnapDiffers(
-            float[] raw_pos,
+        private static void warnIfPositionSnapDiffers(
+            float[] raw_position,
             float[] snapped,
             string go_name) {
 
-            for (int i = 0; i < raw_pos.Length; i++) {
-                if (MathF.Abs(raw_pos[i] - snapped[i]) > GRID_WARN_THRESHOLD) {
+            for (int i = 0; i < raw_position.Length; i++) {
+                if (MathF.Abs(raw_position[i] - snapped[i]) > GRID_WARN_THRESHOLD) {
                     Debug.LogWarning(
                         $"[Briko] Non-grid position on '{go_name}' axis[{i}]: " +
-                        $"{raw_pos[i]:F4} -> {snapped[i]:F4}");
+                        $"{raw_position[i]:F4} -> {snapped[i]:F4}");
                     break;
                 }
             }

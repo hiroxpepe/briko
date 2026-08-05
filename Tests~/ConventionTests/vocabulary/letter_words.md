@@ -1,26 +1,27 @@
 # Letter Words
 
 Words that print writes in all caps. In a name they must be all caps (ID, API),
-not just capitalized (Id, Api). Their lower-case form here is for matching.
+not just capitalized (Id, Api). Written here in caps for people to read; the
+check lower-cases them when it matches.
 
-+ id
-+ io
-+ ui
-+ db
-+ api
-+ url
-+ json
-+ csv
-+ http
-+ html
-+ css
-+ dom
-+ cpu
-+ gpu
-+ gc
-+ cli
-+ cdp
-+ os
-+ sql
-+ xml
-+ uri
++ ID
++ IO
++ UI
++ DB
++ API
++ URL
++ JSON
++ CSV
++ HTTP
++ HTML
++ CSS
++ DOM
++ CPU
++ GPU
++ GC
++ CLI
++ CDP
++ OS
++ SQL
++ XML
++ URI
