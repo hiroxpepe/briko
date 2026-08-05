@@ -709,7 +709,7 @@ Project code words that go beyond this list live in plain_words.md.
 + steel steels steeled steeling
 + stem stems stemmed stemming
 + step steps stepped stepping
-+ stick sticks sticked sticking
++ stick sticks stuck sticking
 + sticky stickier stickiest
 + stiff stiffs stiffer stiffest
 + still stills stilled stilling stiller stillest

@@ -1,22 +1,27 @@
 # Project Words
 
-The made-up names of this project (webio, crown, and the like).
+The made-up names across our projects (webio, animo, briko, and the like).
 
 + activity
++ animo
 + auto
 + autofill
++ bootstrapper
++ briko
 + claudegen
-+ crown
 + crowndom
 + crowngo
 + droid
 + ducker
 + gate
-+ injector
++ goblin
++ levenshtein
 + markless
++ maslow
 + meowtoon
 + opinio
 + padder
++ persona
 + probe
 + tagger
 + webio

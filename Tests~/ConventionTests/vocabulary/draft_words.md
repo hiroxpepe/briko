@@ -10,8 +10,6 @@ abbreviation — an abbreviation is fixed in the code, not kept here.
 + already
 + asset assets
 + assign assigns assigned assigning
-+ background
-+ briko
 + calculate calculates calculated calculating
 + candidate candidates
 + collect collects collected collecting
@@ -23,13 +21,10 @@ abbreviation — an abbreviation is fixed in the code, not kept here.
 + disable disables disabled disabling
 + entity entities
 + exporter exporters
-+ floor floors
 + ground grounds
 + guid guids
 + hierarchy hierarchies
 + importer importers
-+ model models
-+ music
 + normalize normalizes normalized normalizing
 + output outputs
 + panel panels

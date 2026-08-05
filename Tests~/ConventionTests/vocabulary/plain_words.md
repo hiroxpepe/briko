@@ -165,10 +165,10 @@ The Basic English base itself lives in basic_words.md.
 + import imports imported importing
 + importance importances
 + inclusive
-+ index indexes indexed indexing
++ index indexes indices indexed indexing
 + infinity infinities
 + inflate inflates inflated inflating
-+ info infoes
++ info infos
 + information informations
 + initialize initializes initialized initializing
 + injector injectors
@@ -208,6 +208,7 @@ The Basic English base itself lives in basic_words.md.
 + media medias
 + menu menus
 + message messages messaged messaging
++ model models modeled modeling
 + method methods
 + millisecond milliseconds
 + min
@@ -333,7 +334,6 @@ The Basic English base itself lives in basic_words.md.
 + storage storages
 + stream streams streamed streaming
 + string
-+ stick sticks stuck sticking
 + style styles styled styling
 + submit submits submitted submitting
 + substring

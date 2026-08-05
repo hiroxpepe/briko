@@ -105,9 +105,38 @@ static class ConventionRules
         var trimmed = identifier.Trim('_');
         // A run of caps that ends in a lone lower 's' is a plural letter word
         // (URLs -> URL + s), so the caps run stops before that 's'.
+        // Priority order: a floor label (2F, B1F) or a 6-digit hex color or a
+        // digit+unit suffix (100K, 1KB) is claimed whole before the generic
+        // digit-run-then-caps-run catch-all gets a chance to split it
+        // differently — that catch-all still fires for anything else digit-led
+        // (2GARBAGE, 3JUNK), keeping those unregistered and rejected.
         foreach (Match m in Regex.Matches(trimmed,
-                @"[0-9]+[A-Z]+(?![a-z])|[A-Z]+(?=s(?![a-z]))|[A-Z]+(?![a-z])|[A-Z][a-z0-9]*|[a-z0-9]+"))
+                @"B?[0-9]+F(?![a-zA-Z0-9])" +
+                @"|(?=[0-9A-F]{6}(?![A-Za-z0-9]))(?=[0-9A-F]*[0-9])[0-9A-F]{6}" +
+                @"|[0-9]+(?:KB|MB|GB|TB|KHZ|MHZ|GHZ|HZ|MS|K)(?![A-Za-z0-9])" +
+                @"|[0-9]+[A-Z]+(?![a-z])|[A-Z]+(?=s(?![a-z]))|[A-Z]+(?![a-z])|[A-Z][a-z0-9]*|[a-z0-9]+"))
             yield return m.Value;
+    }
+
+    // A 6-character hex color literal (E2246B, FFFFFF): all hex digits, at
+    // least one actual digit so a plain word like "ABCDEF" still goes through
+    // the ordinary all-caps acronym path instead of this one.
+    static bool is_hex_color(string part) =>
+        part.Length == 6 && part.All(c => "0123456789ABCDEF".Contains(c)) && part.Any(char.IsDigit);
+
+    // A digit run followed by a known size/frequency unit suffix (100K, 1KB,
+    // 60Hz already splits into 60+Hz on its own): the unit is fixed by
+    // convention, not a project word, so no registration is needed.
+    static readonly string[] UNIT_SUFFIXES = { "KB", "MB", "GB", "TB", "KHZ", "MHZ", "GHZ", "HZ", "MS", "K" };
+    static bool is_digit_with_unit_suffix(string part) {
+        if (!char.IsDigit(part[0])) return false;
+        foreach (var suffix in UNIT_SUFFIXES) {
+            if (part.EndsWith(suffix, StringComparison.Ordinal)) {
+                var digits = part.Substring(0, part.Length - suffix.Length);
+                if (digits.Length > 0 && digits.All(char.IsDigit)) return true;
+            }
+        }
+        return false;
     }
 
     static bool known_word(string part)
@@ -115,7 +144,8 @@ static class ConventionRules
         var lower = part.ToLowerInvariant();
         return BASIC_WORDS.Contains(lower) || LANG_WORDS.Contains(lower) || PLAIN_WORDS.Contains(lower) || DRAFT_WORDS.Contains(lower) || PROJECT_WORDS.Contains(lower)
             || UNIT_WORDS.Contains(lower) || TECH_TERMS.Contains(lower)
-            || part.All(char.IsDigit);
+            || part.All(char.IsDigit)
+            || is_hex_color(part) || is_digit_with_unit_suffix(part);
     }
 
     // An all-caps letter word (ID, API, JSON): two or more letters, all upper
