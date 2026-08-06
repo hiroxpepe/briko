@@ -15,6 +15,9 @@ namespace Briko.Editor.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [Serializable]
     public class Root {
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>Level identifier, used as scene name on import.</summary>
         public string layout_id { get; set; } = "";
 
@@ -37,6 +40,9 @@ namespace Briko.Editor.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [Serializable]
     public class Platform {
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>Floor identifier ("1f", "2f", ...).</summary>
         public string floor { get; set; } = "";
 
@@ -56,6 +62,9 @@ namespace Briko.Editor.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [Serializable]
     public class Item {
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>Prefab asset name without trailing variant number (e.g. "Ground_10.0x0.5x10.0_Green").</summary>
         public string prefab { get; set; } = "";
 
@@ -75,6 +84,9 @@ namespace Briko.Editor.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [Serializable]
     public class Zone {
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public Properties [noun, adjective]
+
         /// <summary>Zone identifier matching Germio's germio_config.json (e.g. "vol_boss_start").</summary>
         public string zone_id { get; set; } = "";
 

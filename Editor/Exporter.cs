@@ -18,7 +18,7 @@ namespace Briko.Editor {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Exporter {
-        ///////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // Private constants
 
         const float GRID_UNIT = 0.25f;
@@ -31,8 +31,8 @@ namespace Briko.Editor {
         const string PLATFORM_NAME = "Platform";
         const string ENTITY_NAME = "Entity";
 
-        ///////////////////////////////////////////////////////////////////////
-        // Public methods [verb, verb phrase]
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
 
         /// <summary>
         /// Walks the active scene and builds a Root from Platform and Entity hierarchies.
@@ -76,8 +76,8 @@ namespace Briko.Editor {
             return layout;
         }
 
-        ///////////////////////////////////////////////////////////////////////
-        // Private methods [verb, verb phrase]
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Methods [verb]
 
         /// <summary>
         /// Finds a root-level GameObject in the active scene by name.

@@ -17,8 +17,8 @@ namespace Briko.Editor {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Importer {
-        ///////////////////////////////////////////////////////////////////////
-        // Public methods [verb, verb phrase]
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
 
         /// <summary>
         /// Creates a new empty scene, builds the Level/System/Platform/Entity hierarchy,
@@ -89,8 +89,8 @@ namespace Briko.Editor {
             BrikoLog.Write($"[Briko] ImportToNewScene complete.");
         }
 
-        ///////////////////////////////////////////////////////////////////////
-        // Methods
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Methods [verb]
 
         /// <summary>
         /// Instantiates a prefab for <paramref name="item"/> under <paramref name="parent"/>.

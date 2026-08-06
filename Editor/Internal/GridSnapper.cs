@@ -12,8 +12,8 @@ namespace Briko.Editor.Internal {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class GridSnapper {
-        ///////////////////////////////////////////////////////////////////////
-        // Public methods [verb, verb phrase]
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
 
         /// <summary>
         /// Snaps each component of <paramref name="raw"/> to the nearest multiple

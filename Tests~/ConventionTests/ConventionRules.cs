@@ -513,6 +513,159 @@ static class ConventionRules
         return found;
     }
 
+    // A section-header divider's right edge always lands on column 103, and
+    // its label — when it is close to the fixed `[access] [static] Kind
+    // [hint]` vocabulary — must spell that vocabulary exactly. A label that
+    // does not match any Kind pattern at all is free-form and left alone:
+    // the match is strict, never a loose keyword search, so descriptive
+    // text like "Persona own-field merge" is never forced into a shape it
+    // was never trying to be.
+    static readonly (string kind, string modifiers, string hint)[] SECTION_KINDS = {
+        ("Fields", "public|private|protected|internal", ""),
+        ("Constructor", "", ""),
+        ("Destructor", "", ""),
+        ("Delegate", "public|private|protected|internal", ""),
+        ("Properties", "public|private|protected|internal", "noun, adjective"),
+        ("Methods", "public|private|protected|internal", "verb"),
+        ("Classes", "inner", ""),
+        ("Events", "public|private|protected|internal", "verb, verb phrase"),
+        ("Const", "", "nouns"),
+        ("Enums", "public|private|protected|internal", "noun"),
+        ("Interfaces", "public|private|protected|internal", ""),
+        ("Indexers", "public|private|protected|internal", "noun, adjective"),
+    };
+
+    internal static readonly (string kind, string modifiers, string hint)[] SECTION_KINDS_FOR_TEST = SECTION_KINDS;
+
+    internal static List<string> find_section_header_violations(string code, string label)
+    {
+        var found = new List<string>();
+        var lines = code.Replace("\r\n", "\n").Split('\n');
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetCompilationUnitRoot();
+
+        // Map each source line to the member whose declaration starts there
+        // (if any), so a divider's line number can be matched to the real
+        // member that follows it. EnumMemberDeclarationSyntax (an enum's
+        // individual values, e.g. Low/High) is excluded: it is also a
+        // MemberDeclarationSyntax and can share a line with its enclosing
+        // enum, which would otherwise overwrite the real entry.
+        var member_at_line = new Dictionary<int, MemberDeclarationSyntax>();
+        var enclosing_type_at_line = new Dictionary<int, TypeDeclarationSyntax?>();
+        foreach (var m in root.DescendantNodes().OfType<MemberDeclarationSyntax>()) {
+            if (m is EnumMemberDeclarationSyntax) continue;
+            var ln = tree.GetLineSpan(m.Span).StartLinePosition.Line;
+            member_at_line[ln] = m;
+            enclosing_type_at_line[ln] = m.Parent as TypeDeclarationSyntax;
+            member_at_line[tree.GetLineSpan(m.Span).StartLinePosition.Line] = m;
+        }
+
+        // one_kind_of: what this member counts as for the label vocabulary,
+        // or null if it has no place in the fixed vocabulary at all (an
+        // enum, an interface, a destructor, ...) — those are left alone.
+        (string kind, string access, bool is_static)? one_kind_of(MemberDeclarationSyntax member)
+        {
+            var modifiers = modifiers_of(member);
+            var access = has(modifiers, "public") ? "public"
+                : has(modifiers, "protected") ? "protected"
+                : has(modifiers, "internal") ? "internal"
+                : "private";
+            var is_static = has(modifiers, "static");
+            return member switch {
+                FieldDeclarationSyntax f when has(f.Modifiers, "const") => ("Const", access, false),
+                FieldDeclarationSyntax => ("Fields", access, is_static),
+                ConstructorDeclarationSyntax => ("Constructor", access, is_static),
+                DestructorDeclarationSyntax => ("Destructor", access, false),
+                DelegateDeclarationSyntax => ("Delegate", access, is_static),
+                PropertyDeclarationSyntax => ("Properties", access, is_static),
+                MethodDeclarationSyntax => ("Methods", access, is_static),
+                EventDeclarationSyntax or EventFieldDeclarationSyntax => ("Events", access, is_static),
+                ClassDeclarationSyntax or StructDeclarationSyntax or RecordDeclarationSyntax => ("Classes", access, is_static),
+                EnumDeclarationSyntax => ("Enums", access, is_static),
+                InterfaceDeclarationSyntax => ("Interfaces", access, is_static),
+                IndexerDeclarationSyntax => ("Indexers", access, is_static),
+                _ => null
+            };
+        }
+
+        string? canonical_label_for((string kind, string access, bool is_static) k)
+        {
+            var entry = SECTION_KINDS.FirstOrDefault(s => s.kind == k.kind);
+            if (entry.kind == null) return null;
+            var parts = new List<string>();
+            // Methods and Events always spell out the access level, even
+            // private — a class commonly mixes public and private methods,
+            // so the label must say which. Fields/Properties/Classes omit
+            // it for the private+instance default, matching the omitted
+            // `private` keyword rule.
+            var always_shows_access = k.kind == "Methods" || k.kind == "Events";
+            var omit_access = !always_shows_access && k.access == "private" && !k.is_static;
+            if (entry.modifiers != "" && !omit_access)
+                parts.Add(k.access);
+            if (k.kind != "Classes" && k.is_static) parts.Add("static");
+            if (k.kind == "Classes") parts.Add("inner");
+            parts.Add(k.kind);
+            return string.Join(" ", parts) + (entry.hint == "" ? "" : $" [{entry.hint}]");
+        }
+
+        for (int i = 0; i < lines.Length; i++) {
+            var trimmed = lines[i].Trim();
+            if (trimmed.Length < 10 || trimmed.Any(c => c != '/')) continue;
+
+            var indent = lines[i].Length - lines[i].TrimStart(' ').Length;
+            var slash_count = trimmed.Length;
+            if (indent + slash_count != 103)
+                found.Add($"{label}:{i + 1}: section divider must land on column 103 (indent {indent} + slashes {slash_count} = {indent + slash_count})");
+
+            if (i + 1 >= lines.Length || !lines[i + 1].TrimStart().StartsWith("//")) {
+                found.Add($"{label}:{i + 2}: section divider must be followed by a `//` label");
+                continue;
+            }
+            var section_label = lines[i + 1].Trim().Substring(2).Trim();
+
+            // Is the label even trying to be one of the fixed Kind words?
+            // If not, it is free-form — protected, never checked against
+            // the real members below, per the strict-match design.
+            var is_kind_attempt = SECTION_KINDS.Any(sk => {
+                var mod_group = sk.modifiers == "" ? "" : $@"(?:({sk.modifiers})\s+)?";
+                var static_group = sk.kind == "Classes" ? "" : @"(?:(static)\s+)?";
+                var hint_group = sk.hint == "" ? "" : @"(?:\s*\[([a-z ,]+)\])?";
+                return Regex.IsMatch(section_label, $@"^(?i:{mod_group}{static_group}{sk.kind}{hint_group})$");
+            });
+            if (!is_kind_attempt) continue;
+
+            // Find the block of members this label actually covers: from the
+            // first member after the label to the member right before the
+            // next divider (or the end of the type).
+            var members_here = new List<MemberDeclarationSyntax>();
+            TypeDeclarationSyntax? section_type = null;
+            for (int line = i + 2; line < lines.Length; line++) {
+                var t = lines[line].Trim();
+                if (t.Length >= 10 && t.All(c => c == '/')) break; // next divider
+                if (member_at_line.TryGetValue(line, out var m)) {
+                    var owner = enclosing_type_at_line[line];
+                    if (section_type == null) section_type = owner;
+                    else if (owner != section_type) break; // crossed into a sibling/enclosing type
+                    members_here.Add(m);
+                }
+            }
+            if (members_here.Count == 0) continue;
+
+            var kinds = members_here.Select(one_kind_of).ToList();
+            if (kinds.Any(k => k == null)) continue; // a kind outside the fixed vocabulary sits here — leave it alone
+            var distinct = kinds.Select(k => k!.Value).Distinct().ToList();
+            if (distinct.Count > 1) {
+                found.Add($"{label}:{i + 2}: section mixes more than one member kind under one label");
+                continue;
+            }
+            var expected = canonical_label_for(distinct[0]);
+            if (expected != null && section_label != expected)
+                found.Add($"{label}:{i + 2}: section label '{section_label}' must be '{expected}'");
+        }
+        found.Sort(StringComparer.Ordinal);
+        return found;
+    }
+
     static (int kind, int sub, int acc, int stat) key_of(MemberDeclarationSyntax member)
     {
         int kind = kind_rank(member);

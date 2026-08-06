@@ -99,6 +99,110 @@ public class ConventionRulesTests
     }
 
     [Test]
+    public void Passes_DestructorSectionWithBareLabel()
+    {
+        var code = "class Mock {\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // Destructor\n"
+            + "\n"
+            + "        ~Mock() {}\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
+        Assert.That(found, Is.Empty);
+    }
+
+    [Test]
+    public void Catches_EnumSectionMissingAccessLevel()
+    {
+        var code = "class Mock {\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // Enums [noun]\n"
+            + "\n"
+            + "        public enum Level { Low, High }\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("must be 'public Enums [noun]'")), Is.True);
+    }
+
+    [Test]
+    public void Passes_InterfaceSectionBareForPrivateInstance()
+    {
+        var code = "class Mock {\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // Interfaces\n"
+            + "\n"
+            + "        interface Helper {}\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
+        Assert.That(found, Is.Empty);
+    }
+
+    [Test]
+    public void Catches_IndexerSectionMissingAccessLevel()
+    {
+        var code = "class Mock {\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // Indexers [noun, adjective]\n"
+            + "\n"
+            + "        public int this[int i] => i;\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("must be 'public Indexers [noun, adjective]'")), Is.True);
+    }
+
+    [Test]
+    public void Catches_DividerNotOnColumn103()
+    {
+        var code = "class Mock {\n"
+            + "        ///////////////////////////////////////////////////////////////////////\n"
+            + "        // Fields\n"
+            + "\n"
+            + "        int x;\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("column 103")), Is.True);
+    }
+
+    [Test]
+    public void Passes_DividerOnColumn103()
+    {
+        var code = "class Mock {\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // Fields\n"
+            + "\n"
+            + "        int x;\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
+        Assert.That(found, Is.Empty);
+    }
+
+    [Test]
+    public void Catches_WordingDriftOnAKindLabel()
+    {
+        var code = "class Mock {\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // Private methods [verb, verb phrase]\n"
+            + "\n"
+            + "        void run() {}\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("must be 'private Methods [verb]'")), Is.True);
+    }
+
+    [Test]
+    public void Passes_FreeFormLabelThatIsNotAKindAttempt()
+    {
+        var code = "class Mock {\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // Persona own-field merge (persona wins)\n"
+            + "\n"
+            + "        void run() {}\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
+        Assert.That(found, Is.Empty);
+    }
+
+    [Test]
     public void Catches_ExplicitPrivateKeyword()
     {
         Assert.That(caught("class Mock { private void run() {} }", "must omit the redundant 'private' keyword"), Is.True);

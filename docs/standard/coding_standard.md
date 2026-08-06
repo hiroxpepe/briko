@@ -188,3 +188,117 @@ These cases are settled on purpose, and each has a test that holds the line:
 | a unit mark such as `Hz`                  | left as is         | not a letter word; keeps its print form |
 | a call to an outside type (`JsonConvert`) | not checked        | the name is not ours to change          |
 | the plural `Ids`                          | left as is         | reads as a word, not the mark `ID`      |
+
+---
+
+## Member order
+
+Every member in a type is checked on four points, in this priority: kind,
+then (for fields only) const/static/instance, then access level, then
+static before instance. A file that is already green on this order is what
+lets the section-header rule below group members by consecutive runs — same
+kind, access, and static-ness always sit together, never split apart by
+something else in between.
+
+| Rank | Kind             |
+| ---- | ---------------- |
+| 0    | Field            |
+| 2    | Constructor      |
+| 3    | Destructor       |
+| 4    | Delegate         |
+| 5    | Event            |
+| 6    | Enum             |
+| 7    | Interface        |
+| 8    | Property         |
+| 9    | Indexer          |
+| 10   | Method, Operator |
+| 11   | Struct           |
+| 12   | Class, Record    |
+
+A field's sub-rank, ahead of the kind table above for that one row: `const`
+(0), `static` (1), then instance (2). Access level ranks `public` first,
+then the `internal`/`protected` combinations, then `private` last; within
+a tie, `static` sits before instance.
+
+**Operator is a standing exception.** It shares rank 10 with Method rather
+than holding a rank of its own, so the order check does not require
+operators and methods to stay in separate runs — they may interleave. No
+repository has an operator today, so the section-header rule below leaves
+Operator unlabeled until one appears and this gets settled for real, rather
+than guessing at a shape now.
+
+---
+
+## Section-header comments
+
+A block of members of the same kind, access level, and static-ness opens
+with a divider line, a label line, then a blank line before the members
+themselves:
+
+```csharp
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
+
+        void run() { ... }
+```
+
+**The divider line.** Its right edge always lands on column 103, so
+sections line up with each other no matter how deep the indent is: the
+slash count is `103 - indent`. A divider at 8 spaces of indent is 95
+slashes; at 12 spaces, 91 slashes.
+
+**The label line.** One `//` comment, right after the divider, in this
+shape:
+
+```text
+// [access] [static] Kind [grammar hint]
+```
+
+`access` and `static` are left out when the section is private and
+instance — the default needs no name, the same way a `private` keyword
+is left off the member itself. `Kind` and its grammar hint follow the
+table below.
+
+| Kind          | Grammar hint          | Bare form means                        |
+| ------------- | --------------------- | -------------------------------------- |
+| Fields        | (none)                | private, instance                      |
+| Constructor   | (none)                | instance                               |
+| Destructor    | (none)                | — (no access modifier is possible)     |
+| Delegate      | (none)                | private, instance                      |
+| Properties    | `[noun, adjective]`   | private, instance                      |
+| Methods       | `[verb]`              | *(access always shown, see edge case)* |
+| inner Classes | (none)                | — (no access/static split observed)    |
+| Events        | `[verb, verb phrase]` | *(access always shown, like Methods)*  |
+| Const         | `[nouns]`             | a literal `const` field                |
+| Enums         | `[noun]`              | private, instance                      |
+| Interfaces    | (none)                | private, instance                      |
+| Indexers      | `[noun, adjective]`   | private, instance                      |
+
+Worked examples, from an all-`private`-by-default class to one with
+every modifier in play:
+
+| Members below the label     | Label                                           |
+| --------------------------- | ----------------------------------------------- |
+| private instance fields     | `// Fields`                                     |
+| private static fields       | `// static Fields`                              |
+| public instance fields      | `// public Fields`                              |
+| instance constructor        | `// Constructor`                                |
+| static constructor          | `// static Constructor`                         |
+| private instance properties | `// Properties [noun, adjective]`               |
+| public static properties    | `// public static Properties [noun, adjective]` |
+| private instance methods    | `// private Methods [verb]`                     |
+| public instance methods     | `// public Methods [verb]`                      |
+| public static methods       | `// public static Methods [verb]`               |
+| nested type declarations    | `// inner Classes`                              |
+| public events               | `// public Events [verb, verb phrase]`          |
+| `const` fields              | `// Const [nouns]`                              |
+
+## Section-header edge cases
+
+| Case                                                      | What happens                                | Why                                                                                                                                                                                                                                                                              |
+| --------------------------------------------------------- | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fields / Properties, private + instance                   | access and `static` left off the label      | matches the omitted `private` keyword rule                                                                                                                                                                                                                                       |
+| Methods / Events, private + instance                      | `private` is still spelled out on the label | a class commonly mixes public and private methods; the label must say which without making the reader open every one                                                                                                                                                             |
+| a label is an exact `[access] [static] Kind [hint]` match | normalized to that canonical spelling       | close-but-off wording (`Private methods [verb, verb phrase]`, `Static fields`, `Public static methods`) is a spelling drift on a real Kind label, not free-form text                                                                                                             |
+| a label does not exactly match that shape                 | left as free-form, untouched                | the match is strict, not a loose keyword search — `Persona own-field merge` contains the word "field" but is not `Fields`, so it is never forced into that shape; this is what keeps `Menu items`, `GUI`, `Unity EditorWindow lifecycle`, and step-by-step algorithm labels safe |
+| divider not landing on column 103                         | flagged                                     | breaks the alignment across the file                                                                                                                                                                                                                                             |

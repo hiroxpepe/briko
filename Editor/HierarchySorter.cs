@@ -18,7 +18,7 @@ namespace Briko.Editor {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class HierarchySorter {
-        ///////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // Private constants
 
         const string MENU_ROOT = "Tools/Briko/";
@@ -29,7 +29,7 @@ namespace Briko.Editor {
         const string VOL_SPAWN = "vol_spawn";
         const string VOL_EXIT = "vol_exit";
 
-        ///////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // Menu items
 
         /// <summary>
@@ -172,8 +172,8 @@ namespace Briko.Editor {
             Debug.Log(message: $"[Briko] Sort hierarchy by floor complete. {floor_labels.Count} floor(s) detected.");
         }
 
-        ///////////////////////////////////////////////////////////////////////
-        // Private methods [verb, verb phrase]
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Methods [verb]
 
         /// <summary>
         /// Finds a root-level GameObject in the active scene by name.

@@ -15,12 +15,15 @@ namespace Briko.Editor.Internal {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class FloorDetector {
-        ///////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////////////////////
         // Constants
 
         const float FLOOR_ANCHOR_MIN_XZ = 5.0f;
         const float GROUND_HALF_HEIGHT = 0.25f;
         const float CHARACTER_HEIGHT = 1.4f;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private static Fields
 
         static readonly Regex FLOOR_CONTAINER_PATTERN =
             new(@"^\d+F$|^B\d+F$");
@@ -28,8 +31,8 @@ namespace Briko.Editor.Internal {
         static readonly Regex DIMENSION_PATTERN =
             new(@"_([\d.]+)x([\d.]+)x([\d.]+)_");
 
-        ///////////////////////////////////////////////////////////////////////
-        // Public methods [verb, verb phrase]
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
 
         /// <summary>
         /// Parses prefab dimensions (X, Y, Z) from a GameObject name.
