@@ -6,6 +6,9 @@
 using System;
 
 namespace Briko.Editor.Internal {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Snaps a 3D position to the nearest grid boundary.
     /// Pure function — no Unity dependencies, safe to use in test projects.

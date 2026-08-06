@@ -3,6 +3,11 @@
 #nullable enable
 using NUnit.Framework;
 using System.Linq;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Briko.Tests.Convention;
 
@@ -36,6 +41,91 @@ public class ConventionRulesTests
             + "\n"
             + "using System;\n";
         var found = ConventionRules.find_header_violations(code, "mock.cs");
+        Assert.That(found, Is.Empty);
+    }
+
+    [Test]
+    public void Catches_TwoBlankLinesInARow()
+    {
+        var code = "class Mock {\n\n\n    void run() {}\n}";
+        var found = ConventionRules.find_blank_line_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("keep only one")), Is.True);
+    }
+
+    [Test]
+    public void Passes_OneBlankLine()
+    {
+        var code = "class Mock {\n\n    void run() {}\n}";
+        var found = ConventionRules.find_blank_line_violations(code, "mock.cs");
+        Assert.That(found, Is.Empty);
+    }
+
+    [Test]
+    public void Catches_FreeFormLabelDoesNotExemptTheKindRequirement()
+    {
+        var code = "class Mock {\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // Step 2: EffectiveNeeds\n"
+            + "\n"
+            + "        void step2EffectiveNeeds() {}\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("need a section header") && v.Contains("Methods [verb]")), Is.True);
+    }
+
+    [Test]
+    public void Passes_WhenAKindDividerSitsAboveAFreeFormOne()
+    {
+        var code = "class Mock {\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // Methods [verb]\n"
+            + "\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // Step 2: EffectiveNeeds\n"
+            + "\n"
+            + "        void step2EffectiveNeeds() {}\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("need a section header")), Is.False);
+    }
+
+    [Test]
+    public void Catches_DividerMissingBlankLineAbove()
+    {
+        var code = "class Mock {\n"
+            + "        int x;\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // Methods [verb]\n"
+            + "\n"
+            + "        void run() {}\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("needs a blank line above it")), Is.True);
+    }
+
+    [Test]
+    public void Passes_DividerRightAfterAnOpeningBraceNeedsNoBlankLine()
+    {
+        var code = "class Mock {\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // Fields\n"
+            + "\n"
+            + "        int x;\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("needs a blank line above it")), Is.False);
+    }
+
+    [Test]
+    public void Passes_PublicInnerClassesIsRecognizedAsAKindMatch()
+    {
+        var code = "class Outer {\n"
+            + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
+            + "        // public inner Classes\n"
+            + "\n"
+            + "        public class Inner {}\n"
+            + "}";
+        var found = ConventionRules.find_section_header_violations(code, "mock.cs");
         Assert.That(found, Is.Empty);
     }
 
@@ -190,7 +280,7 @@ public class ConventionRulesTests
     }
 
     [Test]
-    public void Passes_FreeFormLabelThatIsNotAKindAttempt()
+    public void Passes_FreeFormLabelWordingIsNeverRewrittenButKindIsStillRequired()
     {
         var code = "class Mock {\n"
             + "        ///////////////////////////////////////////////////////////////////////////////////////////////\n"
@@ -199,7 +289,11 @@ public class ConventionRulesTests
             + "        void run() {}\n"
             + "}";
         var found = ConventionRules.find_section_header_violations(code, "mock.cs");
-        Assert.That(found, Is.Empty);
+        // The free-form text itself is never rewritten or flagged as a
+        // wording problem — but the member still needs its own Kind
+        // divider somewhere, so the "missing header" violation fires.
+        Assert.That(found.Any(v => v.Contains("must be")), Is.False);
+        Assert.That(found.Any(v => v.Contains("need a section header")), Is.True);
     }
 
     [Test]

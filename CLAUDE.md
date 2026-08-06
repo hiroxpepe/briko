@@ -41,3 +41,38 @@ npx --yes markdownlint-cli -c .markdownlint.json <file>
 + Keep the history a single straight line. Do not make merge commits.
 + If a push is refused because the remote is ahead, rebase your work on top of
   the remote, then push. Do not merge.
+
+## Convention maintenance tools
+
++ `Tests~/ConventionTests/tools/*.cs.txt` hold two reusable fixer tools for
+  the section-header rule in `docs/standard/coding_standard.md`. The `.txt`
+  extension keeps them out of the compiled test project on purpose — they
+  are reference copies, not tests that run on every build.
++ `Tool_InsertMissingSectionHeaders.cs.txt` adds a divider and a canonical
+  label wherever a run of same-kind/access/static members has none yet.
++ `Tool_FixSectionHeaders.cs.txt` straightens dividers already in the file to
+  column 103 and normalizes existing labels to the canonical spelling — but
+  only where every member under one label shares the same kind, access, and
+  static-ness; a mixed section is left alone for a human to split.
++ To run either one: copy the whole method into `ConventionRulesTests.cs`
+  (paste anywhere inside the class), add these usings at the top of that
+  file if they are not already there —
+  `System.Collections.Generic`, `System.Text.RegularExpressions`,
+  `Microsoft.CodeAnalysis.CSharp`, `Microsoft.CodeAnalysis.CSharp.Syntax` —
+  then run:
+
+  ```bash
+  dotnet test --no-restore -p:UseSdkRoslyn=true --filter "Tool_InsertMissingSectionHeaders"
+  ```
+
+  (swap in `Tool_FixSectionHeaders` for the other one). Read the printed
+  `PROBE` line for a change count, remove the pasted method again, diff the
+  real changes, then run the full test suite before committing.
++ Order matters: run the insert tool first, then the fix tool. Inserting
+  first splits any old merged section (e.g. public and private fields once
+  sharing one label) into two correctly-scoped groups; the fix tool then
+  normalizes each group's own label on its own, with no manual edit needed
+  in between.
++ Both tools write real files on disk. Diff and re-parse the changed files
+  for zero syntax errors before trusting the result, the same way any other
+  mass mechanical fix in this project is checked.

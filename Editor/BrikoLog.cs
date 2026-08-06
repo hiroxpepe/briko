@@ -8,6 +8,8 @@ using System.IO;
 using UnityEngine;
 
 namespace Briko.Editor {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
 
     /// <summary>
     /// Lightweight file-based logger for Briko diagnostics.

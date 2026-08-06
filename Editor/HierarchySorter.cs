@@ -11,6 +11,8 @@ using UnityEngine.SceneManagement;
 using Briko.Editor.Internal;
 
 namespace Briko.Editor {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
 
     /// <summary>
     /// Reorganizes the Unity scene hierarchy by floor without moving any prefab in world space.
@@ -19,7 +21,7 @@ namespace Briko.Editor {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class HierarchySorter {
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Private constants
+        // Const [nouns]
 
         const string MENU_ROOT = "Tools/Briko/";
         const string PLATFORM_NAME = "Platform";
@@ -28,6 +30,9 @@ namespace Briko.Editor {
         const string BLOCKS_CONTAINER = "blocks";
         const string VOL_SPAWN = "vol_spawn";
         const string VOL_EXIT = "vol_exit";
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Menu items

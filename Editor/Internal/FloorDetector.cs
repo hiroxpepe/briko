@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Briko.Editor.Internal {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
 
     /// <summary>
     /// Detects floor structure from Ground prefab positions and assigns floor labels.
@@ -16,7 +18,7 @@ namespace Briko.Editor.Internal {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class FloorDetector {
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constants
+        // Const [nouns]
 
         const float FLOOR_ANCHOR_MIN_XZ = 5.0f;
         const float GROUND_HALF_HEIGHT = 0.25f;

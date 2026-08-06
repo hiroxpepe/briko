@@ -6,6 +6,9 @@
 using System.Text.RegularExpressions;
 
 namespace Briko.Editor.Internal {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
+
     /// <summary>
     /// Parses Unity GameObject names into prefab name and variant number
     /// based on the Briko naming convention (briko_spec.md §4.3).
@@ -16,7 +19,7 @@ namespace Briko.Editor.Internal {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class PrefabNameParser {
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Constants
+        // Const [nouns]
 
         const string PATTERN = @"^(.+_([\d.]+x[\d.]+x[\d.]+)_.+)_(\d+)$";
 

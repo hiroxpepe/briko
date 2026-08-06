@@ -12,6 +12,8 @@ using Briko.Editor.Internal;
 using Briko.Editor.Model;
 
 namespace Briko.Editor {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
 
     /// <summary>
     /// Exports the active Unity scene to a Briko JSON layout (briko_spec.md §7.2).
@@ -19,7 +21,7 @@ namespace Briko.Editor {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Exporter {
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Private constants
+        // Const [nouns]
 
         const float GRID_UNIT = 0.25f;
         const float GRID_WARN_THRESHOLD = 0.01f;

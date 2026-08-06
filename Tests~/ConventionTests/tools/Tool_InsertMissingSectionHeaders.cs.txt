@@ -1,0 +1,143 @@
+// Reference only — this is NOT part of the compiled test project (note the
+// .txt extension). To use it: copy the method body into
+// ConventionRulesTests.cs temporarily, add these usings at the top if not
+// already there — System.Collections.Generic, Microsoft.CodeAnalysis,
+// Microsoft.CodeAnalysis.CSharp, Microsoft.CodeAnalysis.CSharp.Syntax —
+// run it once via
+//   dotnet test --no-restore -p:UseSdkRoslyn=true --filter "Tool_InsertMissingSectionHeaders"
+// then remove it again. See CLAUDE.md "Convention maintenance tools" for
+// the full how-to. Run this BEFORE Tool_FixSectionHeaders.
+//
+// What it does: walks every type's members AND every namespace's own
+// direct members, in declared order, groups consecutive members that
+// share the same kind/access/static-ness, and for any group boundary that
+// has no Kind-matching divider within reach yet (scanning backward through
+// any stack of comments/blanks/free-form dividers, no line-count cap —
+// and a free-form divider like "Step 2: EffectiveNeeds" does NOT count as
+// satisfying the requirement, per ConventionRules.is_kind_attempt), inserts
+// a fresh divider + canonical label + blank line right before that
+// group's first member (before any existing comment stack, so a Kind
+// divider ends up above a free-form one, not replacing it). Does not add
+// a redundant blank line if the line right after the insertion point is
+// already blank.
+
+[Test]
+public void Tool_InsertMissingSectionHeaders()
+{
+    int files_changed = 0, inserted = 0;
+    foreach (var path in ConventionScan.source_files()) {
+        var code = System.IO.File.ReadAllText(path);
+        var lines = code.Replace("\r\n", "\n").Split('\n').ToList();
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetCompilationUnitRoot();
+
+        (string kind, string access, bool is_static, bool is_nested)? one_kind_of(MemberDeclarationSyntax member)
+        {
+            var mods = member switch {
+                BaseFieldDeclarationSyntax f => f.Modifiers,
+                BasePropertyDeclarationSyntax p => p.Modifiers,
+                BaseMethodDeclarationSyntax bm => bm.Modifiers,
+                BaseTypeDeclarationSyntax t => t.Modifiers,
+                DelegateDeclarationSyntax d => d.Modifiers,
+                _ => default
+            };
+            bool has_mod(string s) => mods.Any(m => m.Text == s);
+            var is_type_decl = member is BaseTypeDeclarationSyntax;
+            var is_nested = member.Parent is TypeDeclarationSyntax;
+            var access = has_mod("public") ? "public" : has_mod("protected") ? "protected" : has_mod("internal") ? "internal"
+                : is_type_decl && !is_nested ? "internal" : "private";
+            var is_static = has_mod("static");
+            return member switch {
+                FieldDeclarationSyntax f when has_mod("const") => ("Const", access, false, is_nested),
+                FieldDeclarationSyntax => ("Fields", access, is_static, is_nested),
+                ConstructorDeclarationSyntax => ("Constructor", access, is_static, is_nested),
+                DestructorDeclarationSyntax => ("Destructor", access, false, is_nested),
+                DelegateDeclarationSyntax => ("Delegate", access, is_static, is_nested),
+                PropertyDeclarationSyntax => ("Properties", access, is_static, is_nested),
+                MethodDeclarationSyntax => ("Methods", access, is_static, is_nested),
+                EventDeclarationSyntax or EventFieldDeclarationSyntax => ("Events", access, is_static, is_nested),
+                ClassDeclarationSyntax or StructDeclarationSyntax or RecordDeclarationSyntax => ("Classes", access, is_static, is_nested),
+                EnumDeclarationSyntax => ("Enums", access, is_static, is_nested),
+                InterfaceDeclarationSyntax => ("Interfaces", access, is_static, is_nested),
+                IndexerDeclarationSyntax => ("Indexers", access, is_static, is_nested),
+                _ => null
+            };
+        }
+
+        string? canonical_for((string kind, string access, bool is_static, bool is_nested) k)
+        {
+            var entry = ConventionRules.SECTION_KINDS_FOR_TEST.FirstOrDefault(s => s.kind == k.kind);
+            if (entry.kind == null) return null;
+            var parts = new List<string>();
+            var default_access = k.is_nested ? "private" : "internal";
+            var always_shows_access = k.kind == "Methods" || k.kind == "Events";
+            var omit_access = !always_shows_access && k.access == default_access && !k.is_static;
+            if (entry.modifiers != "" && !omit_access) parts.Add(k.access);
+            if (k.kind != "Classes" && k.is_static) parts.Add("static");
+            if (k.kind == "Classes" && k.is_nested) parts.Add("inner");
+            parts.Add(k.kind);
+            return string.Join(" ", parts) + (entry.hint == "" ? "" : $" [{entry.hint}]");
+        }
+
+        var insertions = new List<(int line, int indent, string label)>();
+
+        IEnumerable<SyntaxList<MemberDeclarationSyntax>> containers =
+            root.DescendantNodes().OfType<TypeDeclarationSyntax>().Select(t => t.Members)
+            .Concat(root.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>().Select(n => n.Members));
+
+        foreach (var members in containers) {
+            (string, string, bool, bool)? prev_kind = null;
+            foreach (var member in members) {
+                var k = one_kind_of(member);
+                if (k == null) { prev_kind = null; continue; }
+                if (k.Equals(prev_kind)) continue;
+                prev_kind = k;
+
+                var member_line = tree.GetLineSpan(member.Span).StartLinePosition.Line;
+
+                bool has_kind_divider = false;
+                var insert_line = member_line;
+                for (int back = member_line - 1; back >= 0; back--) {
+                    var t = lines[back].Trim();
+                    if (t.Length >= 10 && t.All(c => c == '/')) {
+                        if (back + 1 < lines.Count) {
+                            var lbl = lines[back + 1].Trim();
+                            if (lbl.StartsWith("//") && ConventionRules.is_kind_attempt(lbl.Substring(2).Trim())) {
+                                has_kind_divider = true;
+                                break;
+                            }
+                        }
+                        insert_line = back;
+                        continue;
+                    }
+                    if (t.Length == 0 || t.StartsWith("//") || t.StartsWith("///")) { insert_line = back; continue; }
+                    break; // real code — stop
+                }
+                if (has_kind_divider) continue;
+
+                var canonical = canonical_for(k.Value);
+                if (canonical == null) continue;
+
+                var indent = lines[member_line].Length - lines[member_line].TrimStart(' ').Length;
+                insertions.Add((insert_line, indent, canonical));
+            }
+        }
+
+        if (insertions.Count == 0) continue;
+        foreach (var (line, indent, canonical) in insertions.OrderByDescending(x => x.line)) {
+            var divider = new string(' ', indent) + new string('/', 103 - indent);
+            var label_line = new string(' ', indent) + "// " + canonical;
+            var already_blank_after = line < lines.Count && lines[line].Trim() == "";
+            var prev_trim = line > 0 ? lines[line - 1].TrimEnd().Trim() : "";
+            var needs_leading_blank = prev_trim != "" && !prev_trim.EndsWith("{");
+            var body = already_blank_after ? new[] { divider, label_line } : new[] { divider, label_line, "" };
+            var to_insert = needs_leading_blank ? new[] { "" }.Concat(body).ToArray() : body;
+            lines.InsertRange(line, to_insert);
+            inserted++;
+        }
+        System.IO.File.WriteAllText(path, string.Join("\n", lines));
+        files_changed++;
+    }
+    System.Console.WriteLine($"PROBE files_changed={files_changed} inserted={inserted}");
+    Assert.Pass();
+}

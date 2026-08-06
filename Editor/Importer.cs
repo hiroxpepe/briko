@@ -11,6 +11,8 @@ using Briko.Editor.Internal;
 using Briko.Editor.Model;
 
 namespace Briko.Editor {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
 
     /// <summary>
     /// Imports a Briko JSON layout into a new Unity scene (briko_spec.md §7.2).

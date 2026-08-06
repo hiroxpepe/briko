@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 
 namespace Briko.Editor.Model {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
 
     /// <summary>
     /// Root container for a serialized level layout.

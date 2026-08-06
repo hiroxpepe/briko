@@ -527,7 +527,7 @@ static class ConventionRules
         ("Delegate", "public|private|protected|internal", ""),
         ("Properties", "public|private|protected|internal", "noun, adjective"),
         ("Methods", "public|private|protected|internal", "verb"),
-        ("Classes", "inner", ""),
+        ("Classes", "inner|public|private|protected|internal", ""),
         ("Events", "public|private|protected|internal", "verb, verb phrase"),
         ("Const", "", "nouns"),
         ("Enums", "public|private|protected|internal", "noun"),
@@ -536,6 +536,52 @@ static class ConventionRules
     };
 
     internal static readonly (string kind, string modifiers, string hint)[] SECTION_KINDS_FOR_TEST = SECTION_KINDS;
+
+    // Whether a label is even trying to be one of the fixed Kind words —
+    // loosely, so a wording variant like "Private constants" is still
+    // recognized as an attempt at "Const [nouns]" and normalized, rather
+    // than silently treated as free-form. Matching is deliberately looser
+    // than the canonical form it is checked against: any access word (even
+    // one a given Kind's canonical form never shows, like "Private" on
+    // Const) is accepted as an optional prefix here, and "Const" accepts
+    // its plural too. What is actually shown in the canonical form is a
+    // separate, stricter decision made in canonical_label_for.
+    internal static bool is_kind_attempt(string label_text)
+    {
+        const string any_access = "public|private|protected|internal";
+        return SECTION_KINDS.Any(sk => {
+            var kind_word = sk.kind == "Const" ? "Const|Constants" : sk.kind;
+            // Classes is the one kind whose label can stack two modifier
+            // words (an access word, then "inner", for a nested type) —
+            // every other kind takes at most one modifier word.
+            var mod_group = sk.kind == "Classes"
+                ? $@"(?:({any_access})\s+)?(?:(inner)\s+)?"
+                : $@"(?:({any_access})\s+)?";
+            var static_group = sk.kind == "Classes" ? "" : @"(?:(static)\s+)?";
+            var hint_group = sk.hint == "" ? "" : @"(?:\s*\[([a-z ,]+)\])?";
+            return Regex.IsMatch(label_text, $@"^(?i:{mod_group}{static_group}(?:{kind_word}){hint_group})$");
+        });
+    }
+
+    // No more than one blank line in a row, anywhere in the file. Two blank
+    // lines read the same as one to a human, so the second is just noise —
+    // and it is cheap to check without any syntax awareness at all.
+    internal static List<string> find_blank_line_violations(string code, string label)
+    {
+        var found = new List<string>();
+        var lines = code.Replace("\r\n", "\n").Split('\n');
+        int run = 0;
+        for (int i = 0; i < lines.Length; i++) {
+            if (lines[i].Trim() == "") {
+                run++;
+                if (run == 2)
+                    found.Add($"{label}:{i + 1}: two or more blank lines in a row, keep only one");
+            } else {
+                run = 0;
+            }
+        }
+        return found;
+    }
 
     internal static List<string> find_section_header_violations(string code, string label)
     {
@@ -549,46 +595,56 @@ static class ConventionRules
         // member that follows it. EnumMemberDeclarationSyntax (an enum's
         // individual values, e.g. Low/High) is excluded: it is also a
         // MemberDeclarationSyntax and can share a line with its enclosing
-        // enum, which would otherwise overwrite the real entry.
+        // enum, which would otherwise overwrite the real entry. The owning
+        // parent is kept as-is (not cast to a specific type) so that both
+        // "nested inside a class" and "sitting directly in a namespace"
+        // are correctly told apart from their sibling containers.
         var member_at_line = new Dictionary<int, MemberDeclarationSyntax>();
-        var enclosing_type_at_line = new Dictionary<int, TypeDeclarationSyntax?>();
+        var owner_at_line = new Dictionary<int, SyntaxNode?>();
         foreach (var m in root.DescendantNodes().OfType<MemberDeclarationSyntax>()) {
             if (m is EnumMemberDeclarationSyntax) continue;
             var ln = tree.GetLineSpan(m.Span).StartLinePosition.Line;
             member_at_line[ln] = m;
-            enclosing_type_at_line[ln] = m.Parent as TypeDeclarationSyntax;
-            member_at_line[tree.GetLineSpan(m.Span).StartLinePosition.Line] = m;
+            owner_at_line[ln] = m.Parent;
         }
 
         // one_kind_of: what this member counts as for the label vocabulary,
-        // or null if it has no place in the fixed vocabulary at all (an
-        // enum, an interface, a destructor, ...) — those are left alone.
-        (string kind, string access, bool is_static)? one_kind_of(MemberDeclarationSyntax member)
+        // or null if it has no place in the fixed vocabulary at all (a
+        // destructor, an indexer outside the fixed set, ...) — those are
+        // left alone. is_nested tells a class/enum/interface/etc. declared
+        // directly in a namespace (where only public/internal are valid,
+        // and there is no "inner" concept) apart from one nested inside
+        // another type (where the omitted default is private, like any
+        // other member, and "inner" names the nesting).
+        (string kind, string access, bool is_static, bool is_nested)? one_kind_of(MemberDeclarationSyntax member)
         {
             var modifiers = modifiers_of(member);
+            var is_type_decl = member is BaseTypeDeclarationSyntax;
+            var is_nested = member.Parent is TypeDeclarationSyntax;
             var access = has(modifiers, "public") ? "public"
                 : has(modifiers, "protected") ? "protected"
                 : has(modifiers, "internal") ? "internal"
+                : is_type_decl && !is_nested ? "internal" // the true C# default for a top-level type
                 : "private";
             var is_static = has(modifiers, "static");
             return member switch {
-                FieldDeclarationSyntax f when has(f.Modifiers, "const") => ("Const", access, false),
-                FieldDeclarationSyntax => ("Fields", access, is_static),
-                ConstructorDeclarationSyntax => ("Constructor", access, is_static),
-                DestructorDeclarationSyntax => ("Destructor", access, false),
-                DelegateDeclarationSyntax => ("Delegate", access, is_static),
-                PropertyDeclarationSyntax => ("Properties", access, is_static),
-                MethodDeclarationSyntax => ("Methods", access, is_static),
-                EventDeclarationSyntax or EventFieldDeclarationSyntax => ("Events", access, is_static),
-                ClassDeclarationSyntax or StructDeclarationSyntax or RecordDeclarationSyntax => ("Classes", access, is_static),
-                EnumDeclarationSyntax => ("Enums", access, is_static),
-                InterfaceDeclarationSyntax => ("Interfaces", access, is_static),
-                IndexerDeclarationSyntax => ("Indexers", access, is_static),
+                FieldDeclarationSyntax f when has(f.Modifiers, "const") => ("Const", access, false, is_nested),
+                FieldDeclarationSyntax => ("Fields", access, is_static, is_nested),
+                ConstructorDeclarationSyntax => ("Constructor", access, is_static, is_nested),
+                DestructorDeclarationSyntax => ("Destructor", access, false, is_nested),
+                DelegateDeclarationSyntax => ("Delegate", access, is_static, is_nested),
+                PropertyDeclarationSyntax => ("Properties", access, is_static, is_nested),
+                MethodDeclarationSyntax => ("Methods", access, is_static, is_nested),
+                EventDeclarationSyntax or EventFieldDeclarationSyntax => ("Events", access, is_static, is_nested),
+                ClassDeclarationSyntax or StructDeclarationSyntax or RecordDeclarationSyntax => ("Classes", access, is_static, is_nested),
+                EnumDeclarationSyntax => ("Enums", access, is_static, is_nested),
+                InterfaceDeclarationSyntax => ("Interfaces", access, is_static, is_nested),
+                IndexerDeclarationSyntax => ("Indexers", access, is_static, is_nested),
                 _ => null
             };
         }
 
-        string? canonical_label_for((string kind, string access, bool is_static) k)
+        string? canonical_label_for((string kind, string access, bool is_static, bool is_nested) k)
         {
             var entry = SECTION_KINDS.FirstOrDefault(s => s.kind == k.kind);
             if (entry.kind == null) return null;
@@ -596,14 +652,19 @@ static class ConventionRules
             // Methods and Events always spell out the access level, even
             // private — a class commonly mixes public and private methods,
             // so the label must say which. Fields/Properties/Classes omit
-            // it for the private+instance default, matching the omitted
-            // `private` keyword rule.
+            // it for the default access (private when nested inside another
+            // type; internal when sitting directly in a namespace, since
+            // that is the true C# default there — private is not valid on
+            // a namespace-level type), matching the omitted `private`
+            // keyword rule. "inner" only makes sense for a type nested
+            // inside another type, never for one declared in a namespace.
+            var default_access = k.is_nested ? "private" : "internal";
             var always_shows_access = k.kind == "Methods" || k.kind == "Events";
-            var omit_access = !always_shows_access && k.access == "private" && !k.is_static;
+            var omit_access = !always_shows_access && k.access == default_access && !k.is_static;
             if (entry.modifiers != "" && !omit_access)
                 parts.Add(k.access);
             if (k.kind != "Classes" && k.is_static) parts.Add("static");
-            if (k.kind == "Classes") parts.Add("inner");
+            if (k.kind == "Classes" && k.is_nested) parts.Add("inner");
             parts.Add(k.kind);
             return string.Join(" ", parts) + (entry.hint == "" ? "" : $" [{entry.hint}]");
         }
@@ -611,6 +672,17 @@ static class ConventionRules
         for (int i = 0; i < lines.Length; i++) {
             var trimmed = lines[i].Trim();
             if (trimmed.Length < 10 || trimmed.Any(c => c != '/')) continue;
+
+            // A blank line must sit above the divider, unless the divider
+            // is the very first thing after a type/namespace's opening
+            // brace — right under `public class Foo {`, no blank is
+            // wanted or needed.
+            if (i > 0) {
+                var prev_line = lines[i - 1].TrimEnd();
+                var prev_trim = prev_line.Trim();
+                if (prev_trim != "" && !prev_trim.EndsWith("{"))
+                    found.Add($"{label}:{i + 1}: section divider needs a blank line above it");
+            }
 
             var indent = lines[i].Length - lines[i].TrimStart(' ').Length;
             var slash_count = trimmed.Length;
@@ -626,26 +698,21 @@ static class ConventionRules
             // Is the label even trying to be one of the fixed Kind words?
             // If not, it is free-form — protected, never checked against
             // the real members below, per the strict-match design.
-            var is_kind_attempt = SECTION_KINDS.Any(sk => {
-                var mod_group = sk.modifiers == "" ? "" : $@"(?:({sk.modifiers})\s+)?";
-                var static_group = sk.kind == "Classes" ? "" : @"(?:(static)\s+)?";
-                var hint_group = sk.hint == "" ? "" : @"(?:\s*\[([a-z ,]+)\])?";
-                return Regex.IsMatch(section_label, $@"^(?i:{mod_group}{static_group}{sk.kind}{hint_group})$");
-            });
-            if (!is_kind_attempt) continue;
+            if (!is_kind_attempt(section_label)) continue;
 
             // Find the block of members this label actually covers: from the
             // first member after the label to the member right before the
-            // next divider (or the end of the type).
+            // next divider (or the end of the enclosing container —
+            // whether that is a type or the namespace itself).
             var members_here = new List<MemberDeclarationSyntax>();
-            TypeDeclarationSyntax? section_type = null;
+            SyntaxNode? section_owner = null;
             for (int line = i + 2; line < lines.Length; line++) {
                 var t = lines[line].Trim();
                 if (t.Length >= 10 && t.All(c => c == '/')) break; // next divider
                 if (member_at_line.TryGetValue(line, out var m)) {
-                    var owner = enclosing_type_at_line[line];
-                    if (section_type == null) section_type = owner;
-                    else if (owner != section_type) break; // crossed into a sibling/enclosing type
+                    var owner = owner_at_line[line];
+                    if (section_owner == null) section_owner = owner;
+                    else if (owner != section_owner) break; // crossed into a sibling/enclosing container
                     members_here.Add(m);
                 }
             }
@@ -661,6 +728,51 @@ static class ConventionRules
             var expected = canonical_label_for(distinct[0]);
             if (expected != null && section_label != expected)
                 found.Add($"{label}:{i + 2}: section label '{section_label}' must be '{expected}'");
+        }
+
+        // A free-form label next to an individual member (e.g. "Step 2:
+        // EffectiveNeeds") does not exempt that member's kind/access/static
+        // run from also having its own Kind-labeled divider somewhere above
+        // it — the two serve different purposes and neither substitutes
+        // for the other. Walk every run of consecutive same-kind members
+        // and make sure a genuine Kind label covers it, even if a
+        // free-form divider sits physically closer to the member.
+        bool is_kind_label(string text) => is_kind_attempt(text);
+
+        IEnumerable<SyntaxList<MemberDeclarationSyntax>> containers =
+            root.DescendantNodes().OfType<TypeDeclarationSyntax>().Select(t => t.Members)
+            .Concat(root.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>().Select(n => n.Members));
+
+        foreach (var members in containers) {
+            (string, string, bool, bool)? prev_kind = null;
+            foreach (var member in members) {
+                var k = one_kind_of(member);
+                if (k == null) { prev_kind = null; continue; }
+                if (k.Equals(prev_kind)) continue;
+                prev_kind = k;
+
+                var member_line = tree.GetLineSpan(member.Span).StartLinePosition.Line;
+                bool has_kind_divider = false;
+                for (int back = member_line - 1; back >= 0; back--) {
+                    var t = lines[back].Trim();
+                    if (t.Length >= 10 && t.All(c => c == '/')) {
+                        if (back + 1 < lines.Length) {
+                            var lbl = lines[back + 1].Trim();
+                            if (lbl.StartsWith("//") && is_kind_label(lbl.Substring(2).Trim())) {
+                                has_kind_divider = true;
+                                break;
+                            }
+                        }
+                        continue; // this divider was not a Kind match — keep looking further back
+                    }
+                    if (t.Length > 0 && !t.StartsWith("//") && !t.StartsWith("///")) break; // real code — stop
+                }
+                if (!has_kind_divider) {
+                    var expected = canonical_label_for(k.Value);
+                    if (expected != null)
+                        found.Add($"{label}:{member_line + 1}: members here need a section header ('{expected}')");
+                }
+            }
         }
         found.Sort(StringComparer.Ordinal);
         return found;

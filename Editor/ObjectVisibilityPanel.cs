@@ -11,6 +11,8 @@ using UnityEngine.SceneManagement;
 using Briko.Editor.Internal;
 
 namespace Briko.Editor {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
 
     /// <summary>
     /// Persistent EditorWindow that shows per-type object counts and
@@ -20,7 +22,7 @@ namespace Briko.Editor {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public class ObjectVisibilityPanel : EditorWindow {
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Private constants
+        // Const [nouns]
 
         const string MENU_ROOT = "Tools/Briko/";
         const string PLATFORM_NAME = "Platform";
@@ -35,6 +37,9 @@ namespace Briko.Editor {
 
         List<(string kind, List<GameObject> containers)> _type_entries = new();
         bool _needs_scan = true;
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Menu items
@@ -146,6 +151,9 @@ namespace Briko.Editor {
             }
             return null;
         }
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // private Methods [verb]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Unity EditorWindow lifecycle

@@ -10,6 +10,8 @@ using UnityEngine;
 using Briko.Editor.Model;
 
 namespace Briko.Editor {
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // public Classes
 
     /// <summary>
     /// Registers the Export menu item under Tools > Briko.
@@ -17,7 +19,7 @@ namespace Briko.Editor {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class ExportMenu {
         ///////////////////////////////////////////////////////////////////////////////////////////////
-        // Private constants
+        // Const [nouns]
 
         const string MENU_ROOT = "Tools/Briko/";
 
@@ -29,6 +31,9 @@ namespace Briko.Editor {
             NullValueHandling = NullValueHandling.Ignore,
             DefaultValueHandling = DefaultValueHandling.IgnoreAndPopulate,
         };
+
+        ///////////////////////////////////////////////////////////////////////////////////////////////
+        // public static Methods [verb]
 
         ///////////////////////////////////////////////////////////////////////////////////////////////
         // Menu items
