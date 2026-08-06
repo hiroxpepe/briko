@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System.IO;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -15,8 +17,6 @@ namespace Briko.Editor {
     /// </summary>
     /// <author>h.adachi (STUDIO MeowToon)</author>
     public static class Importer {
-#nullable enable
-
         ///////////////////////////////////////////////////////////////////////
         // Public methods [verb, verb phrase]
 

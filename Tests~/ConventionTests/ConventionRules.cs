@@ -487,6 +487,32 @@ static class ConventionRules
         return found;
     }
 
+    // Every source file opens with the same five lines: the copyright line,
+    // the license line, a blank line, `#nullable enable`, and another blank
+    // line — before anything else, including using directives.
+    internal static List<string> find_header_violations(string code, string label)
+    {
+        var found = new List<string>();
+        var lines = code.Replace("\r\n", "\n").Split('\n');
+        string at(int i) => i < lines.Length ? lines[i] : "";
+
+        const string copyright = "// Copyright (c) STUDIO MeowToon. All rights reserved.";
+        const string license = "// Licensed under the MIT License. See LICENSE in the project root for license information.";
+
+        if (at(0) != copyright)
+            found.Add($"{label}:1: header line 1 must be the copyright notice");
+        if (at(1) != license)
+            found.Add($"{label}:2: header line 2 must be the license notice");
+        if (at(2) != "")
+            found.Add($"{label}:3: header line 3 must be blank");
+        if (at(3) != "#nullable enable")
+            found.Add($"{label}:4: header line 4 must be '#nullable enable'");
+        if (at(4) != "")
+            found.Add($"{label}:5: header line 5 must be blank");
+
+        return found;
+    }
+
     static (int kind, int sub, int acc, int stat) key_of(MemberDeclarationSyntax member)
     {
         int kind = kind_rank(member);

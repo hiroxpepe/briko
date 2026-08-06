@@ -1,6 +1,8 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+#nullable enable
+
 using System;
 using System.Collections.Generic;
 
@@ -13,7 +15,6 @@ namespace Briko.Editor.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [Serializable]
     public class Root {
-#nullable enable
         /// <summary>Level identifier, used as scene name on import.</summary>
         public string layout_id { get; set; } = "";
 
@@ -36,7 +37,6 @@ namespace Briko.Editor.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [Serializable]
     public class Platform {
-#nullable enable
         /// <summary>Floor identifier ("1f", "2f", ...).</summary>
         public string floor { get; set; } = "";
 
@@ -56,7 +56,6 @@ namespace Briko.Editor.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [Serializable]
     public class Item {
-#nullable enable
         /// <summary>Prefab asset name without trailing variant number (e.g. "Ground_10.0x0.5x10.0_Green").</summary>
         public string prefab { get; set; } = "";
 
@@ -76,7 +75,6 @@ namespace Briko.Editor.Model {
     /// <author>h.adachi (STUDIO MeowToon)</author>
     [Serializable]
     public class Zone {
-#nullable enable
         /// <summary>Zone identifier matching Germio's germio_config.json (e.g. "vol_boss_start").</summary>
         public string zone_id { get; set; } = "";
 
