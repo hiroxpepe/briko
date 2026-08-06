@@ -302,3 +302,24 @@ every modifier in play:
 | a label is an exact `[access] [static] Kind [hint]` match | normalized to that canonical spelling       | close-but-off wording (`Private methods [verb, verb phrase]`, `Static fields`, `Public static methods`) is a spelling drift on a real Kind label, not free-form text                                                                                                             |
 | a label does not exactly match that shape                 | left as free-form, untouched                | the match is strict, not a loose keyword search — `Persona own-field merge` contains the word "field" but is not `Fields`, so it is never forced into that shape; this is what keeps `Menu items`, `GUI`, `Unity EditorWindow lifecycle`, and step-by-step algorithm labels safe |
 | divider not landing on column 103                         | flagged                                     | breaks the alignment across the file                                                                                                                                                                                                                                             |
+
+---
+
+## Using-directive order
+
+Every `using` directive falls into one of three groups, checked in this
+order: `System`, then any other outside library, then this project's own
+namespace. Within a group, no particular order is required — only the
+group boundaries are checked, so a file may not put a later group's
+`using` before an earlier group's.
+
+A `using static` directive is grouped exactly the same way as a plain
+`using`, by its own root namespace — `using static UnityEngine.GameObject;`
+sits in the third-party group with `using UnityEngine;`, and
+`using static Germio.Env;` sits in this project's own group with
+`using Germio;`. It is not a fourth group of its own; a project may still
+choose to set it visually apart with a blank line, but the rule does not
+require or check that spacing.
+
+A `using X = Y;` alias is left unchecked: the alias name is ours to
+choose, and there is no single outside root to group it by.

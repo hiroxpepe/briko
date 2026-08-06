@@ -129,6 +129,165 @@ public class ConventionRulesTests
         Assert.That(found, Is.Empty);
     }
 
+    [Test]
+    public void Catches_ConceptEventNameShapedMethodByDefault()
+    {
+        // The concept_EventName shape (Button_Click) is not exempt on its
+        // own — only an exact entry in naming_exceptions.md is. A method
+        // must be explicitly reviewed and named, never waved through by shape.
+        var code = "class Mock { public void abilities_OnAwake() {} }";
+        Assert.That(caught(code, "must be PascalCase"), Is.True);
+    }
+
+    [Test]
+    public void Catches_PlainCamelCaseMethodStillFails()
+    {
+        var code = "class Mock { public void getPushedDirection() {} }";
+        Assert.That(caught(code, "must be PascalCase"), Is.True);
+    }
+
+    [Test]
+    public void Catches_PropertyDoesNotGetTheEventHandlerException()
+    {
+        var code = "class Mock { public int abilities_Count { get; } }";
+        Assert.That(caught(code, "must be PascalCase"), Is.True);
+    }
+
+    [Test]
+    public void Catches_BlankLineAfterBlockScopedNamespace()
+    {
+        var code = "namespace Germio.Core {\n\n    class Mock {}\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found, Is.Not.Empty);
+    }
+
+    [Test]
+    public void Catches_BlankLineAfterFileScopedNamespace()
+    {
+        var code = "namespace Webio.Core;\n\nclass Mock {}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found, Is.Not.Empty);
+    }
+
+    [Test]
+    public void Passes_NoBlankLineAfterNamespace()
+    {
+        var code = "namespace Germio.Core {\n    class Mock {}\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found, Is.Empty);
+    }
+
+    [Test]
+    public void Catches_NamespaceRightAfterUsingWithNoBlankLine()
+    {
+        var code = "using Germio.Systems;\nnamespace Germio.Players {\n    class Mock {}\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("blank line above it")), Is.True);
+    }
+
+    [Test]
+    public void Passes_NamespaceWithBlankLineAfterUsing()
+    {
+        var code = "using Germio.Systems;\n\nnamespace Germio.Players {\n    class Mock {}\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("blank line above it")), Is.False);
+    }
+
+    [Test]
+    public void Catches_BlankLineAfterTypeDeclaration()
+    {
+        var code = "class Mock {\n\n    int x;\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("type")), Is.True);
+    }
+
+    [Test]
+    public void Catches_BlankLineAfterInnerClassDeclaration()
+    {
+        var code = "class Human {\n    protected class Acceleration {\n\n        int x;\n    }\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("type")), Is.True);
+    }
+
+    [Test]
+    public void Passes_NoBlankLineAfterTypeDeclaration()
+    {
+        var code = "class Mock {\n    int x;\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("type")), Is.False);
+    }
+
+    [Test]
+    public void Passes_OneLineEnumFollowedByBlankLine()
+    {
+        var code = "class Mock {\n    public enum Level { Error, Warning }\n\n    int x;\n}";
+        var found = ConventionRules.find_namespace_gap_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("type")), Is.False);
+    }
+
+    [Test]
+    public void Passes_BareFieldsPackedTogether()
+    {
+        var code = "class Mock {\n"
+            + "    int _a;\n"
+            + "    int _b;\n"
+            + "}";
+        var found = ConventionRules.find_member_spacing_violations(code, "mock.cs");
+        Assert.That(found, Is.Empty);
+    }
+
+    [Test]
+    public void Catches_DocumentedFieldWithNoBlankLineAbove()
+    {
+        var code = "class Mock {\n"
+            + "    int _a;\n"
+            + "    /// <summary>b</summary>\n"
+            + "    int _b;\n"
+            + "}";
+        var found = ConventionRules.find_member_spacing_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("above")), Is.True);
+    }
+
+    [Test]
+    public void Catches_DocumentedFieldWithNoBlankLineBelow()
+    {
+        var code = "class Mock {\n"
+            + "    /// <summary>a</summary>\n"
+            + "    int _a;\n"
+            + "    int _b;\n"
+            + "}";
+        var found = ConventionRules.find_member_spacing_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("below")), Is.True);
+    }
+
+    [Test]
+    public void Passes_DocumentedFieldWithBlankLinesAround()
+    {
+        var code = "class Mock {\n"
+            + "    int _a;\n"
+            + "\n"
+            + "    /// <summary>b</summary>\n"
+            + "    int _b;\n"
+            + "\n"
+            + "    int _c;\n"
+            + "}";
+        var found = ConventionRules.find_member_spacing_violations(code, "mock.cs");
+        Assert.That(found, Is.Empty);
+    }
+
+    [Test]
+    public void Passes_BareFieldRightAfterSectionHeaderWithBlank()
+    {
+        var code = "class Mock {\n"
+            + "    /////////////////////////////\n"
+            + "    // Fields\n"
+            + "\n"
+            + "    int _a;\n"
+            + "}";
+        var found = ConventionRules.find_member_spacing_violations(code, "mock.cs");
+        Assert.That(found, Is.Empty);
+    }
+
     static bool caught(string code, string needle) =>
         ConventionRules.find_naming_violations(code, "mock.cs").Any(v => v.Contains(needle));
 
@@ -170,6 +329,46 @@ public class ConventionRulesTests
             + "}";
         var found = ConventionRules.find_using_order_violations(code, "mock.cs");
         Assert.That(found.Any(v => v.Contains("out of group order")), Is.False);
+    }
+
+    [Test]
+    public void Catches_BlankLineBetweenUsings()
+    {
+        var code = "namespace Briko.Editor {\n"
+            + "    using System;\n"
+            + "\n"
+            + "    using UnityEngine;\n"
+            + "    using Briko.Editor.Internal;\n"
+            + "    class Mock {}\n"
+            + "}";
+        var found = ConventionRules.find_using_order_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("blank line")), Is.True);
+    }
+
+    [Test]
+    public void Passes_UsingsWithNoBlankLineBetweenThem()
+    {
+        var code = "namespace Briko.Editor {\n"
+            + "    using System;\n"
+            + "    using UnityEngine;\n"
+            + "    using Briko.Editor.Internal;\n"
+            + "    class Mock {}\n"
+            + "}";
+        var found = ConventionRules.find_using_order_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("blank line")), Is.False);
+    }
+
+    [Test]
+    public void Passes_UsingsSeparatedByCommentOrIfdefWithNoBlankLine()
+    {
+        var code = "using System;\n"
+            + "// explanatory comment\n"
+            + "#if !UNITY_5_3_OR_NEWER\n"
+            + "using NJsonSchema;\n"
+            + "#endif\n"
+            + "namespace Briko.Editor { class Mock {} }";
+        var found = ConventionRules.find_using_order_violations(code, "mock.cs");
+        Assert.That(found.Any(v => v.Contains("blank line")), Is.False);
     }
 
     [Test]
@@ -408,7 +607,6 @@ class Watcher
         Assert.That(naming_count("class Mock { public void FindRegion() {} }"), Is.Zero);
     }
 
-
     [Test]
     public void Ignores_ExternalApiNamesWhenSpelling()
     {
@@ -467,8 +665,8 @@ class Watcher
 class Watcher
 {
     const int MAX_TABS = 8;
-    static int _shared_count;
     int _tab_count;
+    static int _shared_count;
 
     public Watcher() { }
 

@@ -58,6 +58,7 @@ static class ConventionRules
     // check behaves as before.
     static readonly HashSet<string> UNITY_METHODS = load_words("unity_methods.md");
     static readonly HashSet<string> TECH_TERMS = load_tech_terms();
+    static readonly HashSet<string> NAMING_EXCEPTIONS = load_naming_exceptions();
 
     // The tech-terms list is the same one the documents use. Each entry is a
     // line "**term** — sense", so the term is the text in the first bold span.
@@ -92,6 +93,24 @@ static class ConventionRules
                         .Where(line => line.StartsWith("+ "))
                         .SelectMany(line => line.Substring(2).Trim().ToLowerInvariant()
                             .Split(' ', StringSplitOptions.RemoveEmptyEntries))
+                        .Where(w => w.Length > 0));
+        }
+        return new HashSet<string>();
+    }
+
+    // Each line is one exact "TypeName.member_name" entry — case-sensitive,
+    // never split or lower-cased, unlike the word lists above, since this
+    // names a specific member rather than an English word part.
+    static HashSet<string> load_naming_exceptions()
+    {
+        var here = Path.GetDirectoryName(typeof(ConventionRules).Assembly.Location) ?? ".";
+        for (var dir = here; dir != null; dir = Path.GetDirectoryName(dir)) {
+            var path = Path.Combine(dir, "vocabulary", "naming_exceptions.md");
+            if (File.Exists(path))
+                return new HashSet<string>(
+                    File.ReadAllLines(path)
+                        .Where(line => line.StartsWith("+ "))
+                        .Select(line => line.Substring(2).Trim())
                         .Where(w => w.Length > 0));
         }
         return new HashSet<string>();
@@ -171,6 +190,7 @@ static class ConventionRules
                     if (!UPPER_SNAKE.IsMatch(id))
                         found.Add($"{label}:{line(variable)}: const '{id}' must be UPPER_SNAKE");
                 } else if (exposed(field.Modifiers)) {
+                    if (is_naming_exception(variable, id)) continue;
                     // An exposed mutable field on a [Serializable] type is a
                     // JSON-mapping field, and one on a [StructLayout] type is a
                     // mirror of an outside (native) structure: snake_case is its
@@ -362,10 +382,29 @@ static class ConventionRules
             yield return (member.Identifier.ValueText, line(member));
     }
 
+    // The nearest enclosing type's own name, so a member can be looked up
+    // in NAMING_EXCEPTIONS as "TypeName.member_name" — the exact member,
+    // never just the short name, so an unrelated member elsewhere that
+    // happens to share it is never accidentally covered too.
+    static string? enclosing_type_name(SyntaxNode node)
+    {
+        for (var current = node.Parent; current != null; current = current.Parent)
+            if (current is BaseTypeDeclarationSyntax type)
+                return type.Identifier.ValueText;
+        return null;
+    }
+
+    static bool is_naming_exception(SyntaxNode node, string member_name)
+    {
+        var type_name = enclosing_type_name(node);
+        return type_name != null && NAMING_EXCEPTIONS.Contains($"{type_name}.{member_name}");
+    }
+
     static void check_casing(List<string> found, string label, SyntaxNode node,
         string id, SyntaxTokenList modifiers, string kind)
     {
         bool want_pascal = exposed(modifiers);
+        if (want_pascal && is_naming_exception(node, id)) return;
         bool ok = want_pascal ? PASCAL.IsMatch(id) : CAMEL.IsMatch(id);
         if (!ok)
             found.Add($"{label}:{line(node)}: {kind} '{id}' must be {(want_pascal ? "PascalCase" : "camelCase")}");
@@ -473,8 +512,9 @@ static class ConventionRules
         }
 
         int high = -1;
+        UsingDirectiveSyntax? previous = null;
         foreach (var u in unit.DescendantNodes().OfType<UsingDirectiveSyntax>()) {
-            if (u.StaticKeyword.IsKind(SyntaxKind.StaticKeyword) || u.Alias != null) continue;
+            if (u.Alias != null) continue; // an alias's own name is ours to choose; no external root to group by
             var name = u.Name?.ToString() ?? "";
             var group = group_of(name);
             if (group < high) {
@@ -482,8 +522,81 @@ static class ConventionRules
                 found.Add($"{label}:{at}: using '{name}' is out of group order (system, then third-party, then own code)");
             }
             if (group > high) high = group;
+            // The using block is one continuous run — grouping is by order
+            // alone, never by a blank line between one using and the next.
+            // A comment or a #if/#endif line between two usings is a real
+            // annotation, not the pattern this rule targets, so only a
+            // truly empty line in the gap counts.
+            if (previous != null) {
+                var prev_line = tree.GetLineSpan(previous.Span).EndLinePosition.Line;
+                var this_line = tree.GetLineSpan(u.Span).StartLinePosition.Line;
+                var source_lines = code.Replace("\r\n", "\n").Split('\n');
+                bool has_blank = false;
+                for (var li = prev_line + 1; li < this_line; li++)
+                    if (li < source_lines.Length && source_lines[li].Trim().Length == 0)
+                        has_blank = true;
+                if (has_blank)
+                    found.Add($"{label}:{this_line + 1}: using '{name}' has a blank line before it inside the using block");
+            }
+            previous = u;
         }
         found.Sort(StringComparer.Ordinal);
+        return found;
+    }
+
+    // The line right after the namespace declaration — whether the
+    // block-scoped "namespace X {" or the file-scoped "namespace X;" form —
+    // is never blank. Whatever comes first, usually a section-header
+    // comment, sits directly against the namespace line. On the other side,
+    // if a using directive comes right before the namespace declaration,
+    // exactly a blank line separates the two — the using block and the
+    // namespace are visually distinct, unlike the namespace and its own
+    // first line. The same "no blank line right after the opening brace"
+    // rule holds for every type declaration too — class, interface, struct,
+    // record, enum — at any nesting depth, inner classes included.
+    internal static List<string> find_namespace_gap_violations(string code, string label)
+    {
+        var found = new List<string>();
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var unit = tree.GetCompilationUnitRoot();
+        var source_lines = code.Replace("\r\n", "\n").Split('\n');
+
+        void check_no_blank_after(int brace_line, string what)
+        {
+            var next_line = brace_line + 1;
+            if (next_line < source_lines.Length && source_lines[next_line].Trim().Length == 0) {
+                var at = next_line + 1;
+                found.Add($"{label}:{at}: blank line right after the {what} declaration");
+            }
+        }
+
+        foreach (var ns in unit.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>()) {
+            var start_line = tree.GetLineSpan(ns.Span).StartLinePosition.Line;
+            var prev_line = start_line - 1;
+            if (prev_line >= 0 && source_lines[prev_line].Trim().StartsWith("using ")) {
+                found.Add($"{label}:{start_line + 1}: namespace needs a blank line above it, after the using block");
+            }
+
+            // For a block-scoped namespace, the declaration line is the one
+            // with the opening brace; the next line is whatever sits inside.
+            var decl_line = tree.GetLineSpan(ns.Name.Span).EndLinePosition.Line;
+            check_no_blank_after(decl_line, "namespace");
+        }
+
+        foreach (var type in unit.DescendantNodes().OfType<BaseTypeDeclarationSyntax>()) {
+            var brace_line = tree.GetLineSpan(type.Identifier.Span).EndLinePosition.Line;
+            // The identifier's own line may not be the brace line if a base
+            // list or type parameters follow (class Foo : Bar { on one more
+            // line) — walk forward to the line that actually opens the body.
+            for (var li = brace_line; li < source_lines.Length; li++) {
+                if (source_lines[li].Contains("{")) { brace_line = li; break; }
+            }
+            // A one-line declaration (enum Foo { A, B } complete on a
+            // single line) has no real "inside" to check — the closing
+            // brace sits on the same line as the opening one.
+            if (source_lines[brace_line].Contains("}")) continue;
+            check_no_blank_after(brace_line, "type");
+        }
         return found;
     }
 
@@ -558,7 +671,11 @@ static class ConventionRules
                 ? $@"(?:({any_access})\s+)?(?:(inner)\s+)?"
                 : $@"(?:({any_access})\s+)?";
             var static_group = sk.kind == "Classes" ? "" : @"(?:(static)\s+)?";
-            var hint_group = sk.hint == "" ? "" : @"(?:\s*\[([a-z ,]+)\])?";
+            // A bracket suffix is always tolerated for matching purposes,
+            // even on a Kind whose canonical form never has one (Fields,
+            // Constructor, ...) — a wrong or extra hint is still a wording
+            // attempt at that Kind, and gets stripped when normalized.
+            var hint_group = @"(?:\s*\[([a-z ,]+)\])?";
             return Regex.IsMatch(label_text, $@"^(?i:{mod_group}{static_group}(?:{kind_word}){hint_group})$");
         });
     }
@@ -566,6 +683,71 @@ static class ConventionRules
     // No more than one blank line in a row, anywhere in the file. Two blank
     // lines read the same as one to a human, so the second is just noise —
     // and it is cheap to check without any syntax awareness at all.
+    // A field or property is either bare (no doc comment) or documented
+    // (a /// summary sits right above it). Two bare members in a row
+    // pack together with no blank line — there is nothing to set apart.
+    // Everywhere else — a section-header divider next to a member, or a
+    // documented member next to anything — a blank line separates the
+    // two, since a divider label and a doc comment both mark a
+    // deliberate visual break.
+    internal static List<string> find_member_spacing_violations(string code, string label)
+    {
+        var found = new List<string>();
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var root = tree.GetCompilationUnitRoot();
+        var lines = code.Replace("\r\n", "\n").Split('\n');
+
+        bool is_divider(string line) {
+            var t = line.Trim();
+            return t.Length >= 10 && t.All(c => c == '/');
+        }
+
+        bool has_doc_comment(MemberDeclarationSyntax member) =>
+            member.GetLeadingTrivia().Any(t =>
+                t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
+
+        bool blank_at(int i) => i >= 0 && i < lines.Length && lines[i].Trim().Length == 0;
+
+        var targets = root.DescendantNodes()
+            .Where(n => n is FieldDeclarationSyntax || n is PropertyDeclarationSyntax)
+            .Cast<MemberDeclarationSyntax>()
+            .OrderBy(m => m.Span.Start)
+            .ToList();
+
+        foreach (var member in targets) {
+            bool documented = has_doc_comment(member);
+            // The line right above this member's own text (its doc comment
+            // if any, else its declaration) — attributes count as part of
+            // the member's own first line, not something to look above.
+            var first_line = tree.GetLineSpan(
+                (documented ? member.GetLeadingTrivia()
+                    .First(t => t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)).Span
+                 : member.Span)).StartLinePosition.Line;
+            var above = first_line - 1;
+
+            if (above >= 0 && !blank_at(above) && !is_divider(lines[above])) {
+                // The line right above is real code, not a blank and not a
+                // divider — it must be another member. A blank is only
+                // optional when NEITHER side is documented.
+                if (documented)
+                    found.Add($"{label}:{first_line + 1}: documented member needs a blank line above it");
+                // else: bare-to-bare adjacency is fine as-is (packed).
+            }
+
+            var last_line = tree.GetLineSpan(member.Span).EndLinePosition.Line;
+            var below = last_line + 1;
+            // A closing brace right below means this member is the last
+            // one in its type — there is no "next member" to separate
+            // from, so no blank line is needed there either.
+            var below_trim = below < lines.Length ? lines[below].Trim() : "";
+            if (below < lines.Length && !blank_at(below) && !is_divider(lines[below]) && below_trim.Length > 0 && below_trim[0] != '}') {
+                if (documented)
+                    found.Add($"{label}:{last_line + 2}: documented member needs a blank line below it");
+            }
+        }
+        return found;
+    }
+
     internal static List<string> find_blank_line_violations(string code, string label)
     {
         var found = new List<string>();
@@ -781,10 +963,19 @@ static class ConventionRules
     static (int kind, int sub, int acc, int stat) key_of(MemberDeclarationSyntax member)
     {
         int kind = kind_rank(member);
-        int sub = member is FieldDeclarationSyntax f ? field_sub(f) : 0;
+        bool is_field = member is FieldDeclarationSyntax;
+        int sub = is_field ? field_sub((FieldDeclarationSyntax)member) : 0;
         var modifiers = modifiers_of(member);
+        // A field is read as internal state — the plain, private, instance
+        // shape is the normal case and comes first; protected is the
+        // deliberate exception, called out afterward. static vs instance
+        // for a field is handled by field_sub above. A method is read as
+        // the API surface, so it runs the other way: public and static
+        // (the type's own tools) lead, private comes last.
         int stat = has(modifiers, "static") ? 0 : 1;
-        int acc = accessibility_rank(modifiers);
+        int acc = is_field
+            ? 5 - accessibility_rank(modifiers)
+            : accessibility_rank(modifiers);
         return (kind, sub, acc, stat);
     }
 
@@ -810,9 +1001,14 @@ static class ConventionRules
 
     static int field_sub(FieldDeclarationSyntax field)
     {
+        // const stays first regardless — it is neither the "normal
+        // instance state" case nor the "type-level tool" case, just a
+        // literal. Between the other two, a field is read as instance
+        // state first, static second — the opposite of the method
+        // reading order, matched by key_of's stat inversion below.
         if (has(field.Modifiers, "const")) return 0;
-        if (has(field.Modifiers, "static")) return 1;
-        return 2;
+        if (has(field.Modifiers, "static")) return 2;
+        return 1;
     }
 
     static int accessibility_rank(SyntaxTokenList modifiers)
