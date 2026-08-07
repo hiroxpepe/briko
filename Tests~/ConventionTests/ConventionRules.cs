@@ -534,6 +534,8 @@ static class ConventionRules
 
         int high = -1;
         var static_seen_for_root = new HashSet<string>();
+        var finished_roots = new HashSet<string>();
+        string? current_root = null;
         UsingDirectiveSyntax? previous = null;
         foreach (var u in unit.DescendantNodes().OfType<UsingDirectiveSyntax>()) {
             if (u.Alias != null) continue; // an alias's own name is ours to choose; no external root to group by
@@ -545,6 +547,21 @@ static class ConventionRules
             }
             if (group > high) high = group;
 
+            var root = name.Split('.')[0];
+
+            // Every using drawn from one root (UnityEngine, UniRx, ...)
+            // stays in one contiguous run — once a different root has
+            // begun, an earlier root reappearing later means that root's
+            // lines were left scattered instead of kept together.
+            if (root != current_root) {
+                if (current_root != null) finished_roots.Add(current_root);
+                if (finished_roots.Contains(root)) {
+                    var at = tree.GetLineSpan(u.Span).StartLinePosition.Line + 1;
+                    found.Add($"{label}:{at}: using '{name}' is separated from its own root's other usings");
+                }
+                current_root = root;
+            }
+
             // Within one ROOT namespace (UnityEngine, Germio, ...), a
             // plain `using X;` always sorts before any `using static
             // X.Y;` drawn from that same root — the type itself is the
@@ -554,7 +571,6 @@ static class ConventionRules
             // UniRx are both "third-party") are unrelated to each other
             // here, so a plain using from a fresh root never trips on a
             // static left behind by an earlier root in the same group.
-            var root = name.Split('.')[0];
             bool is_static = u.StaticKeyword.IsKind(SyntaxKind.StaticKeyword);
             if (is_static) {
                 static_seen_for_root.Add(root);
@@ -582,6 +598,83 @@ static class ConventionRules
             previous = u;
         }
         found.Sort(StringComparer.Ordinal);
+        return found;
+    }
+
+    // A single check that computes the whole correct order in one pass —
+    // group, then each root in its first-appearance order within that
+    // group, then plain before static within each root — and reports the
+    // full expected block whenever the actual order differs from it.
+    // The three narrower checks above catch specific mistakes with a
+    // precise reason; this one exists so a fix is a single paste, not a
+    // line-by-line hunt, and so it catches any combination those three
+    // might miss between them.
+    internal static List<string> find_using_sort_violations(string code, string label)
+    {
+        var found = new List<string>();
+        var tree = CSharpSyntaxTree.ParseText(code);
+        var unit = tree.GetCompilationUnitRoot();
+
+        var own_ns = unit.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>().FirstOrDefault();
+        var own_root = own_ns?.Name.ToString().Split('.')[0];
+
+        int group_of(string name)
+        {
+            var root = name.Split('.')[0];
+            if (root == "System") return 0;
+            if (own_root != null && root == own_root) return 2;
+            return 1;
+        }
+
+        var all = unit.DescendantNodes().OfType<UsingDirectiveSyntax>().ToList();
+        if (all.Count == 0) return found;
+
+        // Aliases are ours to place, not sorted by a root — each one
+        // stays anchored to whatever directive immediately followed it
+        // in the original file, and rides along with that directive
+        // when the rest of the block gets reordered.
+        var non_alias = all.Where(u => u.Alias == null).ToList();
+        if (non_alias.Count < 2) return found;
+
+        var root_order = new List<string>();
+        var root_group = new Dictionary<string, int>();
+        foreach (var u in non_alias) {
+            var name = u.Name?.ToString() ?? "";
+            var root = name.Split('.')[0];
+            if (!root_group.ContainsKey(root)) {
+                root_group[root] = group_of(name);
+                root_order.Add(root);
+            }
+        }
+        var sorted_roots = root_order
+            .Select((root, idx) => (root, idx))
+            .OrderBy(t => root_group[t.root])
+            .ThenBy(t => t.idx)
+            .Select(t => t.root)
+            .ToList();
+
+        var expected = new List<UsingDirectiveSyntax>();
+        foreach (var root in sorted_roots) {
+            var of_root = non_alias.Where(u => (u.Name?.ToString() ?? "").Split('.')[0] == root).ToList();
+            expected.AddRange(of_root.Where(u => !u.StaticKeyword.IsKind(SyntaxKind.StaticKeyword)));
+            expected.AddRange(of_root.Where(u => u.StaticKeyword.IsKind(SyntaxKind.StaticKeyword)));
+        }
+
+        bool same = non_alias.Count == expected.Count;
+        if (same)
+            for (var i = 0; i < non_alias.Count; i++)
+                if (!ReferenceEquals(non_alias[i], expected[i])) { same = false; break; }
+        if (same) return found;
+
+        // Replay the original list, substituting each non-alias slot
+        // with its correctly-sorted counterpart so every alias keeps
+        // trailing the same directive it followed before.
+        var expected_queue = new Queue<UsingDirectiveSyntax>(expected);
+        var final_order = all.Select(u => u.Alias != null ? u : expected_queue.Dequeue()).ToList();
+
+        var block = string.Join("\n", final_order.Select(u => u.ToString().Trim()));
+        var first_line = tree.GetLineSpan(all[0].Span).StartLinePosition.Line + 1;
+        found.Add($"{label}:{first_line}: using block is out of order, expected:\n{block}");
         return found;
     }
 
