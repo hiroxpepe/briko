@@ -7,27 +7,27 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Briko.Tests.Convention;
-
-/// <summary>
-/// Applies the brace-style rule to the real sources. The rule lives in
-/// ConventionRules and is verified against mock code in ConventionRulesTests.
-/// </summary>
-[TestFixture]
-[Category("Convention")]
-public class BraceConventionTests
-{
-    [Test]
-    public void Sources_JoinOpeningBraceToThePreviousLine()
+namespace Briko.Tests.Convention {
+    /// <summary>
+    /// Applies the brace-style rule to the real sources. The rule lives in
+    /// ConventionRules and is verified against mock code in ConventionRulesTests.
+    /// </summary>
+    [TestFixture]
+    [Category("Convention")]
+    public class BraceConventionTests
     {
-        var found = new List<string>();
-        foreach (var path in ConventionScan.source_files())
-            found.AddRange(ConventionRules.find_brace_violations(
-                File.ReadAllText(path), Path.GetFileName(path)));
+        [Test]
+        public void Sources_JoinOpeningBraceToThePreviousLine()
+        {
+            var found = new List<string>();
+            foreach (var path in ConventionScan.source_files())
+                found.AddRange(ConventionRules.find_brace_violations(
+                    File.ReadAllText(path), Path.GetFileName(path)));
 
-        found.Sort(StringComparer.Ordinal);
-        Assert.That(found, Is.Empty,
-            $"{found.Count} brace-style violation(s) (showing first 40):\n  "
-            + string.Join("\n  ", found.Take(40)));
+            found.Sort(StringComparer.Ordinal);
+            Assert.That(found, Is.Empty,
+                $"{found.Count} brace-style violation(s) (showing first 40):\n  "
+                + string.Join("\n  ", found.Take(40)));
+        }
     }
 }

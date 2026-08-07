@@ -7,27 +7,27 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Briko.Tests.Convention;
-
-/// <summary>
-/// Applies the namespace-gap rule to the real sources. The rule lives in
-/// ConventionRules and is verified against mock code in ConventionRulesTests.
-/// </summary>
-[TestFixture]
-[Category("Convention")]
-public class NamespaceGapConventionTests
-{
-    [Test]
-    public void Sources_HaveNoBlankLineAfterNamespace()
+namespace Briko.Tests.Convention {
+    /// <summary>
+    /// Applies the namespace-gap rule to the real sources. The rule lives in
+    /// ConventionRules and is verified against mock code in ConventionRulesTests.
+    /// </summary>
+    [TestFixture]
+    [Category("Convention")]
+    public class NamespaceGapConventionTests
     {
-        var found = new List<string>();
-        foreach (var path in ConventionScan.source_files())
-            found.AddRange(ConventionRules.find_namespace_gap_violations(
-                File.ReadAllText(path), Path.GetFileName(path)));
+        [Test]
+        public void Sources_HaveNoBlankLineAfterNamespace()
+        {
+            var found = new List<string>();
+            foreach (var path in ConventionScan.source_files())
+                found.AddRange(ConventionRules.find_namespace_gap_violations(
+                    File.ReadAllText(path), Path.GetFileName(path)));
 
-        found.Sort(StringComparer.Ordinal);
-        Assert.That(found, Is.Empty,
-            $"{found.Count} namespace-gap violation(s) (showing first 40):\n  "
-            + string.Join("\n  ", found.Take(40)));
+            found.Sort(StringComparer.Ordinal);
+            Assert.That(found, Is.Empty,
+                $"{found.Count} namespace-gap violation(s) (showing first 40):\n  "
+                + string.Join("\n  ", found.Take(40)));
+        }
     }
 }
