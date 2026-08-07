@@ -29,7 +29,6 @@ namespace Briko.Editor.Internal {
 
         static readonly Regex FLOOR_CONTAINER_PATTERN =
             new(@"^\d+F$|^B\d+F$");
-
         static readonly Regex DIMENSION_PATTERN =
             new(@"_([\d.]+)x([\d.]+)x([\d.]+)_");
 

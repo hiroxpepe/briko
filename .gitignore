@@ -30,3 +30,4 @@ project_all_code.md
 
 # Local NuGet feed config (environment-specific)
 Tests~/ConventionTests/nuget.config
+Tests~/ConventionTests/TestResults/

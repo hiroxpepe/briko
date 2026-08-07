@@ -214,8 +214,16 @@ static class ConventionRules
             // by the dedicated event loop below with the exposed/PascalCase rule.
             if (declarator.Parent?.Parent is EventFieldDeclarationSyntax) continue;
             var id = declarator.Identifier.ValueText;
-            if (!SNAKE.IsMatch(id))
+            // A local declared with the const keyword is a genuine compile-time
+            // constant, the same as a const field — UPPER_SNAKE, not snake_case.
+            bool is_local_const = declarator.Parent?.Parent is LocalDeclarationStatementSyntax local_decl
+                && has(local_decl.Modifiers, "const");
+            if (is_local_const) {
+                if (!UPPER_SNAKE.IsMatch(id))
+                    found.Add($"{label}:{line(declarator)}: local const '{id}' must be UPPER_SNAKE");
+            } else if (!SNAKE.IsMatch(id)) {
                 found.Add($"{label}:{line(declarator)}: local '{id}' must be snake_case");
+            }
         }
 
         foreach (var ev in root.DescendantNodes().OfType<EventFieldDeclarationSyntax>()) {
@@ -241,6 +249,7 @@ static class ConventionRules
             if (id.Length == 0) continue;
             if (in_overriding_member(parameter)) continue;
             if (in_extern_member(parameter)) continue;
+            if (is_bare_naming_exception(id)) continue;
             if (!SNAKE.IsMatch(id))
                 found.Add($"{label}:{line(parameter)}: parameter '{id}' must be snake_case");
         }
@@ -281,6 +290,7 @@ static class ConventionRules
         // name is all caps (JSON, not Json), enforced by the spelling pass below.
         foreach (var type in root.DescendantNodes().OfType<BaseTypeDeclarationSyntax>()) {
             var id = type.Identifier.ValueText;
+            if (is_bare_naming_exception(id)) continue;
             if (!PASCAL.IsMatch(id))
                 found.Add($"{label}:{line(type)}: type '{id}' must be PascalCase");
         }
@@ -309,7 +319,8 @@ static class ConventionRules
         // A name is spelled from known words: each word part is a plain word, a
         // project word, or a unit mark; or it is an all-caps letter word. A part
         // that is none of these is a short form or a hard word, and is flagged.
-        foreach (var (id, at) in declared_names(root)) {
+        foreach (var (id, at, node) in declared_names(root)) {
+            if (is_naming_exception(node, id) || is_bare_naming_exception(id)) continue;
             var parts = word_parts(id).ToList();
             for (var pi = 0; pi < parts.Count; pi++) {
                 var part = parts[pi];
@@ -344,42 +355,42 @@ static class ConventionRules
     // Identifiers introduced by this file: types, members, locals, parameters.
     // Overrides and explicit interface implementations are excluded because their
     // names are fixed by the external type they come from.
-    static IEnumerable<(string id, int at)> declared_names(SyntaxNode root)
+    static IEnumerable<(string id, int at, SyntaxNode node)> declared_names(SyntaxNode root)
     {
         foreach (var type in root.DescendantNodes().OfType<BaseTypeDeclarationSyntax>())
-            yield return (type.Identifier.ValueText, line(type));
+            yield return (type.Identifier.ValueText, line(type), type);
 
         foreach (var method in root.DescendantNodes().OfType<MethodDeclarationSyntax>()) {
             if (has(method.Modifiers, "override") || has(method.Modifiers, "extern")) continue;
             if (method.ExplicitInterfaceSpecifier != null) continue;
             if (UNITY_METHODS.Contains(method.Identifier.ValueText.ToLowerInvariant())) continue;
-            yield return (method.Identifier.ValueText, line(method));
+            yield return (method.Identifier.ValueText, line(method), method);
         }
 
         foreach (var property in root.DescendantNodes().OfType<PropertyDeclarationSyntax>()) {
             if (has(property.Modifiers, "override") || property.ExplicitInterfaceSpecifier != null) continue;
-            yield return (property.Identifier.ValueText, line(property));
+            yield return (property.Identifier.ValueText, line(property), property);
         }
 
         foreach (var declarator in root.DescendantNodes().OfType<VariableDeclaratorSyntax>())
-            yield return (declarator.Identifier.ValueText, line(declarator));
+            yield return (declarator.Identifier.ValueText, line(declarator), declarator);
 
         foreach (var ns in root.DescendantNodes().OfType<BaseNamespaceDeclarationSyntax>())
             foreach (var seg in ns.Name.ToString().Split('.'))
-                yield return (seg, line(ns));
+                yield return (seg, line(ns), ns);
 
         foreach (var each in root.DescendantNodes().OfType<ForEachStatementSyntax>())
-            yield return (each.Identifier.ValueText, line(each));
+            yield return (each.Identifier.ValueText, line(each), each);
 
         foreach (var parameter in root.DescendantNodes().OfType<ParameterSyntax>()) {
             if (parameter.Identifier.ValueText.Length == 0) continue;
             if (in_overriding_member(parameter)) continue;
             if (in_extern_member(parameter)) continue;
-            yield return (parameter.Identifier.ValueText, line(parameter));
+            yield return (parameter.Identifier.ValueText, line(parameter), parameter);
         }
 
         foreach (var member in root.DescendantNodes().OfType<EnumMemberDeclarationSyntax>())
-            yield return (member.Identifier.ValueText, line(member));
+            yield return (member.Identifier.ValueText, line(member), member);
     }
 
     // The nearest enclosing type's own name, so a member can be looked up
@@ -400,11 +411,21 @@ static class ConventionRules
         return type_name != null && NAMING_EXCEPTIONS.Contains($"{type_name}.{member_name}");
     }
 
+    // For a type name or a parameter, there is no meaningful enclosing
+    // "TypeName.member" pair — a type name IS the type, and a parameter
+    // like the discard "_" recurs identically across many unrelated
+    // methods. Such entries are listed bare, with no dot, in
+    // naming_exceptions.md.
+    static bool is_bare_naming_exception(string name) => NAMING_EXCEPTIONS.Contains(name);
+
     static void check_casing(List<string> found, string label, SyntaxNode node,
         string id, SyntaxTokenList modifiers, string kind)
     {
         bool want_pascal = exposed(modifiers);
-        if (want_pascal && is_naming_exception(node, id)) return;
+        // An exception applies to the member regardless of which case it
+        // would otherwise be held to — a private member that must stay
+        // camelCase can be excused exactly the same way an exposed one is.
+        if (is_naming_exception(node, id)) return;
         bool ok = want_pascal ? PASCAL.IsMatch(id) : CAMEL.IsMatch(id);
         if (!ok)
             found.Add($"{label}:{line(node)}: {kind} '{id}' must be {(want_pascal ? "PascalCase" : "camelCase")}");
@@ -714,6 +735,8 @@ static class ConventionRules
             .OrderBy(m => m.Span.Start)
             .ToList();
 
+        MemberDeclarationSyntax? previous = null;
+        bool previous_documented = false;
         foreach (var member in targets) {
             bool documented = has_doc_comment(member);
             // The line right above this member's own text (its doc comment
@@ -732,6 +755,17 @@ static class ConventionRules
                 if (documented)
                     found.Add($"{label}:{first_line + 1}: documented member needs a blank line above it");
                 // else: bare-to-bare adjacency is fine as-is (packed).
+            } else if (above >= 0 && blank_at(above) && !documented) {
+                // A blank line sits right above a bare member. A blank
+                // right after a section header is legitimate (the header
+                // rule requires it) — only a blank between this member
+                // and ANOTHER bare member right above it is unearned,
+                // since two bare members must pack together.
+                var before_blank = above - 1;
+                bool prev_is_bare_member = previous != null && !previous_documented
+                    && tree.GetLineSpan(previous.Span).EndLinePosition.Line == before_blank;
+                if (prev_is_bare_member)
+                    found.Add($"{label}:{above + 1}: blank line between two bare members, they should pack together");
             }
 
             var last_line = tree.GetLineSpan(member.Span).EndLinePosition.Line;
@@ -743,7 +777,18 @@ static class ConventionRules
             if (below < lines.Length && !blank_at(below) && !is_divider(lines[below]) && below_trim.Length > 0 && below_trim[0] != '}') {
                 if (documented)
                     found.Add($"{label}:{last_line + 2}: documented member needs a blank line below it");
+            } else if (below < lines.Length && blank_at(below) && !documented) {
+                // A blank line sits right below a bare member, right
+                // before the type's own closing brace — that separator
+                // is never needed there, the same way it is not needed
+                // right after the opening brace.
+                var after_blank = below + 1;
+                var after_trim = after_blank < lines.Length ? lines[after_blank].Trim() : "";
+                if (after_trim.Length > 0 && after_trim[0] == '}')
+                    found.Add($"{label}:{below + 1}: blank line right before the closing brace is not needed");
             }
+            previous = member;
+            previous_documented = documented;
         }
         return found;
     }
