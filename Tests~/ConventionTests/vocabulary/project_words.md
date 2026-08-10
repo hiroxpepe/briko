@@ -27,3 +27,5 @@ The made-up names across our projects (webio, animo, briko, and the like).
 + webio
 + win64
 + tasklist
++ handoff
++ claude
