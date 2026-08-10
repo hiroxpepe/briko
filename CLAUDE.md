@@ -4,6 +4,21 @@
 > (a language model) that helps build this project. They are kept short and
 > plain, by the writing standard.
 
+## Set up once, before any other work
+
++ Run `git config core.hooksPath .githooks` once per clone. This makes
+  `git commit` run the shared checks in `.githooks/pre-commit` on every
+  markdown file staged for the commit, before the commit is let through.
+
+## Three files, three jobs
+
++ `CLAUDE.md` (this file) — the rules and the promise: how the agent works
+  here, checked every time, not tied to any one piece of work.
++ `TASKLIST.md` — the full list of open work, with a schedule. A short
+  checkbox line up top for each item, a full write-up below it.
++ `HANDOFF.md` — the hand-off to the next chat: where things stand right
+  now, and the next move. Kept short; the full list lives in `TASKLIST.md`.
+
 ## Documents
 
 + Every document follows the writing standard in `docs/standard/`. The words
