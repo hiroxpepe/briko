@@ -1,9 +1,10 @@
 # Draft Words
 
-Words this repository uses that are not in the shared word lists yet. They wait
-here for review; the ones that pass are lifted into the opinio word lists, and
-then taken out of here. A word here must be a real, spelled-out word, not an
-abbreviation — an abbreviation is fixed in the code, not kept here.
+Words this repository uses that are not yet in the shared word lists.
+They wait here for a look-over by the master; the ones the master says
+GO to are put into the shared word lists, and then taken out from here.
+A word here has to be a real word, said out in full, and not a short
+form — a short form is put right in the code, and not kept here.
 
 + 2f
 + active
@@ -45,3 +46,209 @@ abbreviation — an abbreviation is fixed in the code, not kept here.
 + valid
 + variant variants
 + zone zones
+
++ ahead
++ along
++ anywhere
++ both
++ commit commits committing committed
++ english
++ inside
++ once
++ section sections
++ spell spells spelled spelling
++ standard standards
++ two
++ whole
++ server servers
++ wherever
++ column columns
++ either
++ disk disks
++ diff diffs
++ world worlds
++ less
++ feel feels felt feeling
++ aim aims
++ obey obeys
++ unless
++ everyday
++ odd
++ maker makers
++ too
++ english
++ many
++ today
++ weigh weighs weighed weighing
++ people
++ standard standards
++ exact
++ nothing
++ algorithm
++ alias
++ apart
++ appears
++ belongs
++ bend
++ camelcase
++ canonical
++ caps
++ clearly
++ coding
++ combinations
++ comment
++ comments
++ commonly
++ computes
++ consecutive
++ constant
++ constructor
++ contiguous
++ convention
++ correct
++ declarations
++ declare
++ delegate
++ depends
++ destructor
++ directive
++ disagree
++ divider
++ drift
++ easier
++ easiest
++ ecosystem
++ everywhere
++ exactly
++ expected
++ explicit
++ exposed
++ external
++ following
++ four
++ fourth
++ gear
++ grammar
++ guessing
++ helper
++ hint
++ immediately
++ indexer
++ indexers
++ instant
++ interfaces
++ interleave
++ inward
++ keyword
++ magazine
++ meets
++ modifier
++ ness
++ observed
++ older
++ omitted
++ operator
++ operators
++ our
++ ours
++ outward
++ participle
++ payload
++ piece
++ plural
++ priority
++ ranks
++ reappearing
++ reordered
++ require
++ restyle
++ ride
++ riding
++ scattered
++ search
++ section
++ sections
++ segment
++ sheet
++ slash
++ slashes
++ something
++ steady
++ strict
++ technical
++ tense
++ unchecked
++ unlabeled
++ usings
++ variable
++ we
++ whatever
++ within
++ alone
++ always
++ browser
++ code
++ enums
++ faster
++ function
++ goal
++ happening
++ happens
++ indent
++ just
++ leans
++ literal
++ matter
++ nested
++ npm
++ original
++ outside
++ rank
++ rather
++ row
++ shape
++ shapes
++ since
++ sit
++ sits
++ sub
++ untouched
++ which
++ wins
++ without
++ agents
++ also
++ area
++ construction
++ game
++ games
++ graph
++ judgment
++ large
++ larger
++ lost
++ newest
++ password
++ personal
++ program
++ programming
++ programs
++ proves
++ repo
++ spot
++ spots
++ terms
++ tile
++ token
++ toward
++ trip
++ tuned
++ docs
++ fail fails failed failing
++ hurry hurries hurried
++ ones
++ f
++ draft
++ basic
++ md
++ phase phases

@@ -100,6 +100,10 @@ can drive the code under known, made-up conditions.
 
 **region** — A named area of a larger space, marked off for its own handling.
 
+**master** — The one person this tool is built for and works with.
+
+**task** — One piece of work, with its own id, on a `TASKLIST.md`.
+
 ## How to keep this list
 
 + One term, one sense. Give the sense in one place only — here.
