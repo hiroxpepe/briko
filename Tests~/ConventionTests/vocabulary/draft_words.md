@@ -76,12 +76,10 @@ form — a short form is put right in the code, and not kept here.
 + odd
 + maker makers
 + too
-+ english
 + many
 + today
 + weigh weighs weighed weighing
 + people
-+ standard standards
 + exact
 + nothing
 + algorithm
@@ -166,7 +164,6 @@ form — a short form is put right in the code, and not kept here.
 + riding
 + scattered
 + search
-+ section
 + sections
 + segment
 + sheet
@@ -206,7 +203,7 @@ form — a short form is put right in the code, and not kept here.
 + rank
 + rather
 + row
-+ shape
++ shape shapes shaped
 + shapes
 + since
 + sit
@@ -252,3 +249,52 @@ form — a short form is put right in the code, and not kept here.
 + basic
 + md
 + phase phases
++ wish wishes
++ fair
++ honest honestly
++ plainly
++ tiny
++ reminder reminders
++ argue argues argued
++ leave leaves left leaving
++ mid
++ judgement judgements
++ layer layers
++ caller callers
++ sandbox sandboxes
++ device devices
++ runtime runtimes
++ task tasks
++ pure
++ session sessions
++ dev
++ screen screens
++ folder folders
++ develop develops developed developing
++ grow grows growing grew
++ v
++ pick picks
++ link links
++ org orgs
++ class classes
++ pattern patterns
++ fit fits
++ bare
++ guess guesses guessed
++ miss misses
++ fine
++ cannot
++ reach reaches
++ throughout
++ crash crashes
++ badly
++ depth depths
++ whether
++ major
++ swap swaps
++ marker markers
++ neither
++ assume assumes assumed
++ m
++ tonight
++ reference references

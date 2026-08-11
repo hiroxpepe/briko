@@ -104,6 +104,23 @@ can drive the code under known, made-up conditions.
 
 **task** — One piece of work, with its own id, on a `TASKLIST.md`.
 
+**TDD** — Short for "test-driven development": write a failing test
+first, then write the code that makes it pass.
+
+**Schema** — A document that says exactly what fields a JSON file
+must have, and what type each one is.
+
+**Inspector** — The Unity Editor's own panel that shows a
+GameObject's own parts and their own set values.
+
+**Console** — The Unity Editor's own panel that shows a log, a
+warning, or an error while a program runs.
+
+**Newtonsoft** — The name of the .NET library used to read and write
+JSON in this project.
+
+**GameObject** — Unity's own base name for a thing put in a scene.
+
 ## How to keep this list
 
 + One term, one sense. Give the sense in one place only — here.
