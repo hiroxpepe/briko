@@ -4,9 +4,9 @@ Work items still open for this repository. Any person may put in a new
 item; the person who does the work marks it done (`+ [x]`) and puts the
 change in as a commit.
 
-<!-- format: v1 | fields: status, id, title -->
+<!-- format: v1 | fields: status, id, title, phase -->
 
-+ [ ] TASK-001: Put the rest of the docs into Basic English
++ [ ] TASK-001 [PHASE-03]: Put the rest of the docs into Basic English
 
 ## Detail
 
