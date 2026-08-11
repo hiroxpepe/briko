@@ -85,7 +85,7 @@ namespace Briko.Editor {
 
             // Step 4: Assign floor labels
             List<(float surface_y, string label)> floor_labels =
-                FloorDetector.AssignFloorLabels(surface_y_values_desc: anchor_surfaces);
+                FloorDetector.AssignFloorLabels(surface_y_values_descending: anchor_surfaces);
 
             // Step 5: Detect travel direction from zone positions
             float spawn_y = 0f;

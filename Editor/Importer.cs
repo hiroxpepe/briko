@@ -82,8 +82,8 @@ namespace Briko.Editor {
 
             string directory = Path.GetDirectoryName(scene_path) ?? "";
             if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory)) {
-                Directory.CreateDirectory(dir);
-                BrikoLog.Write($"[Briko] Directory created: {dir}");
+                Directory.CreateDirectory(directory);
+                BrikoLog.Write($"[Briko] Directory created: {directory}");
             }
             EditorSceneManager.SaveScene(new_scene, scene_path);
             BrikoLog.Write($"[Briko] Scene saved: {scene_path}");

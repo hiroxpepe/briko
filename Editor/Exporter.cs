@@ -243,7 +243,7 @@ namespace Briko.Editor {
                     best = candidate;
                 }
             }
-            if (best_diff > ROTATION_WARN_THRESHOLD) {
+            if (best_difference > ROTATION_WARN_THRESHOLD) {
                 Debug.LogWarning(
                     $"[Briko] Non-standard rotation_y on '{go_name}': {raw_y:F2} -> {best}");
             }
