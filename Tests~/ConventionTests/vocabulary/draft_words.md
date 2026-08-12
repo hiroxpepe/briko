@@ -7,8 +7,6 @@ A word here has to be a real word, said out in full, and not a short
 form — a short form is put right in the code, and not kept here.
 
 + 2f
-+ _initialized
-+ _tab_count
 + algorithm
 + alias
 + alignment
@@ -46,19 +44,14 @@ form — a short form is put right in the code, and not kept here.
 + docs
 + drift
 + drifted
-+ each_tab
 + ecosystem
 + english
 + entity
-+ entity_root
 + enums
 + exit
-+ exit_y
 + explicit
 + exporter
-+ floor_containers
 + floordetector
-+ floors_descending
 + folder
 + four
 + fourth
@@ -78,13 +71,11 @@ form — a short form is put right in the code, and not kept here.
 + interfaces
 + interleave
 + inward
-+ is_descending
 + isblockscontainer
 + isdescending
 + isflooranchor
 + isfloorcontainer
 + isgroundscontainer
-+ isstructuralcontainer
 + isvariantordervalid
 + its
 + judgement
@@ -95,7 +86,6 @@ form — a short form is put right in the code, and not kept here.
 + maturity
 + mid
 + min
-+ min_distance
 + modifier
 + ness
 + nested
@@ -103,7 +93,6 @@ form — a short form is put right in the code, and not kept here.
 + normalized
 + npm
 + obey
-+ old_containers
 + older
 + omitted
 + our
@@ -132,7 +121,6 @@ form — a short form is put right in the code, and not kept here.
 + resets
 + restyle
 + rotation
-+ rotation_y
 + runtime
 + sandbox
 + scattered
@@ -145,12 +133,10 @@ form — a short form is put right in the code, and not kept here.
 + sorter
 + span
 + spawn
-+ spawn_y
 + spelled
 + stack
 + sub
 + tab
-+ tab_index
 + tabstate
 + tag
 + tags
@@ -176,16 +162,11 @@ form — a short form is put right in the code, and not kept here.
 + visibility
 + watcher
 + whose
-+ all_guids
-+ asset_guid
 + directory
 + duration
 + guid
 + guids
 + id
-+ layout_id
-+ target_duration_second
-+ zone_id
 + ones
 + f
 + md
