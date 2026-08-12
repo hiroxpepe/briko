@@ -170,3 +170,30 @@ form — a short form is put right in the code, and not kept here.
 + ones
 + f
 + md
++ germio
++ stemic
++ mit
++ quest
++ sprout
++ rome
++ afterthought
++ bake bakes baked baking
++ cannot
++ com
++ https
++ m
++ s
++ v
++ dependence
++ finite
++ integrate integrates integrated integrating integration
++ intent
++ layer layers layered layering
++ namespace namespaces
++ overlap overlaps overlapped overlapping
++ prefix prefixes
++ scenario scenarios
++ sequel sequels
++ sibling siblings
++ spatial
++ suite suites

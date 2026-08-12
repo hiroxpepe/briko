@@ -1,8 +1,9 @@
 # Briko
 
-> 🧱 **Block-based Level Construction Tool for Germio**
+> 🧱 **A Tool That Builds a Level Out of Blocks, for Germio**
 >
-> LLM-driven Unity level generation via bidirectional Scene ↔ JSON conversion.
+> An LLM makes a Unity level, going both ways between a Scene and
+> JSON.
 
 [![Unity](https://img.shields.io/badge/Unity-6%20LTS-black?logo=unity)](https://unity.com/)
 ![Phase](https://img.shields.io/badge/phase-1-blue)
@@ -13,14 +14,23 @@
 
 ## What is Briko?
 
-**Briko** (Esperanto for *brick* 🧱) is a Unity Editor extension that lets you serialize a 3D level scene into clean structured JSON — and reconstruct it back into a working Unity scene. The JSON is designed to be **read and written by Large Language Models**, which means you can hand a LLM your existing level and ask it to generate variations, sequels, or entire new stages.
+**Briko** (the Esperanto word for *brick* 🧱) is a Unity Editor
+add-on that turns a 3D level scene into clean, well-formed JSON —
+and can build that same scene back again from the JSON. The JSON
+is made so that a **Large Language Model can read it and write
+it**, so an LLM can be handed a real level, and asked to make new
+forms of it, sequels, or whole new stages.
 
-Briko is the **set-design half** of a two-tool framework. Its sibling [Germio](https://github.com/hiroxpepe/germio) handles scenario logic (state machines, rules, transitions). Together they enable LLM-driven game development without losing creative control.
+Briko is the **set-design half** of a pair of tools. Its sibling,
+[Germio](https://github.com/hiroxpepe/germio), handles the
+scenario's own logic (state machines, rules, moves from one state
+to the next). Together, they let a game be built with an LLM's
+help, with no loss of creative control.
 
 ```mermaid
 graph LR
     Scene[🎮 Unity Scene<br/>Level 1] -->|Briko Export| JSON1[📄 level_layout.json]
-    JSON1 -->|✨ LLM generates variant| JSON2[📄 level_layout_v2.json]
+    JSON1 -->|✨ LLM makes a new form| JSON2[📄 level_layout_v2.json]
     JSON2 -->|Briko Import| Scene2[🎮 Unity Scene<br/>Level 2]
 
     style Scene fill:#90ee90
@@ -33,41 +43,51 @@ graph LR
 
 ## Why Briko?
 
-> **"LLMs cannot meaningfully place 3D models in space."**
+> **"An LLM cannot put 3D shapes in space in any real, working
+> way."**
 
-This was the founding observation. Ask Claude or GPT to "design a Mario level" and you get 60 mismatched coordinates with floating platforms and impossible jumps. The hallucination rate on continuous spatial reasoning is brutal.
+This was the starting fact that led to Briko. Ask Claude or GPT to
+"design a level like Mario's" and back comes 60 points in space
+that do not fit together at all, with platforms floating in the
+air and jumps no one could ever make. When an LLM has to reason
+about space with no real limit at all, it makes up facts that are
+not true — badly, and often.
 
-Briko sidesteps the problem by **shrinking the LLM's freedom**:
+Briko gets around this by **making the LLM's own choices smaller**:
 
-| Continuous problem                   | Briko's discrete reformulation               |
-| ------------------------------------ | -------------------------------------------- |
-| "Place a block somewhere reasonable" | Pick from a fixed prefab catalog             |
-| "Choose XYZ coordinates"             | Snap to 0.25m grid (integer multiples only)  |
-| "Set the rotation"                   | Choose from `{0°, 90°, 180°, 270°}`          |
-| "Imagine a full 3D scene"            | Edit JSON arrays (a thing LLMs are great at) |
+| An open-ended problem | Briko's own, narrow answer |
+| --- | --- |
+| "Put a block somewhere that makes sense" | Pick from a fixed list of ready-made shapes |
+| "Pick X, Y, Z points" | Snap to a 0.25m grid (whole numbers only) |
+| "Set the turn" | Pick from `{0°, 90°, 180°, 270°}` |
+| "See a whole 3D scene in your mind" | Edit a JSON list (a thing an LLM is very good at) |
 
-By constraining the search space to **a discrete vocabulary the LLM can actually reason over**, Briko turns level design from an unsolved problem into an **autocomplete problem**.
+By cutting the space of choice down to **a small, fixed set of
+words the LLM can really reason about**, Briko turns level design
+from a problem with no clean answer into **a problem the LLM can
+finish on its own, one small step at a time**.
 
 ---
 
-## Position in the STUDIO MeowToon Ecosystem
+## Where Briko stands in the STUDIO MeowToon world
 
-Briko is one tool in a larger picture. The center is music; tools serve content; content reaches people.
+Briko is one tool, inside a larger picture. Music sits at the
+center; tools serve the content; the content reaches people.
 
 ```mermaid
 graph TB
-    Music[🎵 Music<br/>The creative center]
+    Music[🎵 Music<br/>The heart of it all]
 
-    subgraph Tools["🛠️ Tools (self-use, OSS)"]
-        Germio[Germio<br/>Scenario framework]
-        Briko[Briko<br/>Level construction]
-        GenToon[GenToon<br/>Comic distribution]
+    subgraph Tools["🛠️ Tools (made for our own use, open source)"]
+        Germio[Germio<br/>the scenario framework]
+        Briko[Briko<br/>level building]
+        GenToon[GenToon<br/>comic delivery]
     end
 
-    subgraph Content["📦 Content (monetized)"]
-        SQ[Sprout Quest<br/>The game]
-        Comics[4-panel comics]
-        BGM[Original soundtrack]
+    subgraph Content["📦 Content (sold)"]
+        SQ[Sprout Quest<br/>the game]
+        Comics[four-panel comics]
+        BGM[music made for it]
     end
 
     Music --> Tools
@@ -76,7 +96,7 @@ graph TB
 
     SQ -.uses.-> Germio
     SQ -.uses.-> Briko
-    Comics -.distributed by.-> GenToon
+    Comics -.sent out by.-> GenToon
 
     classDef center fill:#ff6b6b,stroke:#000,color:#fff
     classDef tool fill:#4ecdc4,stroke:#000
@@ -89,23 +109,24 @@ graph TB
 
 ---
 
-## Briko vs Germio: Storyboard vs Set Design
+## Briko against Germio: a script against a set
 
-The cleanest mental model: **Germio writes the script, Briko builds the stage**. They never overlap.
+The simplest way to see it: **Germio writes the script; Briko
+builds the stage.** The two never overlap.
 
 ```mermaid
 graph TB
-    subgraph Germio["📜 Germio = Storyboard (logic)"]
+    subgraph Germio["📜 Germio = the script (logic)"]
         G1[State - flags, counters, inventory]
-        G2[Rule - event conditions]
-        G3[Command - actions]
-        G4[Next - scene transitions]
+        G2[Rule - conditions for an event]
+        G3[Command - acts to take]
+        G4[Next - a move from one scene to the next]
     end
 
-    subgraph Briko["🏗️ Briko = Set Design (space)"]
-        B1[Block - prefab placements]
-        B2[Floor - hierarchical layers]
-        B3[Grid - 0.25m discrete units]
+    subgraph Briko["🏗️ Briko = the set (space)"]
+        B1[Block - where a ready-made shape sits]
+        B2[Floor - layers, one above the next]
+        B3[Grid - fixed units of 0.25m]
     end
 
     G2 -.zone_id string.-> B1
@@ -119,24 +140,28 @@ graph TB
     style B3 fill:#d1e7ff
 ```
 
-The **only contract** between them is a `zone_id` string. When the player enters a Briko zone, Germio's runtime sees a `zone_id` event and decides what happens. Neither side knows anything else about the other.
+The **only tie** between the two is a `zone_id` string. When the
+player steps into a Briko zone, Germio's own runtime sees a
+`zone_id` event, and decides what happens next. Neither side knows
+anything else at all about the other.
 
-This separation is non-negotiable. Combining the two breaks both.
+This split is not open for debate. Joining the two would break
+both.
 
 ---
 
-## How It Works
+## How it works
 
-### The Bidirectional Flow
+### Going both ways
 
 ```mermaid
 flowchart LR
-    A[🏗️ Hand-crafted<br/>Unity Scene] -->|Export| B[📄 level_layout.json]
-    B -->|🤖 LLM generates<br/>variant| C[📄 level_layout_v2.json]
-    C -->|Import| D[🎮 New Unity Scene]
-    D -->|✏️ Manual tweaks| E[🎮 Polished Scene]
-    E -->|Re-Export| F[📄 Updated JSON]
-    F -.feeds back.-> C
+    A[🏗️ A Unity Scene<br/>built by hand] -->|Export| B[📄 level_layout.json]
+    B -->|🤖 An LLM makes<br/>a new form| C[📄 level_layout_v2.json]
+    C -->|Import| D[🎮 A new Unity Scene]
+    D -->|✏️ small changes<br/>by hand| E[🎮 A polished Scene]
+    E -->|Export again| F[📄 an updated JSON]
+    F -.feeds back into.-> C
 
     style B fill:#fff9c4
     style C fill:#fff9c4
@@ -146,19 +171,25 @@ flowchart LR
     style E fill:#90ee90
 ```
 
-### Why "Round-trip" Matters
+### Why going "both ways" matters
 
-Most level generators are **one-way**: a tool spits out a level, and the moment a human edits it in Unity, the source-of-truth diverges. Briko fixes this by treating **Scene → JSON** as a first-class operation, not just an afterthought.
+Most level-making tools only go **one way**: a tool puts out a
+level, and the moment a person changes it by hand in Unity, the
+JSON and the real scene fall out of step, and no one can say which
+one is true. Briko fixes this by treating **Scene to JSON** as a
+real, first-class act, not a thing added on as an afterthought.
 
-This is what enables the iterative LLM workflow: human and LLM take turns editing, and the JSON stays canonical.
+This is what lets a person and an LLM take turns, editing back and
+forth, while the JSON stays the one, true record.
 
-The discreteness guarantees lossless conversion:
+Since each choice is a fixed, whole-number one, the change from
+Scene to JSON loses nothing at all:
 
 ```mermaid
 graph LR
     A[Scene] -->|Export| B[JSON]
     B -->|Import| C["Scene'"]
-    A -.lossless equality.-> C
+    A -.equal, with nothing lost.-> C
 
     style A fill:#c8e6c9
     style B fill:#fff9c4
@@ -167,16 +198,16 @@ graph LR
 
 ---
 
-## Quick Start
+## Quick start
 
-### Prerequisites
+### What you need first
 
-+ **Unity 6 LTS** or **Unity 2022.3+**
-+ **.NET 9 SDK** (only for running the test suite)
++ **Unity 6 LTS**, or **Unity 2022.3 and up**
++ **the .NET 9 SDK** (only needed to run the test suite)
 
-### Installation (UPM `file:` reference)
+### Putting it in (as a UPM `file:` reference)
 
-In your Unity project's `Packages/manifest.json`:
+In your own Unity project's `Packages/manifest.json`:
 
 ```jsonc
 {
@@ -187,11 +218,11 @@ In your Unity project's `Packages/manifest.json`:
 }
 ```
 
-Adjust the relative path based on where you cloned this repository.
+Change the path to match where you put this repository.
 
-### Usage
+### How to use it
 
-Once installed, two menu items appear in the Unity Editor:
+Once it is in, two menu items show up in the Unity Editor:
 
 ```mermaid
 graph LR
@@ -204,14 +235,17 @@ graph LR
     style Import fill:#ffe66d,stroke:#000
 ```
 
-+ **Export**: dumps the active scene's `Platform` and `Entity` hierarchies into a JSON file.
-+ **Import**: reads a JSON file and constructs a new scene with prefabs placed and zones marked.
++ **Export**: writes out the open scene's own `Platform` and
+  `Entity` trees, into one JSON file.
++ **Import**: reads a JSON file, and builds a new scene, with each
+  shape put in place and every zone marked.
 
 ---
 
-## JSON Format
+## The JSON form
 
-Briko's JSON is human-readable and LLM-friendly. Here's the minimal shape:
+Briko's own JSON can be read by a person, and is easy for an LLM
+to work with. Here is its smallest form:
 
 ```json
 {
@@ -247,7 +281,7 @@ Briko's JSON is human-readable and LLM-friendly. Here's the minimal shape:
 }
 ```
 
-### Data Model
+### The data model
 
 ```mermaid
 graph TB
@@ -257,7 +291,7 @@ graph TB
     P -->|"blocks[]"| I2[Item<br/>🟦 prefab, variant,<br/>position, rotation_y]
     P -->|"zones[]"| Z[Zone<br/>🔔 zone_id, position]
 
-    Z -.synced with.-> Germio[Germio<br/>germio.json]
+    Z -.kept in step with.-> Germio[Germio<br/>germio.json]
 
     style Root fill:#fff9c4
     style P fill:#bbdefb
@@ -267,34 +301,34 @@ graph TB
     style Germio fill:#f8bbd0
 ```
 
-### Design Principles
+### The rules behind the design
 
-| Principle                           | Rationale                                                                          |
-| ----------------------------------- | ---------------------------------------------------------------------------------- |
-| **Integer multiples of grid_unit**  | Float drift is eliminated; LLMs can never produce "almost on the grid" placements  |
-| **rotation_y ∈ {0, 90, 180, 270}**  | Discretization makes intent unambiguous                                            |
-| **Prefab name + variant separated** | LLM picks from a finite catalog; visual variation is decoupled from spatial choice |
-| **No materials, no scales**         | Already baked into prefabs; nothing for the LLM to hallucinate                     |
+| Rule | Why |
+| --- | --- |
+| **Only whole-number steps of grid_unit** | this removes any slow drift in float values; an LLM can never put something "almost on the grid" |
+| **rotation_y is one of {0, 90, 180, 270}** | a fixed, small set of choices makes intent plain and clear |
+| **The shape's name and its variant are kept apart** | the LLM picks from a fixed, finite list; how it looks stays apart from where it sits |
+| **No materials, no scale changes** | these are already baked into each ready-made shape, so the LLM has nothing left to make up facts about |
 
 ---
 
-## Project Structure
+## Project structure
 
 ```text
 briko/
-├── Editor/                              ← all package code is editor-only
-│   ├── Briko.Editor.asmdef             ← assembly definition (Editor platform only)
-│   ├── Exporter.cs                     ← Scene → Root
-│   ├── ExportMenu.cs                   ← Tools/Briko/Export menu wiring
-│   ├── Importer.cs                     ← Root → Scene
-│   ├── ImportMenu.cs                   ← Tools/Briko/Import menu wiring
+├── Editor/                              (all code here runs in the Editor alone)
+│   ├── Briko.Editor.asmdef             (an assembly definition, for the Editor platform only)
+│   ├── Exporter.cs                     (Scene to Root)
+│   ├── ExportMenu.cs                   (wiring for the Tools/Briko/Export menu)
+│   ├── Importer.cs                     (Root to Scene)
+│   ├── ImportMenu.cs                   (wiring for the Tools/Briko/Import menu)
 │   ├── Internal/
-│   │   ├── PrefabNameParser.cs         ← parses naming convention regex
-│   │   └── GridSnapper.cs              ← 0.25m discrete snapping
+│   │   ├── PrefabNameParser.cs         (reads the naming rule, with a regex)
+│   │   └── GridSnapper.cs              (snaps to the fixed 0.25m grid)
 │   └── Model/
-│       └── Layout.cs                   ← Root, Platform, Item, Zone (single file)
-├── Tests~/                              ← UPM convention: hidden from Unity
-│   └── IntegrationTests/                  but visible to dotnet tooling
+│       └── Layout.cs                   (Root, Platform, Item, Zone - one file)
+├── Tests~/                              (a UPM rule: hidden from Unity,
+│   └── IntegrationTests/                 but seen by dotnet's own tools)
 │       ├── IntegrationTests.csproj
 │       ├── Fixtures/
 │       │   └── sample_level_minimal.json
@@ -306,36 +340,36 @@ briko/
 │               ├── LayoutTests.cs
 │               └── RoundTripTests.cs
 ├── docs/
-│   ├── briko_spec.md                   ← design specification (the why)
-│   └── development_plan_v1_detail_JP.md ← implementation plan (the how)
+│   ├── briko_spec.md                   (the design itself - the why)
+│   └── development_plan_v1_detail_JP.md (the build plan - the how)
 ├── package.json
 └── README.md
 ```
 
-### Namespace Layers
+### How the namespaces are layered
 
 ```mermaid
 graph TB
-    subgraph Editor["Briko.Editor — Editor extension"]
+    subgraph Editor["Briko.Editor - the Editor add-on"]
         Exp[Exporter]
         Imp[Importer]
         EM[ExportMenu]
         IM[ImportMenu]
     end
 
-    subgraph Internal["Briko.Editor.Internal — utilities"]
+    subgraph Internal["Briko.Editor.Internal - small helpers"]
         Parse[PrefabNameParser]
         Snap[GridSnapper]
     end
 
-    subgraph Model["Briko.Editor.Model — data classes"]
+    subgraph Model["Briko.Editor.Model - the data classes"]
         Root[Root]
         Plat[Platform]
         Item[Item]
         Zone[Zone]
     end
 
-    subgraph Tests["Briko.Tests.* — test suites"]
+    subgraph Tests["Briko.Tests.* - the test suites"]
         TestI[Briko.Tests.Internal]
         TestM[Briko.Tests.Model]
     end
@@ -353,71 +387,81 @@ graph TB
 
 ---
 
-## Dependency Direction (Strict Rule)
+## Which way things can depend (a strict rule)
 
 ```mermaid
 graph LR
-    Briko -->|✅ may reference| Germio
-    Germio -.❌ never references.-> Briko
-    Briko -.❌ never references.-> GameDev[Game-specific code]
+    Briko -->|✅ may point to| Germio
+    Germio -.❌ never points to.-> Briko
+    Briko -.❌ never points to.-> GameDev[code made for one game alone]
 
     style Briko fill:#d1e7ff
     style Germio fill:#ffd1dc
     style GameDev fill:#ffe0b2
 ```
 
-+ **Briko → Germio**: one-way reference allowed (currently unused in v1)
-+ **Germio → Briko**: forbidden (would create circular dependency)
-+ **Briko → game-specific code**: forbidden (Briko is a generic tool, not Sprout Quest's helper)
++ **Briko to Germio**: a one-way tie is allowed (not yet used, in
+  v1)
++ **Germio to Briko**: not allowed at all (this would make a
+  circle of dependence)
++ **Briko to code made for one game alone**: not allowed at all
+  (Briko is a general tool, not a helper made just for Sprout
+  Quest)
 
 ---
 
-## Naming Conventions
+## Naming rules
 
-Briko follows the conventions of [Stemic](https://github.com/hiroxpepe/stemic) (the parent game project) precisely. Key rules:
+Briko follows the rules of
+[Stemic](https://github.com/hiroxpepe/stemic) (the parent game
+project) with care. The key rules:
 
-| Element                          | Convention                       | Example                            |
-| -------------------------------- | -------------------------------- | ---------------------------------- |
-| Class name                       | Single word, no project prefix   | `Exporter`, not `BrikoExporter`    |
-| Public properties (data classes) | `snake_case` (matches JSON keys) | `layout_id`, `grid_unit`           |
-| Public properties (other)        | `camelCase`                      | `home`, `beat`, `mode`             |
-| Private fields                   | `_snake_case`                    | `_do_update`, `_jump_power`        |
-| Local variables / parameters     | `snake_case`                     | `base_path`, `grid_unit`           |
-| Constants                        | `ALL_CAPS`                       | `GRID_UNIT`, `MENU_ROOT`           |
-| Method calls (project-defined)   | **Always use named parameters**  | `Snap(raw: pos, grid_unit: 0.25f)` |
+| Part | Rule | Example |
+| --- | --- | --- |
+| A class's own name | one word, with no prefix for this project | `Exporter`, not `BrikoExporter` |
+| A public property (on a data class) | `snake_case` (to match the JSON's own keys) | `layout_id`, `grid_unit` |
+| A public property (any other kind) | `camelCase` | `home`, `beat`, `mode` |
+| A private field | `_snake_case` | `_do_update`, `_jump_power` |
+| A local variable or argument | `snake_case` | `base_path`, `grid_unit` |
+| A constant | `ALL_CAPS` | `GRID_UNIT`, `MENU_ROOT` |
+| A method call (made for this project) | **always give each argument its own name** | `Snap(raw: pos, grid_unit: 0.25f)` |
 
-JSON serialization uses no `[JsonProperty]` attributes — property names are the JSON keys directly.
+Turning data into JSON uses no `[JsonProperty]` tags at all — each
+property's own name is used, straight, as the JSON's own key.
 
 ---
 
-## Development
+## Building it further
 
-### Running Tests
+### Running the tests
 
 ```sh
 dotnet test Tests~/IntegrationTests/IntegrationTests.csproj
 ```
 
-Single test:
+One test alone:
 
 ```sh
 dotnet test Tests~/IntegrationTests/IntegrationTests.csproj --filter "FullyQualifiedName~LayoutTests"
 ```
 
-The test project shares source compilation with `Editor/Model/Layout.cs` and the `Internal/` utilities, so you can test pure C# logic without spinning up Unity.
+The test project shares its own build with `Editor/Model/Layout.cs`
+and the tools under `Internal/`, so plain C# logic can be checked
+with no need to start Unity at all.
 
-### Test Coverage Pattern
+### The pattern behind test coverage
 
-Briko follows Stemic's **1:1 test mapping** rule:
+Briko follows Stemic's own rule of **one test file for one source
+file**:
 
 ```mermaid
 graph LR
-    L[Layout.cs] -.->|tested by| LT[LayoutTests.cs]
-    P[PrefabNameParser.cs] -.->|tested by| PT[PrefabNameParserTests.cs]
-    G[GridSnapper.cs] -.->|tested by| GT[GridSnapperTests.cs]
-    All[All Layout classes] -.->|cross-cutting| RT[RoundTripTests.cs]
+    L[Layout.cs] -.->|checked by| LT[LayoutTests.cs]
+    P[PrefabNameParser.cs] -.->|checked by| PT[PrefabNameParserTests.cs]
+    G[GridSnapper.cs] -.->|checked by| GT[GridSnapperTests.cs]
+    All[Every Layout class] -.->|checked across all of them| RT[RoundTripTests.cs]
 
-    Exp[Exporter.cs / Importer.cs] -.testless<br/>Unity API dependent.-> X[v2: PlayMode tests]
+    Exp[Exporter.cs / Importer.cs] -.no tests yet<br/>needs the Unity API.-> X[v2: PlayMode tests]
 
     style L fill:#c5e1a5
     style P fill:#fff9c4
@@ -426,7 +470,11 @@ graph LR
     style X fill:#ffe0b2
 ```
 
-Unity-API-dependent classes (Exporter, Importer, menus) have no NUnit tests in v1, matching Stemic's convention for `MonoBehaviour`-class code (CameraSystem, GameSystem, etc.). Integration tests for these arrive in v2 via Unity Test Framework.
+A class that needs the Unity API (Exporter, Importer, the menus)
+has no NUnit test at all, in v1, matching how Stemic treats any
+`MonoBehaviour` class (CameraSystem, GameSystem, and the rest).
+Real, integration-level tests for these come in v2, through the
+Unity Test Framework.
 
 ---
 
@@ -454,14 +502,16 @@ gantt
     Auto-variant selection      :p3c, 2026-11, 4w
 ```
 
-### Current Status: **v0.1.0 — Phase 1 Complete** ✅
+### Where things stand now: **v0.1.0 — Phase 1 done** ✅
 
-+ ✅ Bidirectional Scene ↔ JSON conversion working
-+ ✅ 18/18 tests passing
-+ ✅ Stemic conventions enforced
-+ ⏳ Manual round-trip validation in progress (Tasks 5-6)
++ ✅ Going both ways, Scene to JSON and back, works
++ ✅ 18 of 18 tests pass
++ ✅ Stemic's own rules are held to
++ ⏳ Checking the round trip by hand is still going on (Tasks 5-6)
 
-See [`docs/development_plan_v1_detail_JP.md`](docs/development_plan_v1_detail_JP.md) for detailed implementation status.
+See
+[`docs/development_plan_v1_detail_JP.md`](docs/development_plan_v1_detail_JP.md)
+for the full, real state of the build.
 
 ---
 
@@ -471,22 +521,36 @@ MIT — see [LICENSE](LICENSE).
 
 ---
 
-## Background
+## Where this came from
 
-Briko is the second tool in a 4-year arc. After [Germio](https://github.com/hiroxpepe/germio) crystallized the LLM-first scenario framework over more than 20 iterations, Briko was conceived to handle the spatial half — the part Germio deliberately refused to absorb.
+Briko is the second tool in a path that has run four years. After
+[Germio](https://github.com/hiroxpepe/germio) settled into its own,
+LLM-first scenario framework, over more than 20 rounds of change,
+Briko was thought up to take on the spatial half — the part Germio,
+on purpose, never took on for itself.
 
-The driving question:
+The question that drove it:
 
-> **"Can a single creator with an LLM produce a complete 3D platformer at the production scale of a 1990s studio?"**
+> **"Can one person, working with an LLM, put out a whole 3D game
+> of climbing and jumping, at the same real scale a 1990s studio
+> once made?"**
 
-The answer is gated on **whether level construction can be automated without spatial hallucination**. Briko is the bet on that answer.
+The answer turns on **whether building a level can be done by
+machine, with no false, made-up facts about space.** Briko is the
+bet placed on that answer.
 
-The target is [Sprout Quest](https://github.com/hiroxpepe/sprout-quest), a 4-years-in-the-making revenge for an unfinished first attempt. Built on Germio for logic, populated by Briko for space, scored by hand-crafted music.
+The real aim is
+[Sprout Quest](https://github.com/hiroxpepe/sprout-quest), four
+years in the making, a second try at a first attempt that was
+never finished. Built on Germio for its logic, filled in by Briko
+for its space, and scored with music made by hand.
 
-Rome wasn't built in a day. But Rome **does** eventually get built.
+Rome was not built in one day. But Rome, in the end, **does** get
+built.
 
 ---
 
-> *"LLMs cannot place 3D models in space — but they can write JSON. So we make space into JSON."*
+> *"An LLM cannot put 3D shapes in space — but it can write JSON.
+> So, we turn space into JSON."*
 
 🐱 **STUDIO MeowToon** — 2026
