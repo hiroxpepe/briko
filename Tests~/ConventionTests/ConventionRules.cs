@@ -1,5 +1,5 @@
 // Copyright (c) STUDIO MeowToon. All rights reserved.
-// Licensed under the MIT License.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 #nullable enable
 using System.IO;
 using Microsoft.CodeAnalysis;
@@ -228,19 +228,25 @@ namespace Briko.Tests.Convention {
 
             foreach (var ev in root.DescendantNodes().OfType<EventFieldDeclarationSyntax>()) {
                 if (has(ev.Modifiers, "override")) continue;
-                foreach (var variable in ev.Declaration.Variables)
+                foreach (var variable in ev.Declaration.Variables) {
                     check_casing(found, label, variable, variable.Identifier.ValueText, ev.Modifiers, "event");
+                    check_participle(found, label, variable, variable.Identifier.ValueText);
+                }
             }
 
             foreach (var ev in root.DescendantNodes().OfType<EventDeclarationSyntax>()) {
                 if (has(ev.Modifiers, "override")) continue;
                 if (ev.ExplicitInterfaceSpecifier != null) continue;
                 check_casing(found, label, ev, ev.Identifier.ValueText, ev.Modifiers, "event");
+                check_participle(found, label, ev, ev.Identifier.ValueText);
             }
 
             foreach (var each in root.DescendantNodes().OfType<ForEachStatementSyntax>()) {
                 var id = each.Identifier.ValueText;
-                if (!SNAKE.IsMatch(id))
+                // A bare "_" is the C# discard token, not a real name — it
+                // carries no spelling of its own, so the snake_case rule
+                // does not apply to it.
+                if (id != "_" && !SNAKE.IsMatch(id))
                     found.Add($"{label}:{line(each)}: foreach var '{id}' must be snake_case");
             }
 
@@ -327,6 +333,7 @@ namespace Briko.Tests.Convention {
                     // A lone 's' right after a letter word is the plural marker
                     // (URLs -> URL, s), so it is not a one-letter name.
                     if (part == "s" && pi > 0 && parts[pi - 1].All(char.IsUpper)) continue;
+                    part = strip_trailing_digits(part);
                     if (part.Length == 1) {
                         if (char.IsDigit(part[0])) continue;
                         if (!SINGLE_WORDS.Contains(part.ToLowerInvariant()))
@@ -436,11 +443,47 @@ namespace Briko.Tests.Convention {
         // The file name (without .cs) must follow the same print rule as a type
         // name: no short forms, letter words in all caps. A file holding type JSON
         // is JSON.cs, not Json.cs.
+        // A trailing run of digits on a word part is an index or count, not
+        // part of its spelling ("a0", "bw12", "pattern8") — strip it before
+        // judging the word itself. A part that is nothing BUT digits is left
+        // alone here (handled by its own digit-only path in each caller).
+        // An event name's last word must be a past participle (a single,
+        // completed happening — "Requested", "Started") or a present
+        // participle (an ongoing state — "Playbacking"), never the bare verb
+        // a command would use ("RequestTransition"). Checked as a plain
+        // suffix on the last word: "-ed" or "-ing". This is a shape check,
+        // not a true grammar check, and is only ever applied to the last
+        // word part of the identifier.
+        //
+        // Deliberately narrower than check_casing's signature: this rule has
+        // exactly one caller kind (an event), so it takes no `modifiers` or
+        // `kind` label. If a future member kind ever needs the same rule,
+        // widen the signature then — matching check_casing's shape today,
+        // before a second caller exists, would only be guessing at a shape
+        // no real second use has confirmed yet.
+        static void check_participle(List<string> found, string label, SyntaxNode node, string id)
+        {
+            if (is_naming_exception(node, id)) return;
+            var parts = word_parts(id).ToList();
+            if (parts.Count == 0) return;
+            var last = parts[parts.Count - 1].ToLowerInvariant();
+            if (last.EndsWith("ed") || last.EndsWith("ing")) return;
+            found.Add($"{label}:{line(node)}: event '{id}' must end in a past or present participle");
+        }
+
+        static string strip_trailing_digits(string part)
+        {
+            int end = part.Length;
+            while (end > 0 && char.IsDigit(part[end - 1])) end--;
+            return end > 0 && end < part.Length ? part.Substring(0, end) : part;
+        }
+
         internal static List<string> find_filename_violations(string file_name)
         {
             var found = new List<string>();
             var stem = file_name.EndsWith(".cs") ? file_name.Substring(0, file_name.Length - 3) : file_name;
-            foreach (var part in word_parts(stem)) {
+            foreach (var raw_part in word_parts(stem)) {
+                var part = strip_trailing_digits(raw_part);
                 if (part.Length == 1) {
                     if (!SINGLE_WORDS.Contains(part.ToLowerInvariant()))
                         found.Add($"{file_name}: file name has the one-letter name '{part}', use a full word");
@@ -868,6 +911,18 @@ namespace Briko.Tests.Convention {
                 member.GetLeadingTrivia().Any(t =>
                     t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia));
 
+            // Is this member the very first thing inside its enclosing type or
+            // namespace (i.e. the line right above it is that container's own
+            // opening brace)? A documented member sitting right there must NOT
+            // be asked for a blank line above — the namespace/type-gap rule
+            // already forbids a blank line right after an opening brace, and
+            // these two rules must never contradict each other.
+            int? container_open_brace_line(MemberDeclarationSyntax m) => m.Parent switch {
+                BaseTypeDeclarationSyntax t when t is TypeDeclarationSyntax td => tree.GetLineSpan(td.OpenBraceToken.Span).StartLinePosition.Line,
+                NamespaceDeclarationSyntax ns => tree.GetLineSpan(ns.OpenBraceToken.Span).StartLinePosition.Line,
+                _ => null
+            };
+
             bool blank_at(int i) => i >= 0 && i < lines.Length && lines[i].Trim().Length == 0;
 
             var targets = root.DescendantNodes()
@@ -888,8 +943,9 @@ namespace Briko.Tests.Convention {
                         .First(t => t.IsKind(SyntaxKind.SingleLineDocumentationCommentTrivia)).Span
                      : member.Span)).StartLinePosition.Line;
                 var above = first_line - 1;
+                bool right_after_own_open = container_open_brace_line(member) == above;
 
-                if (above >= 0 && !blank_at(above) && !is_divider(lines[above])) {
+                if (above >= 0 && !blank_at(above) && !is_divider(lines[above]) && !right_after_own_open) {
                     // The line right above is real code, not a blank and not a
                     // divider — it must be another member. A blank is only
                     // optional when NEITHER side is documented.
@@ -1235,9 +1291,14 @@ namespace Briko.Tests.Convention {
         static bool exposed(SyntaxTokenList modifiers) =>
             has(modifiers, "public") || has(modifiers, "internal") || has(modifiers, "protected");
 
-        // True when the node sits inside a type marked [Serializable]. Such a type
-        // is a JSON-mapping DTO, so its public property names are external JSON keys
-        // and are allowed to stay snake_case.
+        // True when the node sits inside a type marked [Serializable] or
+        // [UnityEngine.Scripting.Preserve]. Both mark a type as a JSON-mapping
+        // DTO: [Serializable] is Unity's own marker; [Preserve] guards a type
+        // that relies on reflection-based JSON libraries (e.g. Newtonsoft.Json)
+        // against being stripped by IL2CPP/AOT, which serves the same role
+        // when a project doesn't use [Serializable] for that purpose. Either
+        // way, the type's public property names are external JSON keys and
+        // are allowed to stay snake_case.
         static bool in_serializable_type(SyntaxNode node)
         {
             for (var current = node.Parent; current != null; current = current.Parent) {
@@ -1245,7 +1306,8 @@ namespace Briko.Tests.Convention {
                     foreach (var list in type.AttributeLists)
                         foreach (var attr in list.Attributes) {
                             var name = attr.Name.ToString();
-                            if (name == "Serializable" || name == "System.Serializable")
+                            if (name == "Serializable" || name == "System.Serializable"
+                                || name == "Preserve" || name == "UnityEngine.Scripting.Preserve")
                                 return true;
                         }
                 }

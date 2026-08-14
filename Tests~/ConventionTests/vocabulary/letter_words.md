@@ -9,7 +9,7 @@ check lower-cases them when it matches.
 + UI
 + DB
 + API
-+ URL
++ URL URLs
 + JSON
 + CSV
 + HTTP
@@ -25,3 +25,5 @@ check lower-cases them when it matches.
 + SQL
 + XML
 + URI
++ AST
++ MCP
