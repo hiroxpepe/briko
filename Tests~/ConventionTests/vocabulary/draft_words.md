@@ -197,3 +197,12 @@ form — a short form is put right in the code, and not kept here.
 + sibling siblings
 + spatial
 + suite suites
++ loop loops
++ tablet tablets
++ zero
++ bullet bullets
++ manual manuals
++ desktop
++ checklist checklists
++ reuse reuses reused
++ eight
