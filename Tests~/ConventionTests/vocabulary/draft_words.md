@@ -254,3 +254,4 @@ form — a short form is put right in the code, and not kept here.
 + re
 + trimmed
 + casing
++ p

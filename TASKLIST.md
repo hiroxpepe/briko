@@ -6,7 +6,7 @@ change in as a commit.
 
 <!-- format: v1 | fields: status, id, title, phase -->
 
-+ [ ] TASK-001 [PHASE-03]: Put the rest of the docs into Basic English
++ [ ] TASK-001 [P-XX]: Put the rest of the docs into Basic English
 
 ## Detail
 
