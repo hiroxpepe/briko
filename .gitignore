@@ -3,6 +3,7 @@
 
 # Unity's auto-generated assembly artifacts
 *.csproj
+!Tests~/ConventionTests/*.csproj
 *.sln
 *.suo
 *.user
