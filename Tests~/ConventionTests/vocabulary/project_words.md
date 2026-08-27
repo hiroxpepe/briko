@@ -1,35 +1,18 @@
 # Project Words
 
-The made-up names across our projects (webio, animo, briko, and the like).
+> Words that name a real, one-of-a-kind thing in this project (a class,
+> a file, a product name). Add a word here only after the master gives GO.
 
-+ activity
 + animo
-+ auto
-+ autofill
-+ bootstrapper
 + briko
-+ claudegen
-+ crowndom
-+ crowngo
-+ droid
-+ ducker
-+ gate
-+ goblin
-+ levenshtein
-+ markless
-+ maslow
-+ meowtoon
-+ opinio
-+ padder
-+ persona
-+ probe
-+ tagger
-+ webio
-+ win64
-+ tasklist
-+ handoff
 + claude
-+ roadmap
-+ Browne
-+ Culligan
-+ NGSL
++ droid
++ germio
++ meowtoon
++ modio
++ opinio
++ quyno
++ signo
++ stemic
++ tropika
++ webio
