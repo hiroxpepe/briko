@@ -2,7 +2,7 @@
 
 <!-- format: v1 | fields: status, phase, title -->
 
-+ [x] P-01: Build a Scene-to-JSON round trip for a level
++ [~] P-01: Build a Scene-to-JSON round trip for a level
 + [~] P-02: Check the round trip on a real level, by hand
 + [~] P-XX: Work that does not fit the first two phases
 
@@ -12,9 +12,8 @@
 
 Build a UPM package that turns a Unity scene into JSON and back
 again: a data model (`Layout.cs`), an Exporter, an Importer, and a
-full test set. This is done; every file this called for was found
-built and tested in the real code. See `docs/briko_roadmap.md` §5
-for the full list.
+full test set. The files this called for stand. The test set does not
+run as it stands: see `HANDOFF.md`.
 
 ### P-02
 
