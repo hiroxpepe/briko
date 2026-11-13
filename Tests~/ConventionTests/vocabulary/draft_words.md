@@ -13,17 +13,23 @@ form — a short form is put right in the code, and not kept here.
 + an
 + anchor
 + anchored
++ assignblocktofloor
++ assignfloorlabels
 + audio
++ b
 + badge
 + badges
 + blank
++ bool
 + browser
 + bumps
++ calcsurfacey
 + caller
 + camelcase
 + canonical
 + ceiling
 + checkbox
++ childcount
 + clone
 + commonly
 + consecutive
@@ -31,6 +37,7 @@ form — a short form is put right in the code, and not kept here.
 + container
 + containers
 + contiguous
++ csproj
 + dashboard
 + declarations
 + default
@@ -68,6 +75,8 @@ form — a short form is put right in the code, and not kept here.
 + indexers
 + initialized
 + instant
++ int
++ integrationtests
 + interfaces
 + interleave
 + inward
@@ -76,6 +85,7 @@ form — a short form is put right in the code, and not kept here.
 + isflooranchor
 + isfloorcontainer
 + isgroundscontainer
++ isstructuralcontainer
 + isvariantordervalid
 + its
 + judgement
@@ -92,6 +102,7 @@ form — a short form is put right in the code, and not kept here.
 + newest
 + normalized
 + npm
++ nunit
 + obey
 + older
 + omitted

@@ -1,6 +1,6 @@
-# Hierarchy Sorter — TDD Specification
+# Hierarchy Sorter — TDD Plan
 
-> **Briko Editor Extension — Floor Detection Logic**
+> **Briko Editor Extension — Logic for Finding Floors**
 >
 > Test-Driven Development plan for `FloorDetector` — the pure logic core of the Hierarchy Sorter.
 > Write tests first (RED), implement to make them GREEN.
@@ -45,17 +45,17 @@ flowchart LR
 
 ### 1.1 Why Pure Logic First
 
-The Hierarchy Sorter's core intelligence — floor detection, block assignment, variant renumbering — has **no Unity dependencies**. By extracting it into `FloorDetector` (pure static methods), we can:
+The Hierarchy Sorter's core intelligence — finding floors, putting blocks on floors, numbering variants again — **needs nothing from Unity**. By extracting it into `FloorDetector` (pure static methods), we can:
 
 + Run tests with `dotnet test` without Unity Test Framework
-+ Prove correctness before touching the scene hierarchy
++ Prove that it is right before touching the scene hierarchy
 + Reuse logic in future tools (Importer, Validator)
 
 ### 1.2 What Is NOT Tested Here
 
-Unity API operations are deferred to v2 PlayMode tests:
+Unity API operations are put off to v2 PlayMode tests:
 
-| Operation               | Reason deferred               |
+| Operation               | Reason put off                |
 | ----------------------- | ----------------------------- |
 | `transform.SetParent()` | Requires Unity runtime        |
 | `GameObject.Find()`     | Requires Unity runtime        |
@@ -83,15 +83,15 @@ classDiagram
     HierarchySorter ..> FloorDetector : uses
 ```
 
-`FloorDetector` is a **pure static utility** in `Briko.Editor.Internal`. All methods take and return plain C# types (`float`, `string`, `List`). No `Vector3`, no `GameObject`, no Unity.
+`FloorDetector` is a **pure static helper** in `Briko.Editor.Internal`. All methods take and return plain C# types (`float`, `string`, `List`). No `Vector3`, no `GameObject`, no Unity.
 
 ### 2.1 Constants
 
-| Constant              | Value   | Rationale                             |
-| --------------------- | ------- | ------------------------------------- |
-| `FLOOR_ANCHOR_MIN_XZ` | `5.0f`  | Ground ≥ 5m × 5m = floor              |
-| `GROUND_HALF_HEIGHT`  | `0.25f` | Half of Ground thickness (0.5m)       |
-| `CHARACTER_HEIGHT`    | `1.4f`  | Max block height reachable from floor |
+| Constant              | Value   | Rationale                                           |
+| --------------------- | ------- | --------------------------------------------------- |
+| `FLOOR_ANCHOR_MIN_XZ` | `5.0f`  | Ground ≥ 5m × 5m = floor                            |
+| `GROUND_HALF_HEIGHT`  | `0.25f` | Half of how thick Ground is (0.5m)                  |
+| `CHARACTER_HEIGHT`    | `1.4f`  | Largest block height that can be reached from floor |
 
 ---
 
@@ -202,12 +202,12 @@ flowchart TB
     style Fallback fill:#fff9c4
 ```
 
-| Test                                                                        | Block Y | Expected Floor                                        |
-| --------------------------------------------------------------------------- | ------- | ----------------------------------------------------- |
-| `AssignBlockToFloor_BlockOnFirstFloor_Returns1F`                            | `0.0`   | `1F` (surface=-0.25, diff=0.25)                       |
-| `AssignBlockToFloor_BlockOnSecondFloor_Returns2F`                           | `1.5`   | `2F` (surface=1.25, diff=0.25)                        |
-| `AssignBlockToFloor_BlockOnB2F_ReturnsB2F`                                  | `-5.0`  | `B2F` (surface=-5.25, diff=0.25)                      |
-| `AssignBlockToFloor_BlockAboveCharacterHeight_FallsBackToNearestFloorBelow` | `7.0`   | `4F` ← Level_3 real data: 2.25m > 1.4m, fallback path |
+| Test                                                                        | Block Y | Expected Floor                                                  |
+| --------------------------------------------------------------------------- | ------- | --------------------------------------------------------------- |
+| `AssignBlockToFloor_BlockOnFirstFloor_Returns1F`                            | `0.0`   | `1F` (surface=-0.25, diff=0.25)                                 |
+| `AssignBlockToFloor_BlockOnSecondFloor_Returns2F`                           | `1.5`   | `2F` (surface=1.25, diff=0.25)                                  |
+| `AssignBlockToFloor_BlockOnB2F_ReturnsB2F`                                  | `-5.0`  | `B2F` (surface=-5.25, diff=0.25)                                |
+| `AssignBlockToFloor_BlockAboveCharacterHeight_FallsBackToNearestFloorBelow` | `7.0`   | `4F` ← Level_3 real data: 2.25m > 1.4m, path to the floor below |
 
 ### 3.6 IsDescending
 
@@ -223,7 +223,7 @@ flowchart TB
 
 ### 4.1 ParseDimensions
 
-Uses `Regex` to extract dimension segment `_(X)x(Y)x(Z)_` from the prefab name. Returns `null` on mismatch.
+Uses `Regex` to extract dimension segment `_(X)x(Y)x(Z)_` from the prefab name. Returns `null` when it does not match.
 
 ```mermaid
 flowchart LR
@@ -292,7 +292,7 @@ flowchart TB
     style K fill:#c8e6c9
 ```
 
-`FloorDetector` provides all floor intelligence. `HierarchySorter` handles only Unity API calls (reparenting, renaming, SetActive).
+`FloorDetector` provides all floor intelligence. `HierarchySorter` handles only Unity API calls (giving a new parent, giving a new name, SetActive).
 
 ---
 
@@ -308,11 +308,11 @@ flowchart TB
 
 | Class                | Tests  | Coverage         |
 | -------------------- | ------ | ---------------- |
-| `ParseDimensions`    | 4      | name parsing     |
-| `IsFloorAnchor`      | 4      | XZ threshold     |
+| `ParseDimensions`    | 4      | reading names    |
+| `IsFloorAnchor`      | 4      | X and Z limit    |
 | `CalcSurfaceY`       | 3      | Y + 0.25         |
 | `AssignFloorLabels`  | 4      | floor numbering  |
-| `AssignBlockToFloor` | 3      | 1.4m threshold   |
+| `AssignBlockToFloor` | 3      | 1.4m limit       |
 | `IsDescending`       | 3      | travel direction |
 | **Total**            | **21** |                  |
 
@@ -327,7 +327,7 @@ Add to `<ItemGroup>` in `IntegrationTests.csproj`:
 
 ---
 
-**End of specification.**
+**End of plan.**
 
 ---
 
@@ -361,27 +361,27 @@ classDiagram
 
 Returns `true` if the given container name matches a floor label (`1F`, `2F`, `B1F`, ...). Used by `HierarchySorter` to detect post-sort floor containers when walking the Platform hierarchy.
 
-Pattern: `^\d+F$` (above / at ground) or `^B\d+F$` (below ground). Uppercase only — spec mandates uppercase `F`.
+Pattern: `^\d+F$` (above / at ground) or `^B\d+F$` (below ground). Capital letters only — the plan needs a capital `F`.
 
-| Test                                              | Input          | Expected                    |
-| ------------------------------------------------- | -------------- | --------------------------- |
-| `IsFloorContainer_1F_ReturnsTrue`                 | `"1F"`         | `true`                      |
-| `IsFloorContainer_2F_ReturnsTrue`                 | `"2F"`         | `true`                      |
-| `IsFloorContainer_3F_ReturnsTrue`                 | `"3F"`         | `true` ← multi-floor        |
-| `IsFloorContainer_B1F_ReturnsTrue`                | `"B1F"`        | `true`                      |
-| `IsFloorContainer_B2F_ReturnsTrue`                | `"B2F"`        | `true`                      |
-| `IsFloorContainer_Grounds_ReturnsFalse`           | `"grounds"`    | `false`                     |
-| `IsFloorContainer_GroundsUnderscore_ReturnsFalse` | `"grounds_1f"` | `false`                     |
-| `IsFloorContainer_Blocks_ReturnsFalse`            | `"blocks"`     | `false`                     |
-| `IsFloorContainer_Platform_ReturnsFalse`          | `"Platform"`   | `false`                     |
-| `IsFloorContainer_LowercaseF_ReturnsFalse`        | `"1f"`         | `false` ← spec is uppercase |
-| `IsFloorContainer_EmptyString_ReturnsFalse`       | `""`           | `false` ← edge case         |
+| Test                                              | Input          | Expected                                 |
+| ------------------------------------------------- | -------------- | ---------------------------------------- |
+| `IsFloorContainer_1F_ReturnsTrue`                 | `"1F"`         | `true`                                   |
+| `IsFloorContainer_2F_ReturnsTrue`                 | `"2F"`         | `true`                                   |
+| `IsFloorContainer_3F_ReturnsTrue`                 | `"3F"`         | `true` ← many floors                     |
+| `IsFloorContainer_B1F_ReturnsTrue`                | `"B1F"`        | `true`                                   |
+| `IsFloorContainer_B2F_ReturnsTrue`                | `"B2F"`        | `true`                                   |
+| `IsFloorContainer_Grounds_ReturnsFalse`           | `"grounds"`    | `false`                                  |
+| `IsFloorContainer_GroundsUnderscore_ReturnsFalse` | `"grounds_1f"` | `false`                                  |
+| `IsFloorContainer_Blocks_ReturnsFalse`            | `"blocks"`     | `false`                                  |
+| `IsFloorContainer_Platform_ReturnsFalse`          | `"Platform"`   | `false`                                  |
+| `IsFloorContainer_LowercaseF_ReturnsFalse`        | `"1f"`         | `false` ← the plan needs capital letters |
+| `IsFloorContainer_EmptyString_ReturnsFalse`       | `""`           | `false` ← edge case                      |
 
 ### 7.3 RenumberVariants
 
-Sorts a list of `(base_name, x, z)` tuples by **Z ascending → X ascending**, then assigns sequential variant suffixes **per base_name group**, each group starting from `_1`. Returns the renamed list in **sorted order** (global Z/X).
+Sorts a list of `(base_name, x, z)` groups of values by **Z going up → X going up**, then gives variant endings in order **per base_name group**, each group starting from `_1`. Returns the list with the new names in **sorted order** (global Z/X).
 
-Signature: `RenumberVariants(List<(string base_name, float x, float z)> items) → List<string>`
+Call: `RenumberVariants(List<(string base_name, float x, float z)> items) → List<string>`
 
 **Per-type numbering rule**: Within the sorted list, each unique base_name has its own counter starting at 1. Different base_names do not share a counter.
 
@@ -392,26 +392,26 @@ Signature: `RenumberVariants(List<(string base_name, float x, float z)> items) �
 | `RenumberVariants_TwoItemsSameZDifferentX_SortsByXAscending`           | X=10 before X=0, same type                             | X=0 → `_1`, X=10 → `_2`                                              |
 | `RenumberVariants_ThreeItems_NumbersSequentiallyByZThenX`              | 3 items same type                                      | (0,0)→`_1`, (10,0)→`_2`, (0,10)→`_3`                                 |
 | `RenumberVariants_EmptyList_ReturnsEmpty`                              | empty input                                            | `[]`                                                                 |
-| `RenumberVariants_MixedBaseNames_NumbersSequentially` (**modified**)   | 2 different types, different Z                         | each type gets `_1` (not global sequential)                          |
+| `RenumberVariants_MixedBaseNames_NumbersSequentially` (**modified**)   | 2 different types, different Z                         | each type gets `_1` (not one order for all)                          |
 | `RenumberVariants_DifferentBasenames_EachStartAtOne` (**new**)         | TypeA(z=0), TypeB(z=5)                                 | `[TypeA_1, TypeB_1]` ← each type resets to _1                        |
 | `RenumberVariants_InterleavedBasenames_NumberedPerType` (**modified**) | TypeA(z=0), TypeB(z=5), TypeA(z=10)                    | `[TypeA_1, TypeA_2, TypeB_1]` ← grouped: all TypeA first, then TypeB |
 | `RenumberVariants_InterleavedTypesOutputGrouped` (**new**)             | Plain(z=2.5), 0.5(z=3.25), Green(z=4.0), Plain(z=6.75) | `[Plain_1, Plain_2, 0.5_1, Green_1]` ← grouped by first-appearance Z |
 
 ### 7.4 Updated Test Count
 
-| Class / Section        | Method                                                  | Tests  |
-| ---------------------- | ------------------------------------------------------- | ------ |
-| `FloorDetectorTests`   | `ParseDimensions`                                       | 4      |
-| `FloorDetectorTests`   | `IsFloorAnchor`                                         | 4      |
-| `FloorDetectorTests`   | `CalcSurfaceY`                                          | 3      |
-| `FloorDetectorTests`   | `AssignFloorLabels`                                     | 4      |
-| `FloorDetectorTests`   | `AssignBlockToFloor`                                    | 3      |
-| `FloorDetectorTests`   | `IsDescending`                                          | 3      |
-| `FloorDetectorTests`   | `AssignFloorLabels` (Level_3 real data)                 | 1      |
-| `FloorDetectorTests`   | `AssignBlockToFloor` (fallback path, Level_3 real data) | 1      |
-| `HierarchySorterTests` | `IsFloorContainer`                                      | 11     |
-| `HierarchySorterTests` | `RenumberVariants`                                      | 6      |
-| **Total**              |                                                         | **40** |
+| Class / Section        | Method                                                            | Tests  |
+| ---------------------- | ----------------------------------------------------------------- | ------ |
+| `FloorDetectorTests`   | `ParseDimensions`                                                 | 4      |
+| `FloorDetectorTests`   | `IsFloorAnchor`                                                   | 4      |
+| `FloorDetectorTests`   | `CalcSurfaceY`                                                    | 3      |
+| `FloorDetectorTests`   | `AssignFloorLabels`                                               | 4      |
+| `FloorDetectorTests`   | `AssignBlockToFloor`                                              | 3      |
+| `FloorDetectorTests`   | `IsDescending`                                                    | 3      |
+| `FloorDetectorTests`   | `AssignFloorLabels` (Level_3 real data)                           | 1      |
+| `FloorDetectorTests`   | `AssignBlockToFloor` (path to the floor below, Level_3 real data) | 1      |
+| `HierarchySorterTests` | `IsFloorContainer`                                                | 11     |
+| `HierarchySorterTests` | `RenumberVariants`                                                | 6      |
+| **Total**              |                                                                   | **40** |
 
 ### 7.5 Files Added (briko_5_4_1)
 
@@ -428,21 +428,21 @@ Signature: `RenumberVariants(List<(string base_name, float x, float z)> items) �
 
 ---
 
-**End of specification.**
+**End of plan.**
 
 ---
 
-## 8. Bug Fixes — briko_5_4_3
+## 8. Fixes for Faults — briko_5_4_3
 
-### 8.1 Bug 1: Empty containers duplicated on re-run
+### 8.1 Fault 1: Empty containers made twice on re-run
 
-**Root cause**: `DestroyImmediate` was gated on `childCount == 0`. On re-run, old floor containers (1F, 2F, ...) have non-zero childCount (empty grounds/blocks inside) → not destroyed → duplicate containers.
+**Root cause**: `DestroyImmediate` was gated on `childCount == 0`. On re-run, old floor containers (1F, 2F, ...) have a childCount that is not zero (empty grounds/blocks inside) → not destroyed → second copies of containers.
 
-**Fix**: New `FloorDetector.IsStructuralContainer(name)` identifies containers safe to destroy. HierarchySorter destroys old containers unconditionally.
+**Fix**: New `FloorDetector.IsStructuralContainer(name)` identifies containers safe to destroy. HierarchySorter always destroys old containers.
 
 #### IsStructuralContainer(string name) → bool
 
-Returns `true` if the name is a structural container (floor label OR grounds/blocks pattern). Used by HierarchySorter to unconditionally destroy old containers.
+Returns `true` if the name is a structural container (floor label OR grounds/blocks pattern). Used by HierarchySorter to always destroy old containers.
 
 `IsStructuralContainer(name)` = `IsFloorContainer(name) || IsGroundsContainer(name) || IsBlocksContainer(name)`
 
@@ -457,25 +457,25 @@ Returns `true` if the name is a structural container (floor label OR grounds/blo
 | `IsStructuralContainer_PlatformRoot_ReturnsFalse`   | `"Platform"`                     | `false`  |
 | `IsStructuralContainer_PrefabName_ReturnsFalse`     | `"Ground_10.0x0.5x10.0_Green_1"` | `false`  |
 
-### 8.2 Bug 2: Sibling order not sorted (_2 before_1 in Hierarchy)
+### 8.2 Fault 2: Sibling order not sorted (_2 before_1 in Hierarchy)
 
-**Root cause**: `RenumberContainerChildren` renamed correctly but did not call `SetSiblingIndex`. Children retained original insertion order in Hierarchy.
+**Root cause**: `RenumberContainerChildren` gave the new names right but did not call `SetSiblingIndex`. Children kept the order they were first put in, in Hierarchy.
 
-**Fix**: Add `SetSiblingIndex(i)` after each rename. New `FloorDetector.IsVariantOrderValid` validates the Hierarchy ordering purely.
+**Fix**: Add `SetSiblingIndex(i)` after each name change. New `FloorDetector.IsVariantOrderValid` checks the Hierarchy order as a pure check.
 
 #### IsVariantOrderValid(List<(string base_name, int variant)> items_in_sibling_order) → bool
 
-Validates that for each base_name, variants appear in ascending order starting from 1 in the given sibling-order list.
-Returns `false` if any base_name's first occurrence is not `_1`, or if subsequent occurrences are not `previous + 1`.
+Checks that for each base_name, variants are in going-up order starting from 1 in the given sibling-order list.
+Returns `false` if any base_name's first time it appears is not `_1`, or if the times after that are not `previous + 1`.
 
-| Test                                                    | Input (sibling order)       | Expected           |
-| ------------------------------------------------------- | --------------------------- | ------------------ |
-| `IsVariantOrderValid_EmptyList_ReturnsTrue`             | `[]`                        | `true`             |
-| `IsVariantOrderValid_SingleItem_ReturnsTrue`            | `[("A",1)]`                 | `true`             |
-| `IsVariantOrderValid_SameTypeAscending_ReturnsTrue`     | `[("A",1),("A",2)]`         | `true`             |
-| `IsVariantOrderValid_SameTypeDescending_ReturnsFalse`   | `[("A",2),("A",1)]`         | `false` ← BUG case |
-| `IsVariantOrderValid_MixedTypesAllInOrder_ReturnsTrue`  | `[("A",1),("B",1),("A",2)]` | `true`             |
-| `IsVariantOrderValid_MixedTypesOutOfOrder_ReturnsFalse` | `[("A",2),("B",1),("A",1)]` | `false`            |
+| Test                                                    | Input (sibling order)       | Expected             |
+| ------------------------------------------------------- | --------------------------- | -------------------- |
+| `IsVariantOrderValid_EmptyList_ReturnsTrue`             | `[]`                        | `true`               |
+| `IsVariantOrderValid_SingleItem_ReturnsTrue`            | `[("A",1)]`                 | `true`               |
+| `IsVariantOrderValid_SameTypeAscending_ReturnsTrue`     | `[("A",1),("A",2)]`         | `true`               |
+| `IsVariantOrderValid_SameTypeDescending_ReturnsFalse`   | `[("A",2),("A",1)]`         | `false` ← FAULT case |
+| `IsVariantOrderValid_MixedTypesAllInOrder_ReturnsTrue`  | `[("A",1),("B",1),("A",2)]` | `true`               |
+| `IsVariantOrderValid_MixedTypesOutOfOrder_ReturnsFalse` | `[("A",2),("B",1),("A",1)]` | `false`              |
 
 ### 8.3 Updated Test Count
 
@@ -487,4 +487,4 @@ Returns `false` if any base_name's first occurrence is not `_1`, or if subsequen
 
 ---
 
-**End of specification.**
+**End of plan.**
