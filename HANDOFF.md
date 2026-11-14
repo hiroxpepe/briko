@@ -23,7 +23,7 @@ State on 2026-11-07, checked against the code.
 | 4 | A trial run | In a copy in another folder (the repository not changed): `RoundTripTests`, `GridSnapperTests`, and `PrefabNameParserTests` (14 tests) ran, and 13 passed. `Root_RoundTrip_IsDeepEqual` failed: `Fixtures/sample_level_minimal.json` holds the key `target_duration_sec`, and `Layout.cs` now holds `target_duration_second` |
 | 5 | Tests behind the code | `LayoutTests` (7 tests) and `FloorDetectorTests` (23 tests) do not build against the code: `target_duration_sec` is now `target_duration_second`, `CalcSurfaceY` is now `CalculateSurfaceY`, and `AssignFloorLabels` has a different parameter. `HierarchySorterTests` (34 tests) and `ObjectVisibilityPanelTests` (21 tests) were not tried: the classes they test use Unity |
 | 6 | Phases | `P-01` is in progress (the test set does not run); `P-02` (the check by hand, in a real Unity) is in progress and needs the master |
-| 7 | Open work | `TASK-001` (the docs into Basic English) is the one task in `TASKLIST.md` |
+| 7 | Open work | `TASK-001` to `TASK-006` (the docs into Basic English, one file to a task), `TASK-007` (two lines of `README.md`), `TASK-008` (the draft words, on the word of the master) |
 
 ## Next move
 
