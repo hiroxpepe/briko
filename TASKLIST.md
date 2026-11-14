@@ -13,8 +13,11 @@ change in as a commit.
 ### TASK-001
 
 **State 2026-11-07, by the Basic English check.** These fail it (the lines with a word not allowed, of the lines of the file): `docs/briko_spec.md` (157 of 1,580),
-`.github/copilot-instructions.md` (77 of 308), `docs/hierarchy_sorter_spec.md` (53 of 522), `docs/hierarchy_sorter_tdd.md` (51 of 490), `docs/object_visibility_spec.md`
+`.github/copilot-instructions.md` (77 of 308), `docs/hierarchy_sorter_spec.md` (53 of 522), `docs/object_visibility_spec.md`
 (30 of 420), `docs/HANDOFF_coding_standard_rollout.md` (17 of 86), and `docs/briko_roadmap.md` (5 of 204). `README.md` passes.
+
+**Changed 2026-11-14.** `docs/hierarchy_sorter_tdd.md` now passes: its words were put into simpler words, and 11 words (code names and short forms) were put into `draft_words.md`.
+The master's rule: a word that has a simple word to take its place is replaced. Only a word that no simple word can take the place of goes into `draft_words.md`, and no hard word stays there.
 
 **Small, still-open things, each inside a file that must come into Basic English first**: these lines still point at the old file name
 `docs/development_plan_v1_detail_JP.md`, which no longer holds that document; the real one sits at `docs/briko_roadmap.md`. They are `README.md` lines 344 and 513,
