@@ -131,7 +131,7 @@ public class ClassName {
   "layout_id": "tropika_stage_01",
   "grid_unit": 0.25,
   "target_duration_second": 180,
-  "bgm_track": "track_01_tropika_morning.mp3",
+  "background_music_track": "track_01_tropika_morning.mp3",
   "platforms": [
     {
       "floor": "1f",

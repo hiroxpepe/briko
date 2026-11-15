@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    Runs briko's integration tests (the layout data model, the grid, the prefab
+    name parser, the floor and hierarchy helpers) with plain .NET, no Unity.
+    The classes under test are compiled from their shared sources in Editor/;
+    the classes that use Unity are not part of this project.
+    Unity itself never reads this file.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <RestoreSources>/home/claude/localnuget/nupkg</RestoreSources>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+    <PackageReference Include="NUnit" Version="4.2.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+
+  <!-- shared sources from the package (no Unity types) -->
+  <ItemGroup>
+    <Compile Include="..\..\Editor\Model\Layout.cs" />
+    <Compile Include="..\..\Editor\Internal\FloorDetector.cs" />
+    <Compile Include="..\..\Editor\Internal\GridSnapper.cs" />
+    <Compile Include="..\..\Editor\Internal\PrefabNameParser.cs" />
+  </ItemGroup>
+
+  <!-- the integration tests -->
+  <ItemGroup>
+    <Compile Include="Scripts\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Fixtures\**\*.*">
+      <Link>Fixtures\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -55,12 +55,12 @@ not true — badly, and often.
 
 Briko gets around this by **making the LLM's own choices smaller**:
 
-| An open-ended problem | Briko's own, narrow answer |
-| --- | --- |
-| "Put a block somewhere that makes sense" | Pick from a fixed list of ready-made shapes |
-| "Pick X, Y, Z points" | Snap to a 0.25m grid (whole numbers only) |
-| "Set the turn" | Pick from `{0°, 90°, 180°, 270°}` |
-| "See a whole 3D scene in your mind" | Edit a JSON list (a thing an LLM is very good at) |
+| An open-ended problem                    | Briko's own, narrow answer                        |
+| ---------------------------------------- | ------------------------------------------------- |
+| "Put a block somewhere that makes sense" | Pick from a fixed list of ready-made shapes       |
+| "Pick X, Y, Z points"                    | Snap to a 0.25m grid (whole numbers only)         |
+| "Set the turn"                           | Pick from `{0°, 90°, 180°, 270°}`                 |
+| "See a whole 3D scene in your mind"      | Edit a JSON list (a thing an LLM is very good at) |
 
 By cutting the space of choice down to **a small, fixed set of
 words the LLM can really reason about**, Briko turns level design
@@ -252,7 +252,7 @@ to work with. Here is its smallest form:
   "layout_id": "tropika_stage_01",
   "grid_unit": 0.25,
   "target_duration_second": 180,
-  "bgm_track": "track_01_tropika_morning.mp3",
+  "background_music_track": "track_01_tropika_morning.mp3",
   "platforms": [
     {
       "floor": "1f",
@@ -285,7 +285,7 @@ to work with. Here is its smallest form:
 
 ```mermaid
 graph TB
-    Root[Root<br/>📋 layout_id, grid_unit,<br/>target_duration_second, bgm_track]
+    Root[Root<br/>📋 layout_id, grid_unit,<br/>target_duration_second, background_music_track]
     Root -->|"platforms[]"| P[Platform<br/>🏢 floor]
     P -->|"grounds[]"| I1[Item<br/>🟩 prefab, variant,<br/>position, rotation_y]
     P -->|"blocks[]"| I2[Item<br/>🟦 prefab, variant,<br/>position, rotation_y]
@@ -303,12 +303,12 @@ graph TB
 
 ### The rules behind the design
 
-| Rule | Why |
-| --- | --- |
-| **Only whole-number steps of grid_unit** | this removes any slow drift in float values; an LLM can never put something "almost on the grid" |
-| **rotation_y is one of {0, 90, 180, 270}** | a fixed, small set of choices makes intent plain and clear |
-| **The shape's name and its variant are kept apart** | the LLM picks from a fixed, finite list; how it looks stays apart from where it sits |
-| **No materials, no scale changes** | these are already baked into each ready-made shape, so the LLM has nothing left to make up facts about |
+| Rule                                                | Why                                                                                                    |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Only whole-number steps of grid_unit**            | this removes any slow drift in float values; an LLM can never put something "almost on the grid"       |
+| **rotation_y is one of {0, 90, 180, 270}**          | a fixed, small set of choices makes intent plain and clear                                             |
+| **The shape's name and its variant are kept apart** | the LLM picks from a fixed, finite list; how it looks stays apart from where it sits                   |
+| **No materials, no scale changes**                  | these are already baked into each ready-made shape, so the LLM has nothing left to make up facts about |
 
 ---
 
@@ -416,15 +416,15 @@ Briko follows the rules of
 [Stemic](https://github.com/hiroxpepe/stemic) (the parent game
 project) with care. The key rules:
 
-| Part | Rule | Example |
-| --- | --- | --- |
-| A class's own name | one word, with no prefix for this project | `Exporter`, not `BrikoExporter` |
-| A public property (on a data class) | `snake_case` (to match the JSON's own keys) | `layout_id`, `grid_unit` |
-| A public property (any other kind) | `camelCase` | `home`, `beat`, `mode` |
-| A private field | `_snake_case` | `_do_update`, `_jump_power` |
-| A local variable or argument | `snake_case` | `base_path`, `grid_unit` |
-| A constant | `ALL_CAPS` | `GRID_UNIT`, `MENU_ROOT` |
-| A method call (made for this project) | **always give each argument its own name** | `Snap(raw: pos, grid_unit: 0.25f)` |
+| Part                                  | Rule                                        | Example                            |
+| ------------------------------------- | ------------------------------------------- | ---------------------------------- |
+| A class's own name                    | one word, with no prefix for this project   | `Exporter`, not `BrikoExporter`    |
+| A public property (on a data class)   | `snake_case` (to match the JSON's own keys) | `layout_id`, `grid_unit`           |
+| A public property (any other kind)    | `camelCase`                                 | `home`, `beat`, `mode`             |
+| A private field                       | `_snake_case`                               | `_do_update`, `_jump_power`        |
+| A local variable or argument          | `snake_case`                                | `base_path`, `grid_unit`           |
+| A constant                            | `ALL_CAPS`                                  | `GRID_UNIT`, `MENU_ROOT`           |
+| A method call (made for this project) | **always give each argument its own name**  | `Snap(raw: pos, grid_unit: 0.25f)` |
 
 Turning data into JSON uses no `[JsonProperty]` tags at all — each
 property's own name is used, straight, as the JSON's own key.

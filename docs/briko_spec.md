@@ -651,7 +651,7 @@ Future versions may eliminate this rule of thumb by introducing explicit `blocks
 
 ```mermaid
 graph TB
-    Root["Root<br/>📋 layout_id, grid_unit,<br/>target_duration_second, bgm_track"]
+    Root["Root<br/>📋 layout_id, grid_unit,<br/>target_duration_second, background_music_track"]
     Root -->|"platforms[]"| P[Platform<br/>floor]
     P -->|"grounds[]"| I1[Item<br/>prefab, variant,<br/>position, rotation_y]
     P -->|"blocks[]"| I2[Item<br/>prefab, variant,<br/>position, rotation_y]
@@ -671,7 +671,7 @@ graph TB
   "layout_id": "stage_01",
   "grid_unit": 0.25,
   "target_duration_second": 180,
-  "bgm_track": "stage_01_theme.mp3",
+  "background_music_track": "stage_01_theme.mp3",
   "platforms": [
     {
       "floor": "1f",
@@ -718,7 +718,7 @@ graph TB
 | `layout_id`              | string           | yes        | Unique identifier; used as default scene name on import    |
 | `grid_unit`              | float            | yes        | Grid rounding in meters (fixed at `0.25` in v1)            |
 | `target_duration_second` | int              | yes        | Intended play duration in seconds                          |
-| `bgm_track`              | string           | not needed | BGM file name (relative to host project's StreamingAssets) |
+| `background_music_track` | string           | not needed | BGM file name (relative to host project's StreamingAssets) |
 | `platforms`              | list of Platform | yes        | One or more floor layers                                   |
 
 #### Platform
@@ -815,7 +815,7 @@ classDiagram
         +string layout_id
         +float grid_unit
         +int target_duration_second
-        +string bgm_track
+        +string background_music_track
         +List~Platform~ platforms
     }
 
