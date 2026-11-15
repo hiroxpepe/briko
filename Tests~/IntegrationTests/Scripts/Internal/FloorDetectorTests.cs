@@ -79,19 +79,19 @@ namespace Briko.Tests.Internal {
 
         [Test, Description("Surface Y of Ground at Y=-0.25 is 0.0 (1F ground level, center at -0.25, top at 0.0)")]
         public void CalcSurfaceY_PrefabAtMinusHalf_ReturnsZero() {
-            float result = FloorDetector.CalcSurfaceY(prefab_y: -0.25f);
+            float result = FloorDetector.CalculateSurfaceY(prefab_y: -0.25f);
             Assert.That(result, Is.EqualTo(0.0f).Within(0.001f));
         }
 
         [Test, Description("Surface Y of Ground at Y=1.0 is 1.25 (2F in Level_2)")]
         public void CalcSurfaceY_PrefabAtOne_ReturnsOnePointTwoFive() {
-            float result = FloorDetector.CalcSurfaceY(prefab_y: 1.0f);
+            float result = FloorDetector.CalculateSurfaceY(prefab_y: 1.0f);
             Assert.That(result, Is.EqualTo(1.25f).Within(0.001f));
         }
 
         [Test, Description("Surface Y of Ground at Y=-5.5 is -5.25 (B2F in Level_2)")]
         public void CalcSurfaceY_PrefabAtMinusFivePointFive_ReturnsMinusFivePointTwoFive() {
-            float result = FloorDetector.CalcSurfaceY(prefab_y: -5.5f);
+            float result = FloorDetector.CalculateSurfaceY(prefab_y: -5.5f);
             Assert.That(result, Is.EqualTo(-5.25f).Within(0.001f));
         }
 
@@ -101,7 +101,7 @@ namespace Briko.Tests.Internal {
         [Test, Description("Level_2 surfaces produce 4 floors: 2F / 1F / B1F / B2F")]
         public void AssignFloorLabels_Level2Surfaces_ReturnsFourFloors() {
             var surfaces = new List<float> { 1.25f, -0.25f, -2.75f, -5.25f };
-            var result = FloorDetector.AssignFloorLabels(surface_y_values_desc: surfaces);
+            var result = FloorDetector.AssignFloorLabels(surface_y_values_descending: surfaces);
             Assert.That(result.Count, Is.EqualTo(4));
             Assert.That(result[0].label, Is.EqualTo("2F"));
             Assert.That(result[1].label, Is.EqualTo("1F"));
@@ -112,14 +112,14 @@ namespace Briko.Tests.Internal {
         [Test, Description("Single surface at Y=0 is assigned 1F")]
         public void AssignFloorLabels_SingleSurfaceAtZero_Returns1F() {
             var surfaces = new List<float> { 0.0f };
-            var result = FloorDetector.AssignFloorLabels(surface_y_values_desc: surfaces);
+            var result = FloorDetector.AssignFloorLabels(surface_y_values_descending: surfaces);
             Assert.That(result[0].label, Is.EqualTo("1F"));
         }
 
         [Test, Description("Two surfaces above and below zero produce 2F and 1F")]
         public void AssignFloorLabels_TwoSurfaces_Returns2FAnd1F() {
             var surfaces = new List<float> { 1.25f, -0.25f };
-            var result = FloorDetector.AssignFloorLabels(surface_y_values_desc: surfaces);
+            var result = FloorDetector.AssignFloorLabels(surface_y_values_descending: surfaces);
             Assert.That(result[0].label, Is.EqualTo("2F"));
             Assert.That(result[1].label, Is.EqualTo("1F"));
         }
@@ -127,7 +127,7 @@ namespace Briko.Tests.Internal {
         [Test, Description("Empty list returns empty result")]
         public void AssignFloorLabels_EmptyList_ReturnsEmpty() {
             var result = FloorDetector.AssignFloorLabels(
-                surface_y_values_desc: new List<float>());
+                surface_y_values_descending: new List<float>());
             Assert.That(result.Count, Is.EqualTo(0));
         }
 
@@ -140,7 +140,7 @@ namespace Briko.Tests.Internal {
                 (1.25f, "2F"), (-0.25f, "1F"), (-2.75f, "B1F"), (-5.25f, "B2F")
             };
             string result = FloorDetector.AssignBlockToFloor(
-                block_y: 0.0f, floors_desc: floors);
+                block_y: 0.0f, floors_descending: floors);
             Assert.That(result, Is.EqualTo("1F"));
         }
 
@@ -150,7 +150,7 @@ namespace Briko.Tests.Internal {
                 (1.25f, "2F"), (-0.25f, "1F"), (-2.75f, "B1F"), (-5.25f, "B2F")
             };
             string result = FloorDetector.AssignBlockToFloor(
-                block_y: 1.5f, floors_desc: floors);
+                block_y: 1.5f, floors_descending: floors);
             Assert.That(result, Is.EqualTo("2F"));
         }
 
@@ -160,7 +160,7 @@ namespace Briko.Tests.Internal {
                 (1.25f, "2F"), (-0.25f, "1F"), (-2.75f, "B1F"), (-5.25f, "B2F")
             };
             string result = FloorDetector.AssignBlockToFloor(
-                block_y: -5.0f, floors_desc: floors);
+                block_y: -5.0f, floors_descending: floors);
             Assert.That(result, Is.EqualTo("B2F"));
         }
 
@@ -193,7 +193,7 @@ namespace Briko.Tests.Internal {
         [Test, Description("Level_3 surfaces produce 4F/3F/2F/1F (all floors above ground, no basement)")]
         public void AssignFloorLabels_Level3Surfaces_ReturnsFourAboveGroundFloors() {
             var surfaces = new List<float> { 4.75f, 2.25f, 1.25f, -0.25f };
-            var result = FloorDetector.AssignFloorLabels(surface_y_values_desc: surfaces);
+            var result = FloorDetector.AssignFloorLabels(surface_y_values_descending: surfaces);
             Assert.That(result.Count, Is.EqualTo(4));
             Assert.That(result[0].label, Is.EqualTo("4F"));
             Assert.That(result[1].label, Is.EqualTo("3F"));
@@ -210,7 +210,7 @@ namespace Briko.Tests.Internal {
                 (4.75f, "4F"), (2.25f, "3F"), (1.25f, "2F"), (-0.25f, "1F")
             };
             string result = FloorDetector.AssignBlockToFloor(
-                block_y: 7.0f, floors_desc: floors);
+                block_y: 7.0f, floors_descending: floors);
             Assert.That(result, Is.EqualTo("4F"));
         }
     }

@@ -1,7 +1,7 @@
 {
   "layout_id": "test_minimal",
   "grid_unit": 0.25,
-  "target_duration_sec": 180,
+  "target_duration_second": 180,
   "bgm_track": "test.mp3",
   "platforms": [
     {

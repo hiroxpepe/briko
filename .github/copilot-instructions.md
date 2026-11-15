@@ -1,7 +1,7 @@
-# Copilot Instructions for Briko
+# Helper Instructions for Briko
 
 > **Briko**: Block-based Level Construction Tool for Germio  
-> A Unity Editor extension that bidirectionally converts 3D level scenes to/from LLM-friendly JSON.
+> A Unity Editor extension that both ways converts solid level scenes to/from LLM-friendly JSON.
 
 ## Build, Test & Lint
 
@@ -20,19 +20,19 @@ dotnet test Tests~/IntegrationTests/IntegrationTests.csproj --filter "FullyQuali
 Test structure:
 
 + `.NET 9.0` target framework with `<LangVersion>latest</LangVersion>`
-+ Tests compile shared sources from `Editor/Model/Layout.cs` and `Editor/Internal/*.cs`
-+ Test fixtures in `Tests~/IntegrationTests/Fixtures/` copied to output directory
++ Tests build shared sources from `Editor/Model/Layout.cs` and `Editor/Internal/*.cs`
++ Test files in `Tests~/IntegrationTests/Fixtures/` copied to output folder
 + **No Unity API tests in v1** — Editor/Importer/Exporter (MonoBehaviour-dependent code) tested in v2 via Unity Test Framework
 
 ### No Linters or Builders
 
-This is a UPM package (not a standalone app). It has no:
+This is a Unity package (not a separate program). It has no:
 
 + `npm run build` / `npm run lint` equivalents
-+ Build output artifacts
-+ Formatting checkers
++ Build output files
++ Layout checks
 
-Tests are the primary validation. All public APIs are covered by NUnit tests.
+Tests are the primary check. All public APIs are covered by NUnit tests.
 
 ---
 
@@ -40,16 +40,16 @@ Tests are the primary validation. All public APIs are covered by NUnit tests.
 
 ### The Core Problem
 
-LLMs hallucinate wildly on continuous 3D spatial reasoning (arbitrary XYZ coordinates, rotations, scales). **Briko solves this by discretizing the problem space**:
+Models do badly with continuous solid space (any XYZ places, turns, scales). **Briko solves this by cutting the problem space**:
 
-+ **Prefab catalog** (finite list) instead of "place any model"
-+ **0.25m grid snapping** (integer multiples only) instead of arbitrary floating-point coordinates
-+ **4 cardinal rotations** (0°, 90°, 180°, 270°) instead of arbitrary angles
-+ **JSON arrays** (LLM's native abstraction) instead of 3D spatial reasoning
++ **part catalog** (finite list) instead of "place any model"
++ **0.25m grid snapping** (whole number multiples only) instead of any floating-point places
++ **4 main turns** (0°, 90°, 180°, 270°) instead of any angles
++ **JSON lists** (model's native idea) instead of solid spatial reasoning
 
-Result: Level design becomes an **autocomplete problem**, not an unsolved spatial hallucination problem.
+Result: Level design becomes **a problem with one right answer**, not an open solid guessing problem.
 
-### Bidirectional Conversion (Lossless)
+### Two-way change (full)
 
 ```text
 Unity Scene ←→ level_layout.json
@@ -58,16 +58,16 @@ Scene → JSON: Export (serialize all Platform/Entity hierarchies)
 JSON → Scene: Import (reconstruct scene from JSON, place prefabs, mark zones)
 ```
 
-Losslessness is guaranteed because everything snaps to the discrete grid. You can export, let an LLM edit the JSON, re-import, and it reconstructs identically.
+Nothing is lost, because everything sits on the separate grid. You can export, let a model edit the JSON, re-import, and it builds the same.
 
 ### The One Contract with Germio
 
-+ **Briko** (this tool): Handles **space** — prefab placements, grid snapping, scene construction
++ **Briko** (this tool): Handles **space** — part places, grid snapping, scene construction
 + **Germio** (sibling tool): Handles **logic** — state machines, rules, transitions, events
 
-The **only connection** is a `zone_id` string in the JSON. When the player enters a Briko `zone`, Germio's runtime sees the zone event and decides what happens next. Neither tool knows anything else about the other.
+The **only connection** is a `zone_id` string in the JSON. When the player enters a Briko `zone`, Germio's run time sees the zone event and decides what happens next. Neither tool knows anything else about the other.
 
-### Namespace & Dependency Hierarchy
+### Group & Need Tree
 
 ```text
 Briko.Editor.*              ← public API (Exporter, Importer, menus)
@@ -77,7 +77,7 @@ Briko.Editor.Internal.*     ← utilities (GridSnapper, PrefabNameParser)
 Briko.Editor.Model.*        ← data classes (Root, Platform, Item, Zone)
 ```
 
-**Strict rule**: `Briko → Germio` (one-way, allowed). `Germio → Briko` forbidden (would create circular dependency). `Briko → game-specific code` forbidden (Briko is generic, not Sprout Quest-specific).
+**Strict rule**: `Briko → Germio` (one-way, allowed). `Germio → Briko` banned (would create a loop of needs). `Briko → game-specific code` banned (Briko is common, not Sprout Quest-specific).
 
 ---
 
@@ -89,13 +89,13 @@ Briko.Editor.Model.*        ← data classes (Root, Platform, Item, Zone)
 | ------------------------------ | -------------------------------- | ----------------------------------- |
 | **Class names**                | Single word, no project prefix   | `Exporter` (not `BrikoExporter`)    |
 | **Data class properties**      | `snake_case` (matches JSON keys) | `layout_id`, `grid_unit`, `zone_id` |
-| **Non-data public properties** | `camelCase`                      | N/A in v1 (minimal public API)      |
+| **Not-data public properties** | `camelCase`                      | N/A in v1 (small public API)        |
 | **Private fields**             | `_snake_case`                    | `_grid_unit`, `_is_valid`           |
 | **Local variables**            | `snake_case`                     | `raw_position`, `snapped_value`     |
 | **Constants**                  | `ALL_CAPS`                       | `PATTERN`, `GRID_UNIT`              |
-| **Method calls**               | **Always use named parameters**  | `Snap(raw: pos, grid_unit: 0.25f)`  |
+| **Method calls**               | **Always use named inputs**      | `Snap(raw: pos, grid_unit: 0.25f)`  |
 
-**JSON serialization**: Property names are JSON keys directly. **No `[JsonProperty]` attributes.**
+**JSON saving**: Property names are JSON keys directly. **No `[JsonProperty]` attributes.**
 
 ### Data Model Pattern (One File, Multiple Classes)
 
@@ -112,7 +112,7 @@ namespace Briko.Editor.Model {
 
 This mirrors Stemic's `Data.cs` pattern (all scenario data in one file).
 
-**Template for each class:**
+**Pattern for each class:**
 
 ```csharp
 /// <summary>Human-readable description (one line, key responsibility).</summary>
@@ -124,13 +124,13 @@ public class ClassName {
 }
 ```
 
-### JSON Structure (Serialization Target)
+### JSON Structure (saving Target)
 
 ```json
 {
   "layout_id": "tropika_stage_01",
   "grid_unit": 0.25,
-  "target_duration_sec": 180,
+  "target_duration_second": 180,
   "bgm_track": "track_01_tropika_morning.mp3",
   "platforms": [
     {
@@ -143,16 +143,16 @@ public class ClassName {
 }
 ```
 
-**Key invariants:**
+**Key rules:**
 
-+ `position` is always `float[3]` with values that are **integer multiples of `grid_unit`** (0.25m)
++ `position` is always `float[3]` with values that are **whole number multiples of `grid_unit`** (0.25m)
 + `rotation_y` is always `0`, `90`, `180`, or `270` (omitted if `0`)
 + `variant` is always `≥ 1`
-+ `zone_id` matches regex `^vol_[a-z0-9_]+$` (lowercase + underscores)
++ `zone_id` matches pattern `^vol_[a-z0-9_]+$` (small letter + marks)
 
 ### GridSnapper Pattern (Testable Pure Function)
 
-`GridSnapper.Snap()` is a **pure static method** that converts between Unity's continuous `Vector3` and discrete `float[]`:
+`GridSnapper.Snap()` is a **pure static method** that converts between Unity's continuous `Vector3` and separate `float[]`:
 
 ```csharp
 // In Exporter.cs (Unity context):
@@ -165,9 +165,9 @@ float[] snapped = GridSnapper.Snap(
 
 This design **enables unit testing without Unity**. The test project imports `GridSnapper.cs` as shared source and can call it directly with `float[]` inputs.
 
-### Prefab Naming Convention
+### part Naming Convention
 
-Briko parses GameObject names to extract prefab identity and visual variant:
+Briko reads GameObject names to extract part identity and visual variant:
 
 ```text
 Ground_10.0x0.5x10.0_Green_1
@@ -176,10 +176,10 @@ Ground_10.0x0.5x10.0_Green_1
      └─ type (any word: Ground, Block, Enemy, ...)  └─ variant number (visual variation)
 ```
 
-Parsing regex: `^(.+_([\d.]+x[\d.]+x[\d.]+)_.+)_(\d+)$`
+Reading pattern: `^(.+_([\d.]+x[\d.]+x[\d.]+)_.+)_(\d+)$`
 
-On export: `PrefabNameParser.Parse(name)` returns `(prefab, variant)` tuple or `null`.
-On import: search all prefabs by file name exact match on `item.prefab` (variant not appended).
+On export: `PrefabNameParser.Parse(name)` returns `(prefab, variant)` pair or `null`.
+On import: search all parts by file name exact match on `item.prefab` (variant not added).
 
 ### Test File Organization
 
@@ -196,14 +196,14 @@ Tests~/IntegrationTests/Scripts/
 **Test method naming**: `ClassName_Feature_ExpectedBehavior`  
 Example: `Root_LayoutId_DeserializesFromJson()`
 
-**Assertion pattern**: Use NUnit's fluent API
+**Check pattern**: Use NUnit's easy API
 
 ```csharp
 Assert.That(value, Is.EqualTo(expected).Within(0.001f)); // floats with tolerance
 Assert.That(root!.layout_id, Is.EqualTo("test_minimal"));
 ```
 
-### Serialization (Newtonsoft.Json)
+### saving (Newtonsoft.Json)
 
 All tests and data models use **Newtonsoft.Json** (v13.0.3):
 
@@ -218,28 +218,28 @@ Root root = JsonConvert.DeserializeObject<Root>(json, _settings);
 string json = JsonConvert.SerializeObject(root, _settings);
 ```
 
-### Assembly & Namespace Structure
+### Build & Group Structure
 
-**Editor assembly** (`Editor/Briko.Editor.asmdef`):
+**Editor build** (`Editor/Briko.Editor.asmdef`):
 
 + Platform: Editor only
 + References: `com.unity.nuget.newtonsoft-json`
-+ Namespaces: `Briko.Editor.*`
++ Groups: `Briko.Editor.*`
 
 **Test project** (`Tests~/IntegrationTests/IntegrationTests.csproj`):
 
-+ Shares source compilation of `Editor/Model/Layout.cs` and `Editor/Internal/*.cs`
-+ Namespace: `Briko.Tests.*`
-+ **Never imports the compiled assembly** — uses shared source instead to avoid cyclic build dependency
++ Shares source building of `Editor/Model/Layout.cs` and `Editor/Internal/*.cs`
++ Group: `Briko.Tests.*`
++ **Never imports the built build** — uses shared source instead to avoid a build loop
 
 ---
 
 ## Code Style Notes
 
-+ **XML doc comments** on all public classes/methods (3 slashes `///`)
-+ **Author tag**: Always `<author>h.adachi (STUDIO MeowToon)</author>` in XML docs
++ **XML document comments** on all public classes/methods (3 slashes `///`)
++ **Author tag**: Always `<author>h.adachi (STUDIO MeowToon)</author>` in XML files
 + **`#nullable enable`** at the top of each class body
-+ **Section headers** in method groups:
++ **Section titles** in method groups:
 
   ```csharp
   ///////////////////////////////////////////////////////////////////////
@@ -249,35 +249,35 @@ string json = JsonConvert.SerializeObject(root, _settings);
   // Private methods
   ```
 
-+ **No blank lines inside method bodies** — compact, readable code
-+ **Early returns** for validation, no deeply nested blocks
++ **No blank lines inside method bodies** — short, clear code
++ **Early returns** for check, no deeply nested blocks
 + **No LINQ** (Stemic convention for performance in tight loops; data models are simple enough to use explicit loops)
 
 ---
 
 ## Design Philosophy (Critical)
 
-### Why Discrete Over Continuous
+### Why separate Over Continuous
 
 The entire project rests on this observation:
 
-> **"LLMs hallucinate wildly on continuous spatial reasoning, but are excellent at JSON manipulation."**
+> **"Models do badly with continuous spatial work, but are excellent at changing JSON."**
 
-Every design decision — prefab catalog, 0.25m grid, 4 cardinal rotations — exists to **shrink the search space into LLM's native domain** (arrays, discrete choices).
+Every design decision — part catalog, 0.25m grid, 4 main turns — exists to **get smaller the search space into model's native field** (lists, separate choices).
 
-This is non-negotiable. Do not add:
+This is closed. Do not add:
 
-+ Arbitrary floating-point coordinates
-+ 360° rotations
++ any floating-point places
++ 360° turns
 + Custom material properties
-+ Scale overrides
++ Scale changes that replace a part's size
 + Any feature that expands the continuous problem space
 
-### Round-trip Losslessness
+### Round-trip with nothing lost
 
-Export → Edit JSON → Import → Export must produce identical JSON.
+Export → Edit JSON → Import → Export must produce same JSON.
 
-This is tested by `RoundTripTests.cs`. If you change the model, you must verify this invariant still holds.
+This is tested by `RoundTripTests.cs`. If you change the model, you must check this rule still holds.
 
 ### One Tool, One Responsibility
 
@@ -286,18 +286,18 @@ This is tested by `RoundTripTests.cs`. If you change the model, you must verify 
 + Define game rules (Germio's job)
 + Manage state machines
 + Handle player input
-+ Know about collectibles, enemies, or game logic
++ Know about items, enemies, or game logic
 
-This separation is codified in the `zone_id` contract. Violating it breaks the ability to reuse Briko in other projects (and violates the stated design philosophy).
+This split is written down in the `zone_id` contract. Breaking it breaks the ability to reuse Briko in other projects (and breaks the written design philosophy).
 
 ---
 
 ## References
 
-+ **README.md**: High-level vision, quick start, JSON examples
-+ **docs/briko_spec.md**: Design rationale (the "why")
-+ **docs/development_plan_v1_detail_JP.md**: Implementation details and task breakdown
-+ **Germio repo**: Sibling tool; Briko has one-way dependency but never imports Germio code in v1
++ **`README.md`**: High-level vision, quick start, JSON examples
++ **docs/briko_plan.md**: Design reason (the "why")
++ **docs/development_plan_v1_detail_JP.md**: Implementation details and task list
++ **Germio repo**: Sibling tool; Briko has one-way need but never imports Germio code in v1
 
 ---
 
@@ -305,4 +305,4 @@ This separation is codified in the `zone_id` contract. Violating it breaks the a
 
 + **Current version**: v0.1.0 (Phase 1 Complete)
 + **Test coverage**: 19/19 passing
-+ **Next phase** (v2): JSON Schema lock, validator (zone_id sync), PlayMode integration tests
++ **Next phase** (v2): JSON Layout lock, check (zone_id match), PlayMode integration tests

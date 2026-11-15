@@ -1,15 +1,15 @@
-# Briko Specification
+# Briko plan
 
 > **Block-based Level Construction Tool for Germio**
 >
-> A Unity Editor extension enabling LLM-driven level generation through bidirectional Scene ↔ JSON conversion.
+> A Unity Editor extension enabling LLM-driven level generation through two-way Scene ↔ JSON change.
 
 ---
 
 **Document Version**: 1.1
 **Last Updated**: 2026-05-05
 **Status**: Stable (v1 implementation complete)
-**Companion to**: [Germio Framework](https://github.com/hiroxpepe/germio)
+**Partner to**: [Germio Framework](https://github.com/hiroxpepe/germio)
 
 ---
 
@@ -29,37 +29,37 @@ graph LR
     style Tests fill:#c8e6c9
 ```
 
-| Section | Topic                      |
-| ------- | -------------------------- |
-| 1       | Overview                   |
-| 2       | Design Philosophy          |
-| 3       | Relationship with Germio   |
-| 4       | Coordinate System and Grid |
-| 5       | Prefab Naming Convention   |
-| 6       | Scene Hierarchy            |
-| 7       | Layout JSON Format         |
-| 8       | Bidirectional Converter    |
-| 9       | Repository Structure       |
-| 10      | Coding Conventions         |
-| 11      | Common Layout Patterns     |
-| 12      | LLM Workflow Models        |
-| 13      | Failure Mode Catalog       |
-| 14      | Roadmap                    |
-| 15      | References                 |
+| Section | Topic                    |
+| ------- | ------------------------ |
+| 1       | Summary                  |
+| 2       | Design Philosophy        |
+| 3       | Relationship with Germio |
+| 4       | place System and Grid    |
+| 5       | part Naming Convention   |
+| 6       | Scene Tree               |
+| 7       | Layout JSON Format       |
+| 8       | Two-way change           |
+| 9       | Repository Structure     |
+| 10      | Coding Conventions       |
+| 11      | Common Layout Patterns   |
+| 12      | Model Workflows          |
+| 13      | Failure Mode Catalog     |
+| 14      | Roadmap                  |
+| 15      | References               |
 
 ---
 
-## 1. Overview
+## 1. Summary
 
 ### 1.1 What Briko Is
 
 Briko is a Unity Editor extension that:
 
-1. **Serializes** an existing Unity scene into structured JSON (the `Layout` document).
-2. **Reconstructs** a Unity scene from a `Layout` document.
-3. Maintains **lossless round-trip** between the two representations through strict discrete constraints.
+1. **saves** an existing Unity scene into structured JSON (the `Layout` document).
+2. **Makes again** a Unity scene from a `Layout` document.
+3. Maintains **full round-trip** between the two representations through strict separate constraints.
 
-The JSON format is designed to be read and written by Large Language Models (LLMs).
+The JSON format is designed to be read and written by language models.
 
 ```mermaid
 graph LR
@@ -77,12 +77,12 @@ graph LR
 
 | Briko is not                      | Justification                                                                   |
 | --------------------------------- | ------------------------------------------------------------------------------- |
-| A runtime level editor            | All operations execute in the Unity Editor only                                 |
-| A procedural generator            | Briko has no random-generation logic; it transforms between two representations |
-| An ML-based generator             | Briko provides no learned model; LLM intelligence is external                   |
+| A run time level editor           | All operations run in the Unity Editor only                                     |
+| A step by step maker              | Briko has no random-generation logic; it transforms between two representations |
+| A maker based on machine learning | Briko provides no taught model; model intelligence is external                  |
 | A scenario / state machine engine | That responsibility belongs to Germio                                           |
-| An asset creation tool            | Prefabs must already exist in the host project                                  |
-| A universal level format          | The format is specific to a constrained genre and prefab convention             |
+| An asset creation tool            | parts must already exist in the host project                                    |
+| A universal level format          | The format is specific to a limited kind and part convention                    |
 
 ### 1.3 Position Relative to Germio
 
@@ -140,22 +140,22 @@ graph TB
     style Script fill:#fff4cc
 ```
 
-| Approach              | LLM-friendly | Bidirectional | Deterministic | Explainable |
-| --------------------- | ------------ | ------------- | ------------- | ----------- |
-| UI-driven editor      | No           | No            | Yes           | Yes         |
-| Manual 3D modeling    | No           | No            | Yes           | Yes         |
-| Procedural generation | Partial      | No            | No (random)   | Partial     |
-| ML-based generation   | Partial      | No            | No            | No          |
-| Scripted construction | Partial      | No            | Yes           | Yes         |
-| **Briko**             | **Yes**      | **Yes**       | **Yes**       | **Yes**     |
+| Approach                          | LLM-friendly | Two-way | Deterministic | Explainable |
+| --------------------------------- | ------------ | ------- | ------------- | ----------- |
+| UI-driven editor                  | No           | No      | Yes           | Yes         |
+| Manual solid modeling             | No           | No      | Yes           | Yes         |
+| step by step generation           | Some         | No      | No (random)   | Some        |
+| machine learning-based generation | Some         | No      | No            | No          |
+| Written by script construction    | Some         | No      | Yes           | Yes         |
+| **Briko**                         | **Yes**      | **Yes** | **Yes**       | **Yes**     |
 
 ---
 
 ## 2. Design Philosophy
 
-### 2.1 The LLM Spatial Reasoning Problem
+### 2.1 The Model Spatial Reasoning Problem
 
-LLMs operate on token sequences. 3D space is a continuous coordinate field. The translation between them is unreliable when the LLM is asked to produce coordinates directly.
+Models work on token lists. Solid space is a continuous place field. Moving between them is not safe when the model is asked to make places directly.
 
 ```mermaid
 graph TB
@@ -175,7 +175,7 @@ graph TB
     style S2 fill:#fff9c4
 ```
 
-Common failure modes when an LLM is asked to produce 3D coordinates directly:
+Common failure modes when a model is asked to produce solid places directly:
 
 ```mermaid
 graph TB
@@ -195,9 +195,9 @@ graph TB
     style F5 fill:#ffcdd2
 ```
 
-### 2.2 The Discrete Reformulation
+### 2.2 The separate Reformulation
 
-Briko's approach: replace each continuous degree of freedom with a discrete choice.
+Briko's approach: replace each continuous degree of freedom with a separate choice.
 
 ```mermaid
 graph LR
@@ -230,11 +230,11 @@ graph LR
     style D4 fill:#c8e6c9
 ```
 
-The principle: **reducing the LLM's freedom raises output quality** by making invalid outputs unrepresentable.
+The principle: **reducing the model's freedom raises output quality** by making wrong outputs impossible to write.
 
-### 2.3 Bidirectional as a First-Class Property
+### 2.3 Two-way as a First-Class Property
 
-Most level generators are unidirectional: tool emits a scene, and any subsequent human edit causes the source-of-truth to diverge from the original input.
+Most level makers are one-way: tool gives a scene, and any subsequent human edit causes the source-of-truth to split from the original input.
 
 Briko's solution: treat **Scene → JSON** as a primary operation, equal in importance to **JSON → Scene**.
 
@@ -257,26 +257,26 @@ graph LR
     style JSON2 fill:#fff9c4
 ```
 
-The discrete constraints from §2.2 mathematically guarantee this round-trip property (see §8.3).
+The rules from §2.2, taken together, guarantee this round-trip property (see §8.3).
 
 ### 2.4 LLM-First Design Principles
 
-Briko inherits a subset of design principles from Germio's LLM-First framework:
+Briko takes from a part of design principles from Germio's LLM-First framework:
 
-| Principle                      | Application in Briko                               |
-| ------------------------------ | -------------------------------------------------- |
-| Closed minimal vocabulary      | Fixed prefab catalog, fixed rotation values        |
-| Declarative not procedural     | JSON describes state, not steps                    |
-| Self-correcting error format   | Failed parse logs warning and skips, never crashes |
-| snake_case throughout          | All JSON keys and C# data class properties         |
-| Public JSON schema             | The format is the API                              |
-| Layered namespace architecture | `Briko.Editor.{Model, Internal}`                   |
+| Principle                         | Application in Briko                               |
+| --------------------------------- | -------------------------------------------------- |
+| Closed small word list            | Fixed part catalog, fixed rotation values          |
+| Said as a whole, not step by step | JSON describes state, not steps                    |
+| Self-correcting error format      | Failed parse logs warning and skips, never crashes |
+| snake_case throughout             | All JSON keys and C# data class properties         |
+| Public JSON layout                | The format is the API                              |
+| Layered group architecture        | `Briko.Editor.{Model, Internal}`                   |
 
 ---
 
 ## 3. Relationship with Germio
 
-### 3.1 Role Separation
+### 3.1 Role split
 
 Germio and Briko are designed to **never overlap** in scope:
 
@@ -318,9 +318,9 @@ graph TB
 
 The single string `zone_id` is the contract between Germio and Briko.
 
-**Naming convention**: `zone_id` matches the regex `^vol_[a-z0-9_]+$`.
+**Naming convention**: `zone_id` matches the pattern `^vol_[a-z0-9_]+$`.
 
-The `vol_` prefix denotes "volumetric trigger" — a 3D region that emits an event when the player enters it.
+The `vol_` prefix means "solid trigger" — a solid region that gives an event when the player enters it.
 
 ```mermaid
 graph TB
@@ -344,7 +344,7 @@ graph TB
 
 **v1 supports `vol_*` only.** Other prefixes are reserved for future expansion.
 
-### 3.3 Runtime Data Flow
+### 3.3 Run time Data Flow
 
 ```mermaid
 sequenceDiagram
@@ -393,7 +393,7 @@ graph TB
     style S4 fill:#c8e6c9
 ```
 
-### 3.5 Dependency Direction
+### 3.5 Need Direction
 
 ```mermaid
 graph LR
@@ -406,13 +406,13 @@ graph LR
     style GameDev fill:#ffe0b2
 ```
 
-+ Briko → Germio: permitted but unused in v1
-+ Germio → Briko: forbidden (would create circular dependency)
-+ Briko → host project: forbidden (Briko remains generic)
++ Briko → Germio: permitted but not used in v1
++ Germio → Briko: banned (would create a loop of needs)
++ Briko → host project: banned (Briko remains common)
 
 ---
 
-## 4. Coordinate System and Grid
+## 4. place System and Grid
 
 ### 4.1 Unit System
 
@@ -420,11 +420,11 @@ graph LR
 1 Briko unit = 1 meter (matches Unity's default world unit)
 ```
 
-No conversion is applied between Unity coordinates and Briko coordinates. A position of `[10, 0, 5]` in Briko JSON corresponds directly to Unity world coordinates `(10, 0, 5)`.
+No change is applied between Unity places and Briko places. A position of `[10, 0, 5]` in Briko JSON corresponds directly to Unity world places `(10, 0, 5)`.
 
-### 4.2 Grid Hierarchy
+### 4.2 Grid Tree
 
-The grid hierarchy is derived from observed prefab dimensions in the reference implementation:
+The grid tree is derived from observed part dimensions in the reference implementation:
 
 ```mermaid
 graph TB
@@ -452,19 +452,19 @@ graph TB
 
 **Grid base unit: 0.25m. Sizes step in factors of 2 or 2.5.. Sizes step in factors of 2 or 2.5.
 
-### 4.3 Discrete Constraints
+### 4.3 separate Constraints
 
-| Quantity      | Constraint                      | Domain                       |          |
-| ------------- | ------------------------------- | ---------------------------- | -------- |
-| `position[i]` | Integer multiple of `grid_unit` | `{ k × 0.25 \                | k ∈ ℤ }` |
-| `rotation_y`  | Discrete cardinal               | `{ 0, 90, 180, 270 }`        |          |
-| `prefab`      | Member of the prefab catalog    | finite set, project-specific |          |
-| `variant`     | Positive integer                | `{ 1, 2, 3, ... }`           |          |
-| `grid_unit`   | Fixed value                     | `0.25` (v1)                  |          |
+| Quantity      | Constraint                           | field                        |          |
+| ------------- | ------------------------------------ | ---------------------------- | -------- |
+| `position[i]` | Whole number multiple of `grid_unit` | `{ k × 0.25 \                | k ∈ ℤ }` |
+| `rotation_y`  | separate main                        | `{ 0, 90, 180, 270 }`        |          |
+| `prefab`      | Member of the part catalog           | finite set, project-specific |          |
+| `variant`     | Positive whole number                | `{ 1, 2, 3, ... }`           |          |
+| `grid_unit`   | Fixed value                          | `0.25` (v1)                  |          |
 
-### 4.4 Snap Algorithm
+### 4.4 Snap Step
 
-For each axis component `v`:
+For each line component `v`:
 
 ```text
 snapped(v) = round(v / grid_unit) × grid_unit
@@ -489,15 +489,15 @@ flowchart TB
     style Log fill:#fff9c4
 ```
 
-When the difference between raw and snapped exceeds 0.01m on any axis, the exporter emits a console warning to alert the user that source data is off-grid.
+When the difference between raw and snapped exceeds 0.01m on any line, the exporter gives a console warning to tell the user that source data is off-grid.
 
 ---
 
-## 5. Prefab Naming Convention
+## 5. part Naming Convention
 
 ### 5.1 Format
 
-Prefab assets must follow this naming pattern:
+part assets must follow this naming pattern:
 
 ```text
 <Kind>_<Width>x<Height>x<Depth>_<Descriptor>_<Variant>
@@ -505,20 +505,20 @@ Prefab assets must follow this naming pattern:
 
 Where:
 
-+ `Kind` is any arbitrary word (e.g., `Ground`, `Block`, `Enemy`, `Wall`, `Trap`). Open-ended and extensible.
-+ `Width`, `Height`, `Depth` are decimal numbers in meters
-+ `Descriptor` is a free-form identifier, may contain underscores (e.g., `Green`, `Plain_Green`)
-+ `Variant` is a positive integer
++ `Kind` is any word (for example, `Ground`, `Block`, `Enemy`, `Wall`, `Trap`). Open-ended and open to add.
++ `Width`, `Height`, `Depth` are numbers with a point in meters
++ `Descriptor` is a free-form identifier, may contain marks (for example, `Green`, `Plain_Green`)
++ `Variant` is a positive whole number
 
 ### 5.2 Examples
 
-| Prefab name                          | Kind      | Dimensions  | Descriptor  | Variant |
-| ------------------------------------ | --------- | ----------- | ----------- | ------- |
-| `Ground_10.0x0.5x10.0_Green_1`       | Ground    | 10×0.5×10   | Green       | 1       |
-| `Block_1.0x1.0x1.0_Plain_Green_3`    | Block     | 1×1×1       | Plain_Green | 3       |
-| `Ground_2.5x0.5x2.5_Stone_2`         | Ground    | 2.5×0.5×2.5 | Stone       | 2       |
-| `Enemy_1.0x2.0x1.0_Red_1`            | Enemy     | 1×2×1       | Red         | 1       |
-| `Bipyramid_0.5x1.0x0.5_Plain_Blue_1` | Bipyramid | 0.5×1×0.5   | Plain_Blue  | 1       |
+| part name                            | Kind               | Dimensions  | label       | Variant |
+| ------------------------------------ | ------------------ | ----------- | ----------- | ------- |
+| `Ground_10.0x0.5x10.0_Green_1`       | Ground             | 10×0.5×10   | Green       | 1       |
+| `Block_1.0x1.0x1.0_Plain_Green_3`    | Block              | 1×1×1       | Plain_Green | 3       |
+| `Ground_2.5x0.5x2.5_Stone_2`         | Ground             | 2.5×0.5×2.5 | Stone       | 2       |
+| `Enemy_1.0x2.0x1.0_Red_1`            | Enemy              | 1×2×1       | Red         | 1       |
+| `Bipyramid_0.5x1.0x0.5_Plain_Blue_1` | double-point shape | 0.5×1×0.5   | Plain_Blue  | 1       |
 
 ### 5.3 Parser State Machine
 
@@ -542,15 +542,15 @@ flowchart TB
     style Null fill:#ffcdd2
 ```
 
-The greedy quantifier on group 1 correctly handles multi-word descriptors like `Plain_Green` because the trailing `_(\d+)$` anchors to the end. `Kind` is unrestricted — any word is accepted as long as the `_NxNxN_` dimension segment is present.
+Group 1 takes as much text as it can, so many-word labels like `Plain_Green` work, because the end part `_(\d+)$` marks the end of the name. `Kind` is free — any word is accepted as long as the `_NxNxN_` dimension segment is present.
 
-### 5.4 The Catalog as LLM Vocabulary
+### 5.4 The Catalog as model word list
 
-The set of available prefabs constitutes the LLM's vocabulary for level construction. By encoding dimensions in the name itself, the LLM can:
+The set of available parts constitutes the model's word list for level construction. By code dimensions in the name itself, the model can:
 
-1. Reason about size without an external lookup table
-2. Validate placement compatibility from the name alone
-3. Generate names that conform to a known pattern
+1. Reason about size without an external search table
+2. Check place match from the name alone
+3. Make names that match to a known pattern
 
 ```mermaid
 graph LR
@@ -570,15 +570,15 @@ graph LR
     style Sel fill:#bbdefb
 ```
 
-LLM cognitive load is partitioned: structural choices (size, kind, descriptor) require reasoning, while variant selection can be effectively random.
+The model's work is split: structural choices (size, kind, label) require reasoning, while variant selection can be effectively random.
 
 ---
 
-## 6. Scene Hierarchy
+## 6. Scene Tree
 
 ### 6.1 Required Structure
 
-Briko expects scenes to follow this top-level hierarchy:
+Briko expects scenes to follow this top-level tree:
 
 ```text
 {LevelRoot}                ← scene root, name is arbitrary
@@ -622,36 +622,36 @@ graph TB
 
 | Container        | Pattern            | Example                        | Contents         |
 | ---------------- | ------------------ | ------------------------------ | ---------------- |
-| Ground container | `grounds_<floor>`  | `grounds_1f`, `grounds_2f`     | Ground prefabs   |
-| Block container  | `blocks_<variant>` | `blocks_plain`, `blocks_basic` | Block prefabs    |
-| Zone marker      | `vol_<identifier>` | `vol_spawn`, `vol_boss_start`  | Empty GameObject |
+| Ground container | `grounds_<floor>`  | `grounds_1f`, `grounds_2f`     | Ground parts     |
+| Block container  | `blocks_<variant>` | `blocks_plain`, `blocks_basic` | Block parts      |
+| Zone mark        | `vol_<identifier>` | `vol_spawn`, `vol_boss_start`  | Empty GameObject |
 
 ### 6.4 Floor Inference for Blocks
 
-Because Block containers are not floor-grouped in the reference implementation, the floor for each Block is inferred from its world Y-coordinate:
+Because Block containers are not floor-grouped in the reference implementation, the floor for each Block is worked out from its world Y-place:
 
 ```text
 floor(block) = "1f"  if block.position.y < 3.0
              = "2f"  otherwise
 ```
 
-The threshold `3.0` is justified by:
+The limit `3.0` is justified by:
 
-+ Floor 1 ground thickness: 0.5m
++ Floor 1 ground, 0.5m across
 + Possible block stack height on floor 1: up to 2.5m
-+ Total: 3.0m maximum reachable Y on floor 1
++ Total: 3.0m maximum able to reach Y on floor 1
 
-Future versions may eliminate this heuristic by introducing explicit `blocks_<floor>` containers.
+Future versions may eliminate this rule of thumb by introducing explicit `blocks_<floor>` containers.
 
 ---
 
 ## 7. Layout JSON Format
 
-### 7.1 Schema Overview
+### 7.1 Layout Summary
 
 ```mermaid
 graph TB
-    Root["Root<br/>📋 layout_id, grid_unit,<br/>target_duration_sec, bgm_track"]
+    Root["Root<br/>📋 layout_id, grid_unit,<br/>target_duration_second, bgm_track"]
     Root -->|"platforms[]"| P[Platform<br/>floor]
     P -->|"grounds[]"| I1[Item<br/>prefab, variant,<br/>position, rotation_y]
     P -->|"blocks[]"| I2[Item<br/>prefab, variant,<br/>position, rotation_y]
@@ -670,7 +670,7 @@ graph TB
 {
   "layout_id": "stage_01",
   "grid_unit": 0.25,
-  "target_duration_sec": 180,
+  "target_duration_second": 180,
   "bgm_track": "stage_01_theme.mp3",
   "platforms": [
     {
@@ -713,38 +713,38 @@ graph TB
 
 #### Root
 
-| Field                 | Type              | Required | Description                                               |
-| --------------------- | ----------------- | -------- | --------------------------------------------------------- |
-| `layout_id`           | string            | yes      | Unique identifier; used as default scene name on import   |
-| `grid_unit`           | float             | yes      | Grid quantization in meters (fixed at `0.25` in v1)       |
-| `target_duration_sec` | int               | yes      | Intended play duration in seconds                         |
-| `bgm_track`           | string            | optional | BGM filename (relative to host project's StreamingAssets) |
-| `platforms`           | array of Platform | yes      | One or more floor layers                                  |
+| Field                    | Type             | Required   | Description                                                |
+| ------------------------ | ---------------- | ---------- | ---------------------------------------------------------- |
+| `layout_id`              | string           | yes        | Unique identifier; used as default scene name on import    |
+| `grid_unit`              | float            | yes        | Grid rounding in meters (fixed at `0.25` in v1)            |
+| `target_duration_second` | int              | yes        | Intended play duration in seconds                          |
+| `bgm_track`              | string           | not needed | BGM file name (relative to host project's StreamingAssets) |
+| `platforms`              | list of Platform | yes        | One or more floor layers                                   |
 
 #### Platform
 
-| Field     | Type          | Required | Description                             |
-| --------- | ------------- | -------- | --------------------------------------- |
-| `floor`   | string        | yes      | Floor identifier (`"1f"`, `"2f"`, etc.) |
-| `grounds` | array of Item | optional | Ground tile placements                  |
-| `blocks`  | array of Item | optional | Block obstacle placements               |
-| `zones`   | array of Zone | optional | Trigger zone markers                    |
+| Field     | Type         | Required   | Description                                   |
+| --------- | ------------ | ---------- | --------------------------------------------- |
+| `floor`   | string       | yes        | Floor identifier (`"1f"`, `"2f"`, and so on.) |
+| `grounds` | list of Item | not needed | Ground tile places                            |
+| `blocks`  | list of Item | not needed | Block places                                  |
+| `zones`   | list of Zone | not needed | Trigger zone marks                            |
 
 #### Item
 
-| Field        | Type     | Required | Description                                                                                              |
-| ------------ | -------- | -------- | -------------------------------------------------------------------------------------------------------- |
-| `prefab`     | string   | yes      | Prefab asset name **without** trailing variant number (e.g. `"Ground_10.0x0.5x10.0_Green"`)              |
-| `variant`    | int      | yes      | Variant number (1-based); used for scene object naming only, not appended to prefab asset name on import |
-| `position`   | float[3] | yes      | World coordinates `[x, y, z]` in meters                                                                  |
-| `rotation_y` | int      | optional | Y-axis rotation in degrees, default `0`                                                                  |
+| Field        | Type     | Required   | Description                                                                                         |
+| ------------ | -------- | ---------- | --------------------------------------------------------------------------------------------------- |
+| `prefab`     | string   | yes        | part asset name **without** trailing variant number (for example `"Ground_10.0x0.5x10.0_Green"`)    |
+| `variant`    | int      | yes        | Variant number (1-based); used for scene object naming only, not added to part asset name on import |
+| `position`   | float[3] | yes        | World places `[x, y, z]` in meters                                                                  |
+| `rotation_y` | int      | not needed | Y-line rotation in degrees, default `0`                                                             |
 
 #### Zone
 
-| Field      | Type     | Required | Description                             |
-| ---------- | -------- | -------- | --------------------------------------- |
-| `zone_id`  | string   | yes      | Identifier matching `^vol_[a-z0-9_]+$`  |
-| `position` | float[3] | yes      | World coordinates `[x, y, z]` in meters |
+| Field      | Type     | Required | Description                            |
+| ---------- | -------- | -------- | -------------------------------------- |
+| `zone_id`  | string   | yes      | Identifier matching `^vol_[a-z0-9_]+$` |
+| `position` | float[3] | yes      | World places `[x, y, z]` in meters     |
 
 ### 7.4 Constraints Summary
 
@@ -767,7 +767,7 @@ graph TB
     style C6 fill:#fff9c4
 ```
 
-### 7.5 Property Naming Rationale (snake_case)
+### 7.5 Property Naming reason (snake_case)
 
 Briko data classes use `snake_case` C# property names that correspond directly to JSON keys, with no `[JsonProperty]` attribute mapping.
 
@@ -789,9 +789,9 @@ graph LR
     style N fill:#c5e1a5
 ```
 
-This deviates from typical C# conventions (where public properties are `PascalCase` or `camelCase`) but matches Germio's `Data.cs` convention. The principle: **the property name is the wire format**.
+This differs from typical C# conventions (where public properties are `PascalCase` or `camelCase`) but matches Germio's `Data.cs` convention. The principle: **the property name is the wire format**.
 
-### 7.6 Serializer Settings
+### 7.6 Save Settings
 
 ```csharp
 new JsonSerializerSettings {
@@ -803,9 +803,9 @@ new JsonSerializerSettings {
 
 Effects:
 
-+ Output is indented for human and LLM readability
-+ Default values (e.g., `rotation_y: 0`) are omitted, reducing noise
-+ Nulls are omitted
++ Output is laid out for clear reading by people and models
++ Default values (for example, `rotation_y: 0`) are omitted, reducing noise
++ Empty values are omitted
 
 ### 7.7 C# Class Diagram
 
@@ -814,7 +814,7 @@ classDiagram
     class Root {
         +string layout_id
         +float grid_unit
-        +int target_duration_sec
+        +int target_duration_second
         +string bgm_track
         +List~Platform~ platforms
     }
@@ -844,11 +844,11 @@ classDiagram
     Platform "1" --> "0..*" Zone : zones
 ```
 
-All four classes reside in a single file `Editor/Model/Layout.cs` under namespace `Briko.Editor.Model`.
+All four classes live in a single file `Editor/Model/Layout.cs` under group `Briko.Editor.Model`.
 
 ---
 
-## 8. Bidirectional Converter
+## 8. Two-way change
 
 ### 8.1 Forward Flow (JSON → Scene)
 
@@ -944,7 +944,7 @@ flowchart TB
 
 ### 8.3 Round-trip Property
 
-The bidirectional converter satisfies:
+The two-way change satisfies:
 
 ```text
 ∀ valid JSON j:        Export(Import(j)) ≡_semantic j
@@ -954,43 +954,43 @@ The bidirectional converter satisfies:
 Where:
 
 + `≡_semantic` means JSON documents are equivalent under `JToken.DeepEquals`
-+ `≈_layout` means scenes contain identical prefab placements and zone positions (other scene attributes such as material instance IDs may differ)
++ `≈_layout` means scenes contain same part places and zone positions (other scene attributes such as material copy IDs may differ)
 
-The discreteness of the input space (§4.3) is what mathematically guarantees this property:
+The separate parts of the input space (§4.3) together guarantee this property:
 
-+ No floating-point drift accumulates across round trips
++ No floating-point drift grows across round trips
 + Every position has a unique grid-snapped representation
-+ Every rotation has a unique cardinal representation
-+ Every prefab has a unique name encoding
++ Every rotation has a unique main representation
++ Every part has a unique name code
 
 ### 8.4 Round-trip Test Strategy
 
 The reference implementation includes `RoundTripTests.cs` which:
 
-1. Loads a fixture JSON from disk
-2. Deserializes to `Root`
-3. Re-serializes to a new JSON string
-4. Parses both as `JToken`
-5. Asserts `JToken.DeepEquals(before, after) == true`
+1. Loads a test file JSON from disk
+2. Loads to `Root`
+3. Re-saves to a new JSON string
+4. Reads both as `JToken`
+5. Checks `JToken.DeepEquals(before, after) == true`
 
-This test exercises the JSON ↔ POCO round-trip but not the JSON ↔ Scene round-trip (which requires Unity runtime and is deferred to v2 PlayMode tests).
+This test exercises the JSON ↔ POCO round-trip but not the JSON ↔ Scene round-trip (which requires Unity run time and is put off to v2 PlayMode tests).
 
-### 8.5 Tolerance Handling
+### 8.5 Allowed gap Handling
 
-| Quantity                     | Tolerance            | Action when exceeded             |
+| Quantity                     | Allowed gap          | Action when exceeded             |
 | ---------------------------- | -------------------- | -------------------------------- |
-| Position drift from grid     | 0.01m per axis       | Console warning, continue        |
-| Rotation drift from cardinal | 1.0°                 | Console warning, continue        |
-| Prefab name pattern mismatch | exact match required | Skip object silently             |
-| Missing prefab on import     | exact match required | Console warning, skip GameObject |
+| Position drift from grid     | 0.01m per line       | Console warning, continue        |
+| Rotation drift from main     | 1.0°                 | Console warning, continue        |
+| part name pattern difference | exact match required | Skip object quietly              |
+| Missing part on import       | exact match required | Console warning, skip GameObject |
 
-Briko **never throws fatal exceptions** on data anomalies. The principle: a partial result with warnings is more useful than a complete failure.
+Briko **never stops with a crash** on odd data. The principle: a part result with warning is more useful than a complete failure.
 
 ---
 
 ## 9. Repository Structure
 
-### 9.1 UPM Package Layout
+### 9.1 Unity Package Layout
 
 ```text
 briko/
@@ -1027,11 +1027,11 @@ briko/
 
 ### 9.2 The Tests~ Convention
 
-The tilde suffix on `Tests~` is a UPM convention: directories ending in `~` are **invisible to Unity** but visible to standard .NET tooling.
+The end mark on the name `Tests~` is a UPM convention: places ending in `~` are **not seen to Unity** but visible to standard .NET tooling.
 
-This allows shipping a test project alongside the package without polluting the host project's Unity assemblies.
+This allows shipping a test project alongside the package without dirtying the host project's Unity builds.
 
-### 9.3 Namespace Organization
+### 9.3 Group Organization
 
 ```mermaid
 graph TB
@@ -1086,7 +1086,7 @@ graph TB
 
 ### 9.4 Test Project (.csproj) Structure
 
-The test project uses **shared source compilation**: it directly compiles selected files from `Editor/` rather than referencing a compiled assembly.
+The test project uses **shared source files**: it directly includes chosen files from `Editor/` rather than pointing to a built build.
 
 ```xml
 <ItemGroup>
@@ -1101,12 +1101,12 @@ The test project uses **shared source compilation**: it directly compiles select
 </ItemGroup>
 ```
 
-`<EnableDefaultItems>false</EnableDefaultItems>` ensures every file is explicitly listed.
+`<EnableDefaultItems>false</EnableDefaultItems>` ensures every file is clearly listed.
 
 This pattern allows:
 
 + Tests run on plain .NET 9 without Unity
-+ No double-compilation of source files
++ No double copies of source files
 + Clear visibility of which Editor classes have NUnit coverage
 
 ### 9.5 Class Coverage Pattern
@@ -1127,7 +1127,7 @@ graph LR
     style X fill:#ffe0b2
 ```
 
-Classes that depend on Unity APIs (GameObject, Transform, EditorSceneManager, AssetDatabase) are not unit-tested in v1. Their integration tests are deferred to v2 using Unity Test Framework PlayMode mode.
+Classes that depend on Unity APIs (GameObject, Transform, EditorSceneManager, AssetDatabase) are not unit-tested in v1. Their integration tests are put off to v2 using Unity Test Framework PlayMode mode.
 
 ---
 
@@ -1137,25 +1137,25 @@ Classes that depend on Unity APIs (GameObject, Transform, EditorSceneManager, As
 
 Classes use **single words without project prefix**:
 
-| Used                               | Avoided                              |
-| ---------------------------------- | ------------------------------------ |
-| `Exporter`                         | `BrikoExporter`                      |
-| `Importer`                         | `BrikoImporter`                      |
-| `Root`, `Platform`, `Item`, `Zone` | `LayoutRoot`, `LayoutPlatform`, etc. |
-| `PrefabNameParser`                 | `BrikoPrefabNameParser`              |
+| Used                               | Avoided                                    |
+| ---------------------------------- | ------------------------------------------ |
+| `Exporter`                         | `BrikoExporter`                            |
+| `Importer`                         | `BrikoImporter`                            |
+| `Root`, `Platform`, `Item`, `Zone` | `LayoutRoot`, `LayoutPlatform`, and so on. |
+| `PrefabNameParser`                 | `BrikoPrefabNameParser`                    |
 
-Disambiguation when needed is achieved through namespaces: `Briko.Editor.Exporter` vs `OtherPackage.Exporter`.
+Clearing up when needed is achieved through groups: `Briko.Editor.Exporter` against `OtherPackage.Exporter`.
 
 ### 10.2 Property Naming
 
-| Class type                 | Convention                  | Example                     |
-| -------------------------- | --------------------------- | --------------------------- |
-| Data class (Layout, etc.)  | `snake_case` (matches JSON) | `layout_id`, `grid_unit`    |
-| Service / behavior class   | `camelCase`                 | `home`, `beat`, `mode`      |
-| Private field              | `_snake_case`               | `_do_update`, `_jump_power` |
-| Local variable / parameter | `snake_case`                | `base_path`, `grid_unit`    |
-| Constant                   | `ALL_CAPS`                  | `GRID_UNIT`, `MENU_ROOT`    |
-| `[SerializeField]` (Unity) | `_ALL_CAPS`                 | `_JUMP_POWER`               |
+| Class type                      | Convention                  | Example                     |
+| ------------------------------- | --------------------------- | --------------------------- |
+| Data class (Layout, and so on.) | `snake_case` (matches JSON) | `layout_id`, `grid_unit`    |
+| Service / behavior class        | `camelCase`                 | `home`, `beat`, `mode`      |
+| Private field                   | `_snake_case`               | `_do_update`, `_jump_power` |
+| Local variable / input          | `snake_case`                | `base_path`, `grid_unit`    |
+| Constant                        | `ALL_CAPS`                  | `GRID_UNIT`, `MENU_ROOT`    |
+| `[SerializeField]` (Unity)      | `_ALL_CAPS`                 | `_JUMP_POWER`               |
 
 ### 10.3 Named Arguments Rule
 
@@ -1170,13 +1170,13 @@ Importer.ImportToNewScene(layout: root, scene_path: path);
 GridSnapper.Snap(position, 0.5f);
 ```
 
-Exceptions (positional permitted):
+Exceptions (where permitted):
 
 + .NET BCL: `Math.Round(value)`, `string.IsNullOrEmpty(s)`
 + Unity API: `GameObject.Find("Platform")`, `transform.position`
 + Newtonsoft.Json: `JsonConvert.SerializeObject(obj)`
 
-### 10.4 File Header
+### 10.4 File Top line
 
 Every C# file begins with:
 
@@ -1187,7 +1187,7 @@ Every C# file begins with:
 
 ### 10.5 XML Documentation
 
-Every class and public method has author attribution:
+Every class and public method has author credit:
 
 ```csharp
 /// <summary>
@@ -1203,7 +1203,7 @@ public class Foo {
 }
 ```
 
-### 10.6 Nullable Annotations
+### 10.6 Can be empty Annotations
 
 `#nullable enable` is declared **inside** each class body, not at file level:
 
@@ -1222,15 +1222,15 @@ Data classes are grouped into a single file rather than one-class-per-file:
 
 + `Editor/Model/Layout.cs` contains `Root`, `Platform`, `Item`, `Zone`
 
-This convention matches Germio's `Data.cs` (containing `Scenario`, `State`, `World`, `Level`, `Next`, `Rule`, etc.). Service and behavior classes use one-file-per-class.
+This convention matches Germio's `Data.cs` (containing `Scenario`, `State`, `World`, `Level`, `Next`, `Rule`, and so on.). Service and behavior classes use one-file-per-class.
 
 ---
 
 ## 11. Common Layout Patterns
 
-These reference patterns illustrate typical level structures expressible in the Layout JSON. They serve as starting templates for LLM-assisted generation.
+These reference patterns illustrate typical level structures that can be written in the Layout JSON. They serve as starting patterns for model-assisted generation.
 
-### 11.1 Linear Stage
+### 11.1 Straight Stage
 
 ```mermaid
 graph LR
@@ -1245,7 +1245,7 @@ graph LR
     style G fill:#ffd700
 ```
 
-**Characteristics**: high prefab density, narrow elongated space, sequential difficulty curve.
+**Characteristics**: high part density, narrow long space, in order difficulty curve.
 
 ### 11.2 Branching Exploration
 
@@ -1264,7 +1264,7 @@ graph TB
     style Sub2 fill:#fff9c4
 ```
 
-**Characteristics**: large open space, medium density, optional collectible zones.
+**Characteristics**: large open space, medium density, no need for item zones.
 
 ### 11.3 Boss Arena
 
@@ -1287,9 +1287,9 @@ graph TB
     style Final fill:#ffcdd2
 ```
 
-**Characteristics**: compact, high block density, multi-phase zone progression.
+**Characteristics**: short, high block density, many-phase zone steps.
 
-### 11.4 Speedrun Stage
+### 11.4 Fast run Stage
 
 ```mermaid
 graph LR
@@ -1305,13 +1305,13 @@ graph LR
     style TE fill:#fff9c4
 ```
 
-**Characteristics**: linear, medium density, paired timer zones for Germio integration.
+**Characteristics**: a straight line, medium density, paired clock zones for Germio integration.
 
 ---
 
-## 12. LLM Workflow Models
+## 12. Model Workflows
 
-### 12.1 Human-led with LLM Assistance (v1 Workflow)
+### 12.1 Human-led with model Assistance (v1 Workflow)
 
 ```mermaid
 sequenceDiagram
@@ -1330,7 +1330,7 @@ sequenceDiagram
     H->>U: manual polish
 ```
 
-In this model, the human owns the creative direction and uses the LLM as a generator of variations.
+In this model, the human has the creative direction and uses the model as a maker of variations.
 
 ### 12.2 LLM-led with Human Supervision (v2 Workflow)
 
@@ -1354,9 +1354,9 @@ sequenceDiagram
     H->>U: review and select
 ```
 
-The Validator (planned for v2) provides automated feedback that the LLM uses to self-correct, reducing human intervention to high-level review.
+The check (planned for v2) provides answers made by the check itself that the model uses to self-correct, reducing human intervention to high-level review.
 
-### 12.3 Autonomous Agent Loop (v3 Workflow)
+### 12.3 Self-run Agent Loop (v3 Workflow)
 
 ```mermaid
 sequenceDiagram
@@ -1377,7 +1377,7 @@ sequenceDiagram
     Note over Agent,TestRig: iteration without human input
 ```
 
-### 12.4 Multi-LLM Collaboration
+### 12.4 Many-model Collaboration
 
 ```mermaid
 graph TB
@@ -1403,7 +1403,7 @@ graph TB
     style Output fill:#c8e6c9
 ```
 
-Specialized roles can be assigned to different LLMs (or different prompts to the same LLM), with Briko serving as the data interchange layer.
+Specialized roles can be assigned to different models (or different prompts to the same model), with Briko serving as the data change layer.
 
 ---
 
@@ -1439,7 +1439,7 @@ graph TB
     style S5 fill:#c8e6c9
 ```
 
-### 13.2 LLM Output Failure Modes
+### 13.2 Model Output Failure Modes
 
 ```mermaid
 graph TB
@@ -1469,12 +1469,12 @@ graph TB
     style M5 fill:#c8e6c9
 ```
 
-### 13.3 Mitigation Principles
+### 13.3 Relief Principles
 
-1. **Never crash on data anomalies.** Briko logs and proceeds.
-2. **Surface drift to the user.** Warnings make off-spec data visible.
-3. **Skip unknown elements.** Partial output is preferred over no output.
-4. **Validate at deserialization time.** Structural violations are caught before processing begins.
+1. **Never crash on odd data.** Briko logs and proceeds.
+2. **Show drift to the user.** Messages make off-plan data visible.
+3. **Skip unknown elements.** Some output is better than no output.
+4. **Check at loading time.** Structural breaks are caught before processing begins.
 
 ---
 
@@ -1500,10 +1500,10 @@ graph LR
 + ✅ Exporter (Scene → JSON)
 + ✅ Importer (JSON → Scene)
 + ✅ Editor menu integration
-+ ✅ Round-trip property guaranteed by discrete constraints
-+ ✅ Test suite (NUnit, 18 tests, shared source compilation)
-+ ✅ Stemic-aligned coding conventions
-+ ✅ BrikoLog diagnostic logger
++ ✅ Round-trip property guaranteed by separate constraints
++ ✅ Test suite (NUnit, 18 tests, shared source files)
++ ✅ Coding conventions matched with stemic
++ ✅ Briko log writer
 
 ### 14.3 v2.0 — Planned
 
@@ -1520,7 +1520,7 @@ graph TB
     style V2 fill:#fff9c4
 ```
 
-### 14.4 v3.0 — Envisioned
+### 14.4 v3.0 — Planned
 
 ```mermaid
 graph TB
@@ -1536,45 +1536,45 @@ graph TB
 
 ### 14.5 Out of Scope
 
-The following are explicitly **not** Briko's responsibility:
+The following are clearly **not** Briko's responsibility:
 
-+ Scenario logic (delegated to Germio)
-+ Procedural generation algorithms
-+ Prefab asset creation
-+ Game runtime (Briko is Editor-only)
++ Scenario logic (handed to Germio)
++ step by step generation steps
++ part asset creation
++ Game run time (Briko is Editor-only)
 + Asset-store distribution
 
 ---
 
 ## 15. References
 
-### 15.1 Companion Documents
+### 15.1 Partner Documents
 
-| Document                                   | Purpose                                         |
-| ------------------------------------------ | ----------------------------------------------- |
-| `docs/development_plan_v1_detail_JP.md`    | Step-by-step v1 implementation guide (Japanese) |
-| `README.md`                                | User-facing introduction                        |
-| Germio specification (separate repository) | Companion framework reference                   |
+| Document                                | Purpose                                         |
+| --------------------------------------- | ----------------------------------------------- |
+| `docs/development_plan_v1_detail_JP.md` | Step-by-step v1 implementation guide (Japanese) |
+| `README.md`                             | User-facing introduction                        |
+| Germio plan (separate repository)       | Partner framework reference                     |
 
 ### 15.2 External Resources
 
-+ [Unity Package Manager Custom Layout](https://docs.unity3d.com/Manual/cus-layout.html) — `Tests~` directory convention
-+ [com.unity.nuget.newtonsoft-json](https://docs.unity3d.com/Packages/com.unity.nuget.newtonsoft-json@latest) — JSON library
++ [Unity Package Manager Custom Layout](https://docs.unity3d.com/Manual/cus-layout.html) — `Tests~` folder convention
++ [com.unity.package.newtonsoft-json](https://docs.unity3d.com/Packages/com.unity.package.newtonsoft-json@latest) — JSON library
 + [NUnit Documentation](https://docs.nunit.org/) — test framework
 
-### 15.3 Conformance
+### 15.3 Match
 
-A Briko-conforming Unity Editor extension must:
+A Briko-matching Unity Editor extension must:
 
 1. Read and write JSON matching the format specified in §7
-2. Apply discrete constraints from §4.3 on both directions of conversion
-3. Implement the snap algorithm from §4.4
-4. Parse prefab names per the regex `^(.+_([\d.]+x[\d.]+x[\d.]+)_.+)_(\d+)$` in §5.3
-5. Recognize the scene hierarchy from §6.1
+2. Apply separate constraints from §4.3 on both directions of change
+3. Implement the snap step from §4.4
+4. Parse part names per the pattern `^(.+_([\d.]+x[\d.]+x[\d.]+)_.+)_(\d+)$` in §5.3
+5. Recognize the scene tree from §6.1
 6. Match `zone_id` against `^vol_[a-z0-9_]+$`
 7. Preserve the round-trip property defined in §8.3
-8. Log warnings (not exceptions) on the failure modes listed in §13
+8. Log warning (not exceptions) on the failure modes listed in §13
 
 ---
 
-**End of specification.**
+**End of plan.**

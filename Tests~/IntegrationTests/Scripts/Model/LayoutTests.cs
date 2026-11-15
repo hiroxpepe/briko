@@ -39,11 +39,11 @@ namespace Briko.Tests.Model {
             Assert.That(root!.grid_unit, Is.EqualTo(0.25f).Within(0.001f));
         }
 
-        [Test, Description("Root.target_duration_sec deserializes to 180")]
+        [Test, Description("Root.target_duration_second deserializes to 180")]
         public void Root_TargetDurationSec_DeserializesTo180() {
             string json = File.ReadAllText(Path.Combine("Fixtures", "sample_level_minimal.json"));
             Root? root = JsonConvert.DeserializeObject<Root>(json, _settings);
-            Assert.That(root!.target_duration_sec, Is.EqualTo(180));
+            Assert.That(root!.target_duration_second, Is.EqualTo(180));
         }
 
         [Test, Description("Platform.floor deserializes to '1f'")]

@@ -251,7 +251,7 @@ to work with. Here is its smallest form:
 {
   "layout_id": "tropika_stage_01",
   "grid_unit": 0.25,
-  "target_duration_sec": 180,
+  "target_duration_second": 180,
   "bgm_track": "track_01_tropika_morning.mp3",
   "platforms": [
     {
@@ -285,7 +285,7 @@ to work with. Here is its smallest form:
 
 ```mermaid
 graph TB
-    Root[Root<br/>📋 layout_id, grid_unit,<br/>target_duration_sec, bgm_track]
+    Root[Root<br/>📋 layout_id, grid_unit,<br/>target_duration_second, bgm_track]
     Root -->|"platforms[]"| P[Platform<br/>🏢 floor]
     P -->|"grounds[]"| I1[Item<br/>🟩 prefab, variant,<br/>position, rotation_y]
     P -->|"blocks[]"| I2[Item<br/>🟦 prefab, variant,<br/>position, rotation_y]
