@@ -51,7 +51,6 @@ form — a short form is put right in the code, and not kept here.
 + docs
 + drift
 + drifted
-+ ecosystem
 + english
 + entity
 + enums
@@ -78,7 +77,6 @@ form — a short form is put right in the code, and not kept here.
 + int
 + integrationtests
 + interfaces
-+ interleave
 + inward
 + isblockscontainer
 + isdescending
@@ -108,7 +106,6 @@ form — a short form is put right in the code, and not kept here.
 + omitted
 + our
 + ours
-+ outward
 + pad
 + parameter
 + parse
@@ -117,7 +114,6 @@ form — a short form is put right in the code, and not kept here.
 + parser
 + participle
 + password
-+ payload
 + plainly
 + plural
 + programming
@@ -163,8 +159,6 @@ form — a short form is put right in the code, and not kept here.
 + token
 + tracked
 + two
-+ unchecked
-+ unlabeled
 + untouched
 + usings
 + valid
