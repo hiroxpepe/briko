@@ -6,14 +6,14 @@ change in as a commit.
 
 <!-- format: v1 | fields: status, id, title, phase -->
 
-+ [ ] TASK-001 [P-XX]: Put the main design paper into Basic English
-+ [ ] TASK-002 [P-XX]: Put the guide for the code helper into Basic English
-+ [ ] TASK-003 [P-XX]: Put the paper on the order of the scene into Basic English
-+ [ ] TASK-004 [P-XX]: Put the paper on what is seen into Basic English
-+ [ ] TASK-005 [P-XX]: Put the notes on the coding rules into Basic English
-+ [ ] TASK-006 [P-XX]: Put the long roadmap into Basic English
-+ [ ] TASK-007 [P-XX]: Point two lines of the first page at the right roadmap file
-+ [ ] TASK-008 [P-XX]: Move the technical words out of the draft list, on the word of the master
++ [ ] TASK-001 [PHASE-XX]: Put the main design paper into Basic English
++ [ ] TASK-002 [PHASE-XX]: Put the guide for the code helper into Basic English
++ [ ] TASK-003 [PHASE-XX]: Put the paper on the order of the scene into Basic English
++ [ ] TASK-004 [PHASE-XX]: Put the paper on what is seen into Basic English
++ [ ] TASK-005 [PHASE-XX]: Put the notes on the coding rules into Basic English
++ [ ] TASK-006 [PHASE-XX]: Put the long roadmap into Basic English
++ [ ] TASK-007 [PHASE-XX]: Point two lines of the first page at the right roadmap file
++ [ ] TASK-008 [PHASE-XX]: Move the technical words out of the draft list, on the word of the master
 
 ## Detail
 
